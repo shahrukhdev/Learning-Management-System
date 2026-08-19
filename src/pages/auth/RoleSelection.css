@@ -1,0 +1,73 @@
+.role-selection {
+  display: grid;
+  grid-template-columns: repeat(4, 196px);
+  justify-content: center;
+  gap: 20px;
+  max-width: 100%;
+}
+
+.role-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.role-card {
+  position: relative;
+  display: block;
+  padding: 2px;
+  border-radius: 26px;
+  cursor: pointer;
+  background: #F7F5EC;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#F7F5EC, #F7F5EC) padding-box,
+    linear-gradient(0deg, #3F421A, #7E823D) border-box;
+}
+
+.role-card-content {
+  background: #f7f5ec;
+  border-radius: 24px;
+  min-height: 195px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.role-card input:checked + .role-card-content {
+  box-shadow: 0px 2.83745px 24.1183px 2.83745px rgba(0, 0, 0, 0.16);
+}
+
+.role-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 27px;
+  text-align: center;
+  color: #606060;
+  opacity: 0.5;
+}
+
+.role-card input:checked + .role-card-content .role-title {
+  color: #535624;
+  opacity: 1;
+}
+
+.role-icon-area {
+  width: 112px;
+  height: 112px;
+  background: #e7e5cb;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-icon {
+  opacity: 0.3;
+}
+
+.role-card input:checked + .role-card-content .role-icon {
+  opacity: 1;
+}
