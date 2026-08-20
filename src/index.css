@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 * {
   margin: 0;
@@ -27,6 +28,7 @@
 
 :root {
   --font-manrope: "Manrope", sans-serif;
+  --font-inter: "Inter", sans-serif;
   --primary-text-color: #535624;
 }
 
@@ -38,6 +40,22 @@ html {
 body {
   overflow-x: hidden;
   font-family: var(--font-manrope);
+}
+
+.dashboard-layout {
+    min-height: 100vh;
+    display: flex;
+    padding: 28px 18px 28px;
+    background-color: #FFFDF6;
+}
+
+.dashboard-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-content {
+    padding: 24px;
 }
 
 .primary-btn {
@@ -67,10 +85,48 @@ body {
 }
 
 .primary-btn:hover {
-    color: white;
-    filter: brightness(1.15);
+    color: #41441B;
+    background: linear-gradient(104.94deg, #E7E5CB 0%, #F5F3EA 60%), #F1FAF5;
     box-shadow: 0 8px 20px rgba(63, 66, 26, 0.3);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+}
+
+.primary-btn:hover svg {
+    stroke: #41441B;
+}
+
+.secondary-btn {
+  height: 35px;
+  background: linear-gradient(104.94deg, #E7E5CB 0%, #F5F3EA 60%), #F1FAF5;
+  border: 1px solid #E1EFE7;
+  border-radius: 11px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 15px;
+  color: #41441B;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    color: white;
+    box-shadow: 0 8px 20px rgba(63, 66, 26, 0.3);
+    transform: translateY(-1px);
+        background: linear-gradient(
+        104.94deg,
+        #3F421A 0%,
+        #535624 60%
+    );
+}
+
+.secondary-btn:hover svg {
+  stroke: white;
 }
 
 .home-title {
@@ -94,4 +150,78 @@ body {
   display: inline-block;
 }
 
-/* auth screen css end */
+.user-avatar {
+  height: 40px;
+  width: 40px;
+  background: #6D5BD0;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: normal;
+  color: #FFFDF6;
+  border: none;
+  outline: none;
+}
+
+.sidebar-user-info {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sidebar-user-name {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 16px;
+  color: #0F3327;
+}
+
+.sidebar-user-role {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 13px;
+  color: #828684;
+}
+
+/* =========================================================
+  Dashboard Page css
+========================================================= */
+
+/* Outer wrapper — gradient border */
+.border-wrapper {
+  padding: 2px;
+  border-radius: 30px;
+  background: linear-gradient(to bottom, #F3F1E2, #666B21);
+  box-shadow: 0px 14px 34px -18px rgba(15, 51, 39, 0.16);
+}
+
+/* Inner content */
+.border-wrapper .content {
+  border-radius: 28px;
+  overflow: hidden;
+  background: linear-gradient(138deg, #404319 0%, #535625 100%);
+  height: 256px;
+  position: relative;
+}
+
+
+.welcome-banner-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+}
+
+/* Background+Border+Shadow */

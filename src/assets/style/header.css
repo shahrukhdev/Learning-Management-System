@@ -1,0 +1,398 @@
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    padding-left: 18px;
+}
+
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.header-search {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+}
+
+.search-input {
+    width: 100%;
+    max-width: 320px;
+    height: 40px;
+
+    padding: 5px 20px 5px 40px;
+
+    background-color: #FFFDF6;
+    border: 1px solid #E1EFE7;
+    border-radius: 14px;
+
+    box-shadow: 0 5px 20px rgba(15, 51, 39, 0.16);
+
+    outline: none;
+
+    font-family: var(--font-inter);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 16px;
+
+    color: #000;
+}
+
+.search-input::placeholder {
+    color: #93AEA3;
+}
+
+
+/* =========================================================
+   HEADER NOTIFICATION BUTTON
+========================================================= */
+
+.header-notification {
+    position: relative;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: rgba(255, 255, 255, 0.002);
+    border: 1px solid #E1EFE7;
+    border-radius: 50%;
+
+    box-shadow: 0 14px 34px -18px rgba(15, 51, 39, 0.16);
+
+    outline: none;
+    cursor: pointer;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+
+    width: 7px;
+    height: 7px;
+
+    background: #D6447B;
+    border: 1px solid #FFFDF6;
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   DROPDOWN COMMON
+========================================================= */
+
+.profile-menu,
+.notification-menu {
+    position: relative;
+}
+
+.profile-dropdown,
+.notification-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+
+    padding: 8px;
+
+    background: linear-gradient(
+        180deg,
+        #E7E5CB 0%,
+        #D9D6B6 100%
+    );
+
+    border: 1px solid #E5E9DF;
+    border-radius: 14px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
+
+    z-index: 100;
+}
+
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+.profile-dropdown {
+    width: 220px;
+}
+
+.sidebar-user-info {
+    padding: 8px;
+}
+
+.profile-dropdown-divider,
+.notification-dropdown-divider {
+    height: 1px;
+    margin: 6px 0;
+
+    background: #FFFFFF;
+}
+
+.profile-dropdown-item {
+    width: 100%;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0 10px;
+
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+
+    color: #3F421A;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.profile-dropdown-item:hover {
+    background: #F7F5EC;
+}
+
+.profile-dropdown-item svg {
+    color: #6E7A6D;
+}
+
+.profile-dropdown-item.logout,
+.profile-dropdown-item.logout svg {
+    color: #B54848;
+}
+
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+========================================================= */
+
+.notification-dropdown {
+    width: 360px;
+}
+
+.notification-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 10px;
+}
+
+.notification-dropdown-header h6 {
+    margin: 0 0 3px;
+
+    color: #3F421A;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.notification-dropdown-header span {
+    color: #6E7A6D;
+
+    font-size: 11px;
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   MARK ALL READ
+========================================================= */
+
+.mark-read-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 5px 7px;
+
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+
+    color: #525523;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.mark-read-btn:hover {
+    background: #F7F5EC;
+}
+
+
+/* =========================================================
+   NOTIFICATION LIST
+========================================================= */
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notification-item {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 10px;
+
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.notification-item:hover,
+.notification-item.unread {
+    background: rgba(247, 245, 236, 0.65);
+}
+
+.notification-item-icon {
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #F7F5EC;
+    border-radius: 50%;
+
+    color: #525523;
+}
+
+.notification-item-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notification-item-content strong {
+    color: #3F421A;
+
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+}
+
+.notification-item-content small {
+    color: #6E7A6D;
+
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.notification-item-content time {
+    margin-top: 2px;
+
+    color: #8A907F;
+
+    font-size: 9px;
+    font-weight: 500;
+}
+
+.notification-unread-dot {
+    width: 6px;
+    height: 6px;
+
+    flex: 0 0 6px;
+
+    margin-top: 5px;
+
+    background: #C94B4B;
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   VIEW ALL NOTIFICATIONS
+========================================================= */
+
+.view-all-notifications {
+    width: 100%;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+
+    color: #525523;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.view-all-notifications:hover {
+    background: #F7F5EC;
+}
+
+
+/* =========================================================
+   COMMON BUTTON RESET
+========================================================= */
+
+.header-notification,
+.profile-dropdown-item,
+.mark-read-btn,
+.notification-item,
+.view-all-notifications {
+    font-family: inherit;
+}
