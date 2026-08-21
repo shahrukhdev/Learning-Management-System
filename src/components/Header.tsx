@@ -45,7 +45,7 @@ const Header = () => {
         <header className="header">
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-12 p-lg-0">
+                    <div className="col-12">
                         <div className="header-flex">
                             <div className="header-search">
                                 <Search

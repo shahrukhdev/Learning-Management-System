@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 * {
   margin: 0;
@@ -29,6 +30,7 @@
 :root {
   --font-manrope: "Manrope", sans-serif;
   --font-inter: "Inter", sans-serif;
+  --font-amiri: "Amiri", sans-serif;
   --primary-text-color: #535624;
 }
 
@@ -45,17 +47,19 @@ body {
 .dashboard-layout {
     min-height: 100vh;
     display: flex;
-    padding: 28px 18px 28px;
+    padding: 28px 0 28px 18px;
     background-color: #FFFDF6;
 }
 
 .dashboard-main {
     flex: 1;
     min-width: 0;
+    height: calc(100vh - 56px);
+    overflow: auto;
 }
 
 .dashboard-content {
-    padding: 24px;
+    padding: 24px 12px 24px 12px;
 }
 
 .primary-btn {
@@ -129,6 +133,34 @@ body {
   stroke: white;
 }
 
+.welcome-banner-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 17px;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 15px;
+  color: #0E5A3D;
+  background-color: #FFFDF6;
+  border: 1px solid #E1EFE7;
+  border-radius: 12px;
+  transition: 0.4s;
+}
+
+.welcome-banner-btn:hover {
+  color: #40431A;
+  background: linear-gradient(104.94deg, #E7E5CB 0%, #F5F3EA 60%);
+  box-shadow: 0px 4px 10px rgba(245, 243, 234, 0.28);
+}
+
+.welcome-banner-btn:hover svg {
+  stroke: #40431A;
+}
+
 .home-title {
   font-style: normal;
   font-weight: 400;
@@ -137,6 +169,16 @@ body {
   text-align: center;
   color: var(--primary-text-color);
   opacity: 0.85;
+}
+
+.banner-title {
+  font-family: var(--font-amiri);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 3.4rem;
+  line-height: 60px;
+  color: #F7F5EC;
+  margin: 16px 0 6px;
 }
 
 .error-text {
@@ -194,34 +236,204 @@ body {
   color: #828684;
 }
 
+.welcome-banner-text {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.35rem;
+  line-height: 16px;
+  color: #F7F5EC;
+}
+
 /* =========================================================
   Dashboard Page css
 ========================================================= */
 
-/* Outer wrapper — gradient border */
-.border-wrapper {
+.welcome-banner {
   padding: 2px;
   border-radius: 30px;
   background: linear-gradient(to bottom, #F3F1E2, #666B21);
   box-shadow: 0px 14px 34px -18px rgba(15, 51, 39, 0.16);
+  margin-bottom: 25px;
 }
 
 /* Inner content */
-.border-wrapper .content {
+.welcome-banner-content {
   border-radius: 28px;
   overflow: hidden;
   background: linear-gradient(138deg, #404319 0%, #535625 100%);
-  height: 256px;
+  min-height: 256px;
   position: relative;
+  padding: 30px 33px 45px;
 }
 
 
 .welcome-banner-img {
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
   width: auto;
   height: auto;
 }
 
-/* Background+Border+Shadow */
+.welcome-banner-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8.5px;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: normal;
+  letter-spacing: 0.945px;
+  text-transform: uppercase;
+  color: #535624;
+  padding: 6px 12px;
+  width: fit-content;
+  background: #F3F1E2;
+  border-radius: 50px;
+}
+
+.welcome-banner-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-stats {
+  margin-bottom: 25px;
+}
+
+.dash-stat-card {
+  min-height: 142px;
+  background: #FFFDF6;
+  border: 1px solid #E5EEE8;
+  box-shadow: 0px 1.0336px 2.0672px rgba(15, 28, 23, 0.04);
+  border-radius: 22px;
+  padding: 20px 20px;
+}
+
+.stat-icon {
+  height: 38px;
+  width: 38px;
+  background: #DFF6E8;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stat-icon.students {
+  background: #DFF6E8;
+}
+
+.stat-icon.students svg {
+  stroke: #0F7A47;
+}
+
+.stat-icon.teachers {
+  background: #E9F3FD;
+}
+
+.stat-icon.teachers svg {
+  stroke: #3E8FDE;
+}
+
+.stat-icon.sessions {
+  background: #FCF3E1;
+}
+
+.stat-icon.sessions svg {
+  stroke: #DE9B23;
+}
+
+.stat-icon.attendance {
+  background: #EEECFC;
+}
+
+.stat-icon.attendance svg {
+  stroke: #7C6AE8;
+}
+
+.stat-content {
+  margin-top: 14px;
+}
+
+.stat-value {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 2.6rem;
+  line-height: 34px;
+  color: #0F1C17;
+  margin-bottom: 2px;
+}
+
+.stat-title {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.35rem;
+  line-height: 16px;
+  color: #6B7A73;
+}
+
+.stat-change {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 14px;
+  color: #159A57;
+}
+
+.stat-change.neutral {
+  color: #96A39D;
+}
+
+.stat-change.positive {
+  color: #159A57;
+}
+
+.stat-change.negative {
+  color: #E4573D;
+}
+
+.dashboard-box {
+  background: #FFFDF6;
+  border: 1px solid #E5EEE8;
+  box-shadow: 0px 1.0336px 2.0672px rgba(15, 28, 23, 0.04);
+  border-radius: 23px;
+  padding: 25px 22px;
+  margin-bottom: 25px;
+}
+
+.hifz-overview.dashboard-box {
+  min-height: 332px;
+}
+
+.student-attendance-overview.dashboard-box {
+  min-height: 465px;
+}
+
+.announcement.dashboard-box, 
+.teachers-online.dashboard-box, .quran-progress-overview.dashboard-box {
+  min-height: 250px;
+}
+
+.dash-box-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-box-title {
+  font-style: normal;
+  font-weight: 800;
+  font-size: 1.6rem;
+  line-height: 22px;
+  color: #0F1C17;
+}
