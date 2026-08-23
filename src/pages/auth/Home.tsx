@@ -3,7 +3,7 @@ import TopImg2 from "../../assets/images/auth-top-img-2.png";
 import AuthLogo from "../../assets/images/auth-logo.png";
 import Copyright from "../../components/Copyright";
 import RoleSelection from "./RoleSelection";
-import SEO from "../../components/seo/SEO";
+import SEO from "../../components/Seo/SEO";
 
 const Home = () => {
   return (

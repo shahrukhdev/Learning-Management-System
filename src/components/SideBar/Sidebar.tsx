@@ -1,13 +1,13 @@
-import "../assets/style/sidebar.css";
+import "./sidebar.css";
 import { NavLink } from "react-router-dom";
 
-import Logo from "../assets/images/dashboard-logo.svg";
-import NavIcon1 from "../assets/images/nav-icon-1.svg";
-import NavIcon2 from "../assets/images/nav-icon-2.svg";
-import NavIcon3 from "../assets/images/nav-icon-3.svg";
-import NavIcon4 from "../assets/images/nav-icon-4.svg";
-import NavIcon5 from "../assets/images/nav-icon-5.svg";
-import NavIcon6 from "../assets/images/nav-icon-6.svg";
+import Logo from "../../assets/images/dashboard-logo.svg";
+import NavIcon1 from "../../assets/images/nav-icon-1.svg";
+import NavIcon2 from "../../assets/images/nav-icon-2.svg";
+import NavIcon3 from "../../assets/images/nav-icon-3.svg";
+import NavIcon4 from "../../assets/images/nav-icon-4.svg";
+import NavIcon5 from "../../assets/images/nav-icon-5.svg";
+import NavIcon6 from "../../assets/images/nav-icon-6.svg";
 import { LogOut } from "lucide-react";
 
 const navItems = [

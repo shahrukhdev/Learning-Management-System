@@ -1,4 +1,4 @@
-import "../assets/style/header.css";
+import "./header.css";
 
 import { useEffect, useRef, useState } from "react";
 import { Bell, Search, User, Settings, LogOut, Check } from "lucide-react";

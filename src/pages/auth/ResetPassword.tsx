@@ -1,5 +1,5 @@
-import AuthLayout from "../../components/layouts/AuthLayout";
-import SEO from "../../components/seo/SEO";
+import AuthLayout from "../../components/Layouts/AuthLayout";
+import SEO from "../../components/Seo/SEO";
 import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import ResetPassIcon from "../../assets/images/reset-password-icon.png";

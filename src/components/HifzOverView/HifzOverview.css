@@ -1,0 +1,97 @@
+/* =========================================================
+  Hifz Overview CSS Start
+========================================================= */
+
+.hifz-overview.dashboard-box {
+  min-height: 332px;
+}
+
+.hifz-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.hifz-item:last-child {
+  border-bottom: none;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar.green {
+  background: #12945a;
+}
+
+.student-avatar.blue {
+  background: #398bd8;
+}
+
+.student-avatar.orange {
+  background: #e39a19;
+}
+
+.student-avatar.purple {
+  background: #7964e8;
+}
+
+.student-progress {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 40px;
+}
+
+.progress-circle {
+  --progress: 0%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(
+        circle,
+        #fff 58%,
+        transparent 59%
+    ),
+    conic-gradient(
+        currentColor var(--progress),
+        #eeeeee 0
+    );
+  font-style: normal;
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: normal;
+  color: #0B4629;
+}
+
+.progress-circle.green {
+  color: #12945a;
+}
+
+.progress-circle.blue {
+  color: #398bd8;
+}
+
+.progress-circle.orange {
+  color: #e39a19;
+}
+
+.progress-circle.purple {
+  color: #7964e8;
+}
+
+.progress-pages {
+  width: 40px;
+}
+
+/* =========================================================
+  Hifz Overview CSS End
+========================================================= */

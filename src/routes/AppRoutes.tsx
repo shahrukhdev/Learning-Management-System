@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/auth/Home";
 import Login from "../pages/auth/Login";
 import ResetPassword from "../pages/auth/ResetPassword";
-import DashboardLayout from "../components/layouts/DashboardLayout";
+import DashboardLayout from "../components/Layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 
 

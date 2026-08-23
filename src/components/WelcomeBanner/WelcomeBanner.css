@@ -1,0 +1,52 @@
+.welcome-banner {
+  padding: 2px;
+  border-radius: 30px;
+  background: linear-gradient(to bottom, #F3F1E2, #666B21);
+  box-shadow: 0px 14px 34px -18px rgba(15, 51, 39, 0.16);
+  margin-bottom: 25px;
+}
+
+/* Inner content */
+.welcome-banner-content {
+  border-radius: 28px;
+  overflow: hidden;
+  background: linear-gradient(138deg, #404319 0%, #535625 100%);
+  min-height: 256px;
+  position: relative;
+  padding: 30px 33px 45px;
+}
+
+.welcome-banner-img {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+}
+
+.welcome-banner-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8.5px;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: normal;
+  letter-spacing: 0.945px;
+  text-transform: uppercase;
+  color: #535624;
+  padding: 6px 12px;
+  width: fit-content;
+  background: #F3F1E2;
+  border-radius: 50px;
+}
+
+.welcome-banner-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
