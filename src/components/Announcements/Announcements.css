@@ -1,0 +1,31 @@
+.announcement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #E9E7DD;
+}
+
+.announcement-item:last-child {
+    border-bottom: none;
+}
+
+.announcement-dot {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+    margin-top: 6px;
+    border-radius: 50%;
+}
+
+.announcement-dot.green {
+    background: #159A57;
+}
+
+.announcement-dot.yellow {
+    background: #DE9B23 ;
+}
+
+.announcement-dot.blue {
+    background: #3E8FDE;
+}

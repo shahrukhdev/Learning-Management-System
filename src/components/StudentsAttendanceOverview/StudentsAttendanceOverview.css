@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --font-inter: 'Inter', sans-serif;
+}
+
+.student-attendance-overview {
+    width: 100%;
+}
+
+.student-attendance-overview .dash-box-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.attendance-period {
+    padding: 8px 12px;
+    background-color: #F0F3FF;
+    border-radius: 8px;
+    font-family: var(--font-inter);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: normal;
+    color: #151C27;
+    border: none;
+    outline: none;
+    width: 130px;
+    background-position: right 5px center;
+    cursor: pointer;
+}
+
+.attendance-period:focus {
+    box-shadow: none;
+    border: none;
+}
+
+.attendance-chart {
+    width: 100%;
+    min-height: 330px;
+    margin-top: 60px;
+}
+

@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --font-inter: 'Inter', sans-serif;
+}
+
+.teacher-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #E9E7DD;
+}
+
+.teacher-item:last-child {
+    border-bottom: none;
+}
+
+.teacher-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.teacher-avatar {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #3E8FDE 0%, #1A5B9E 100%);
+    color: #FFFFFF;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.teacher-status {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-family: var(--font-inter);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 14px;
+    color: #0F7A47;
+}
+
+.teacher-status.active {
+    background-color: #DFF6E8;
+    color: #07834A;
+}
+
+.teacher-status.offline {
+    background-color: #F0F0EC;
+    color: #868987;
+}

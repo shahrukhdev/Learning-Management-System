@@ -1,5 +1,5 @@
-import AuthLayout from "../../components/layouts/AuthLayout";
-import SEO from "../../components/seo/SEO";
+import AuthLayout from "../../components/Layouts/AuthLayout";
+import SEO from "../../components/Seo/SEO";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Mail, LockKeyholeOpen, Eye, EyeOff, Check, ArrowRight, ArrowLeft } from "lucide-react";

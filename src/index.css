@@ -133,6 +133,31 @@ body {
   stroke: white;
 }
 
+.view-details-btn {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  color: #828684;
+  text-decoration: none;
+}
+
+.add-btn {
+  height: 33px;
+  width: 33px;
+  background: #FFFDF6;
+  border: 1.0336px solid #E5EEE8;
+  border-radius: 12.4032px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
 .welcome-banner-btn {
   display: flex;
   justify-content: center;
@@ -192,6 +217,25 @@ body {
   display: inline-block;
 }
 
+.sm-title {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  color: #0F1C17;
+  margin-bottom: 0;
+}
+
+.sm-para {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 16px;
+  color: #96A39D;
+}
+
 .user-avatar {
   height: 40px;
   width: 40px;
@@ -245,162 +289,17 @@ body {
   color: #F7F5EC;
 }
 
+.copy-right-text {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.45rem;
+  line-height: 20px;
+  color: #4c6b5f;
+}
+
 /* =========================================================
   Dashboard Page css
 ========================================================= */
-
-.welcome-banner {
-  padding: 2px;
-  border-radius: 30px;
-  background: linear-gradient(to bottom, #F3F1E2, #666B21);
-  box-shadow: 0px 14px 34px -18px rgba(15, 51, 39, 0.16);
-  margin-bottom: 25px;
-}
-
-/* Inner content */
-.welcome-banner-content {
-  border-radius: 28px;
-  overflow: hidden;
-  background: linear-gradient(138deg, #404319 0%, #535625 100%);
-  min-height: 256px;
-  position: relative;
-  padding: 30px 33px 45px;
-}
-
-
-.welcome-banner-img {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: auto;
-  height: auto;
-}
-
-.welcome-banner-badge {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8.5px;
-  font-family: var(--font-inter);
-  font-style: normal;
-  font-weight: 800;
-  font-size: 1.1rem;
-  line-height: normal;
-  letter-spacing: 0.945px;
-  text-transform: uppercase;
-  color: #535624;
-  padding: 6px 12px;
-  width: fit-content;
-  background: #F3F1E2;
-  border-radius: 50px;
-}
-
-.welcome-banner-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 10px;
-}
-
-.dashboard-stats {
-  margin-bottom: 25px;
-}
-
-.dash-stat-card {
-  min-height: 142px;
-  background: #FFFDF6;
-  border: 1px solid #E5EEE8;
-  box-shadow: 0px 1.0336px 2.0672px rgba(15, 28, 23, 0.04);
-  border-radius: 22px;
-  padding: 20px 20px;
-}
-
-.stat-icon {
-  height: 38px;
-  width: 38px;
-  background: #DFF6E8;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.stat-icon.students {
-  background: #DFF6E8;
-}
-
-.stat-icon.students svg {
-  stroke: #0F7A47;
-}
-
-.stat-icon.teachers {
-  background: #E9F3FD;
-}
-
-.stat-icon.teachers svg {
-  stroke: #3E8FDE;
-}
-
-.stat-icon.sessions {
-  background: #FCF3E1;
-}
-
-.stat-icon.sessions svg {
-  stroke: #DE9B23;
-}
-
-.stat-icon.attendance {
-  background: #EEECFC;
-}
-
-.stat-icon.attendance svg {
-  stroke: #7C6AE8;
-}
-
-.stat-content {
-  margin-top: 14px;
-}
-
-.stat-value {
-  font-family: var(--font-inter);
-  font-style: normal;
-  font-weight: 800;
-  font-size: 2.6rem;
-  line-height: 34px;
-  color: #0F1C17;
-  margin-bottom: 2px;
-}
-
-.stat-title {
-  font-family: var(--font-inter);
-  font-style: normal;
-  font-weight: 600;
-  font-size: 1.35rem;
-  line-height: 16px;
-  color: #6B7A73;
-}
-
-.stat-change {
-  font-family: var(--font-inter);
-  font-style: normal;
-  font-weight: 700;
-  font-size: 1.2rem;
-  line-height: 14px;
-  color: #159A57;
-}
-
-.stat-change.neutral {
-  color: #96A39D;
-}
-
-.stat-change.positive {
-  color: #159A57;
-}
-
-.stat-change.negative {
-  color: #E4573D;
-}
 
 .dashboard-box {
   background: #FFFDF6;
@@ -411,16 +310,13 @@ body {
   margin-bottom: 25px;
 }
 
-.hifz-overview.dashboard-box {
-  min-height: 332px;
-}
-
 .student-attendance-overview.dashboard-box {
   min-height: 465px;
 }
 
 .announcement.dashboard-box, 
-.teachers-online.dashboard-box, .quran-progress-overview.dashboard-box {
+.teachers-online.dashboard-box, 
+.quran-progress-overview.dashboard-box {
   min-height: 250px;
 }
 
@@ -428,6 +324,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
 }
 
 .dash-box-title {
@@ -436,4 +333,5 @@ body {
   font-size: 1.6rem;
   line-height: 22px;
   color: #0F1C17;
+  margin-bottom: 0;
 }

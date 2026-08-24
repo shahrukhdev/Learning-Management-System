@@ -1,3 +1,4 @@
+import "./DashbaordStatistics.css"
 import { BookOpen, Clock3, TrendingUp, Users } from "lucide-react";
 
 const statistics = [
@@ -49,8 +50,8 @@ const DashboardStats = () => {
                     const Icon = stat.icon;
 
                     return (
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <div className="dash-stat-card" key={stat.id}>
+                        <div className="col-12 col-md-6 col-lg-3" key={stat.id}>
+                            <div className="dash-stat-card">
                                 <div className={`stat-icon ${stat.iconClass}`}>
                                     <Icon
                                         size={18}
@@ -62,7 +63,7 @@ const DashboardStats = () => {
                                     <h3 className="stat-value">
                                         {stat.value}
                                     </h3>
-                                    <div className="stat-bottom d-flex justify-content-between align-items-center g-2">
+                                    <div className="stat-bottom d-flex justify-content-between align-items-center gap-2">
                                         <span className="stat-title">
                                             {stat.title}
                                         </span>
