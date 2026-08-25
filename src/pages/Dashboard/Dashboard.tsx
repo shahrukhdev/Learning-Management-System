@@ -5,6 +5,7 @@ import WelcomeBanner from "../../components/WelcomeBanner/WelcomeBanner";
 import StudentAttendanceOverview from "../../components/StudentsAttendanceOverview/StudentsAttendanceOverview";
 import Announcements from "../../components/Announcements/Announcements";
 import TeachersOnline from "../../components/TeachersOnline/TeachersOnline";
+import QuranProgressOverview from "../../components/QuranProgressOverview/QuranProgressOverview";
 
 const Dashboard = () => {
     return (
@@ -48,13 +49,7 @@ const Dashboard = () => {
                                         <TeachersOnline />
 
                                         {/* Quran Progress */}
-                                        <div className="quran-progress-overview dashboard-box">
-                                            <div className="dash-box-top">
-                                                <h2 className="dash-box-title">
-                                                    Quran Progress Overview
-                                                </h2>
-                                            </div>
-                                        </div>
+                                        <QuranProgressOverview />
 
                                     </div>
 

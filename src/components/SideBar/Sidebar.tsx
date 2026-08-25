@@ -1,4 +1,4 @@
-import "./sidebar.css";
+import "./Sidebar.css";
 import { NavLink } from "react-router-dom";
 
 import Logo from "../../assets/images/dashboard-logo.svg";

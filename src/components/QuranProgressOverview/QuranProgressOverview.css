@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+:root {
+    --plus-jakarta-font: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Header */
+
+.quran-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 34px;
+}
+
+.quran-progress-heading {
+    min-width: 0;
+}
+
+.quran-progress-subtitle {
+    font-family: var(--plus-jakarta-font);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 16px;
+    color: #3F4944;
+}
+
+/* Legend */
+
+.quran-progress-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.progress-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--plus-jakarta-font);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #151C27;
+}
+
+.progress-legend-dot {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+    border-radius: 50%;
+}
+
+.progress-legend-dot.on-track {
+    background-color: #004532;
+}
+
+.progress-legend-dot.needs-attention {
+    background-color: #BA1A1A66;
+}
+
+/* Progress List */
+
+.quran-progress-item {
+    margin-bottom: 20px;
+}
+
+.quran-progress-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 4px;
+}
+
+.quran-progress-title,
+.quran-progress-value {
+    font-family: var(--plus-jakarta-font);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.6px;
+    color: #151C27;
+}
+
+.quran-progress-value {
+    white-space: nowrap;
+}
+
+/* Progress Bar */
+
+.quran-progress-bar {
+    width: 100%;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 100px;
+    background: #BA1A1A66;
+}
+
+.quran-progress-fill {
+    height: 100%;
+    border-radius: 100px 0 0 100px;
+    background: #004532;
+}
