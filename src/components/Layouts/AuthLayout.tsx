@@ -1,4 +1,4 @@
-import "../../pages/auth/Auth.css";
+import "../../pages/Auth/Auth.css";
 
 import Copyright from "../Copyright";
 
