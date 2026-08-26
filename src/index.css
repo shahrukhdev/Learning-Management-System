@@ -236,6 +236,15 @@ body {
   color: #96A39D;
 }
 
+.section-title {
+  font-family: var(--font-amiri);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 4rem;
+  line-height: 70px;
+  color: #0B4230;
+}
+
 .user-avatar {
   height: 40px;
   width: 40px;

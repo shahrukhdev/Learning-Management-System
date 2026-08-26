@@ -1,10 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
-import Home from "../pages/auth/Home";
-import Login from "../pages/auth/Login";
-import ResetPassword from "../pages/auth/ResetPassword";
+import Home from "../pages/Auth/Home";
+import Login from "../pages/Auth/Login";
+import ResetPassword from "../pages/Auth/ResetPassword";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import Attendance from "../pages/Attendance/Attendance";
 
 
 const AppRoutes = () => {
@@ -22,11 +23,12 @@ const AppRoutes = () => {
                 <Route index element={<Dashboard />} />
 
                 {/* Future dashboard pages */}
-                <Route path="attendance" element="" />
-                <Route path="hifz" element="" />
+                <Route path="attendance" element={<Attendance />} />
+                
+                {/* <Route path="hifz" element="" />
                 <Route path="notices" element="" />
                 <Route path="students" element="" />
-                <Route path="admin" element="" />
+                <Route path="admin" element="" /> */}
 
             </Route>
             

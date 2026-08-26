@@ -15,30 +15,31 @@ const navItems = [
         title: "Dashboard",
         path: "/dashboard",
         icon: NavIcon1,
+        end: true,
     },
     {
         title: "Attendance",
-        path: "/attendance",
+        path: "/dashboard/attendance",
         icon: NavIcon2,
     },
     {
         title: "Hifz",
-        path: "/hifz",
+        path: "/dashboard/hifz",
         icon: NavIcon3,
     },
     {
         title: "Notices",
-        path: "/notices",
+        path: "/dashboard/notices",
         icon: NavIcon4,
     },
     {
         title: "Students",
-        path: "/students",
+        path: "/dashboard/students",
         icon: NavIcon5,
     },
     {
         title: "Admin",
-        path: "/admin",
+        path: "/dashboard/admin",
         icon: NavIcon6,
     }
 ]
@@ -59,7 +60,7 @@ const Sidebar = () => {
             <nav className="sidebar-nav">
 
                 {navItems.map((item, index) => (
-                    <NavLink key={index} className={navLinkClass} to={item.path}>
+                    <NavLink key={index} className={navLinkClass} to={item.path} end={item.end} >
                         <img className="img-fluid nav-icon" src={item.icon} alt={item.title} />
                         {item.title}
                     </NavLink>
