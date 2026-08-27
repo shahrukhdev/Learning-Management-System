@@ -1,0 +1,187 @@
+.attendance-class-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.attendance-student-list {
+    background: #EFECE0;
+    box-shadow: 0px 14px 34px -18px rgba(15, 51, 39, 0.16);
+    border-radius: 20px;
+    padding: 12px 20px 20px;
+}
+
+.student-card-wrapper {
+    height: 148px;
+    width: calc((100% - 30px) / 7);
+}
+
+.attendance-student-card {
+    background: #FFFDF6;
+    border: 1px solid #E1EFE7;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    text-align: center;
+    padding: 12px 12px;
+    position: relative;
+    display: flex;
+    justify-content: end;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+.attendance-date {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.4rem;
+    line-height: 16px;
+    letter-spacing: 0.6px;
+    color: #151C27;
+}
+
+.attendance-class-select {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 23px;
+    color: #000000;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 8px 15px;
+    background-color: #DFDDBF;
+    border-radius: 30px;
+    max-width: 220px;
+    width: 100%;
+}
+
+.attendance-class-select:focus,
+.attendance-class-select:focus:not(:focus-visible),
+.attendance-class-select:focus-visible {
+    border-color: transparent !important;
+    outline: 0 !important;
+    box-shadow: unset !important;
+}
+
+.student-card-number {
+    width: 25px;
+    height: 25px;
+    background: #F1FAF5;
+    border: 1px solid #E1EFE7;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: normal;
+    color: #5A776C;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+} 
+
+.student-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: contain;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.12);
+}
+
+.student-name {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.28rem;
+    line-height: 17px;
+    color: #5A776C;
+}
+
+.student-attendance-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: normal;
+    color: #FFFDF6;
+    padding: 4px 10px;
+    min-width: 70px;
+    background-color: white;
+    border-radius: 6px;
+}
+
+.student-attendance-status.present {
+    background-color: #4D822C;
+}
+
+.student-attendance-status.late {
+    background-color: #F5C72E;
+    color: #424242;
+}
+
+.student-attendance-status.absent {
+    background-color: #CF0015;
+}
+
+.student-attendance-status.not-marked {
+    background-color: #7F7F7F;
+}
+
+.student-attendance-status .dot {
+    width: 4px;
+    height: 4px;
+    background: #FFFDF6;
+    border-radius: 50px;
+}
+
+.student-attendance-status.late .dot {
+    background: #424242;
+}
+
+.attendance-student-grid {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 5px;
+}
+
+.selected-icon {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.selected-icon.present {
+    background: #4D822C;
+}
+
+.selected-icon.late {
+    background: #F5C72E;
+}
+
+.selected-icon.late svg {
+    stroke: #424242;
+}
+
+.selected-icon.absent {
+    background: #CF0015;
+}

@@ -48,6 +48,10 @@
   color: white;
 }
 
+.nav-link:focus-visible {
+  box-shadow: none;
+}
+
 .nav-link:hover .nav-icon, .nav-link.active  .nav-icon {
   filter: brightness(0) invert(1);
 }
