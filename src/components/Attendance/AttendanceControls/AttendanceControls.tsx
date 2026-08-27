@@ -16,7 +16,7 @@ interface AttendanceControlsProps {
     totalStudents: number;
     attendance: Record<number, AttendanceStatus>;
     onSelectAll: () => void;
-    onMarkAttendane: (
+    onMarkAttendance: (
         status: AttendanceStatus
     ) => void;
 }
@@ -27,7 +27,7 @@ const AttendanceControls = ({
     totalStudents,
     attendance,
     onSelectAll,
-    onMarkAttendane,
+    onMarkAttendance,
     
 }: AttendanceControlsProps) => {
 
@@ -141,15 +141,15 @@ const AttendanceControls = ({
                 </div>
 
                 <div className="attendance-buttons">
-                    <button className="attendance-btn present-btn" disabled={isStatusDisabled("present")} onClick={() => onMarkAttendane("present")}>
+                    <button className="attendance-btn present-btn" disabled={isStatusDisabled("present")} onClick={() => onMarkAttendance("present")}>
                         Present
                     </button>
 
-                    <button className="attendance-btn late-btn" disabled={isStatusDisabled("late")} onClick={() => onMarkAttendane("late")}>
+                    <button className="attendance-btn late-btn" disabled={isStatusDisabled("late")} onClick={() => onMarkAttendance("late")}>
                         Late
                     </button>
 
-                    <button className="attendance-btn absent-btn" disabled={isStatusDisabled("absent")} onClick={() => onMarkAttendane("absent")}>
+                    <button className="attendance-btn absent-btn" disabled={isStatusDisabled("absent")} onClick={() => onMarkAttendance("absent")}>
                         Absent
                     </button>
                 </div>

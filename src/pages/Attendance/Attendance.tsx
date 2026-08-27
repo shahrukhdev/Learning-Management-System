@@ -253,7 +253,7 @@ const Attendance = () => {
                                 selectedStudents={selectedStudents}
                                 totalStudents={students.length}
                                 onSelectAll={handleSelectAll}
-                                onMarkAttendane={handleMarkAttendance}
+                                onMarkAttendance={handleMarkAttendance}
                                 attendance={attendance}
 
                             />
