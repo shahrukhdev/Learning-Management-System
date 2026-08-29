@@ -2,7 +2,7 @@ import SEO from "../../components/Seo/SEO";
 import DashboardStats from "../../components/DashboardStatistics/DashbaordStatistics";
 import HifzOverview from "../../components/HifzOverView/HifzOverview";
 import WelcomeBanner from "../../components/WelcomeBanner/WelcomeBanner";
-import StudentAttendanceOverview from "../../components/StudentsAttendanceOverview/StudentsAttendanceOverview";
+import StudentAttendanceOverview from "../../components/StudentsAttendanceOverview/StudentsAttendanceOverviewChart";
 import Announcements from "../../components/Announcements/Announcements";
 import TeachersOnline from "../../components/TeachersOnline/TeachersOnline";
 import QuranProgressOverview from "../../components/QuranProgressOverview/QuranProgressOverview";

@@ -1,5 +1,5 @@
 import "./AttendanceStudentList.css";
-import type { AttendanceStatus, Student } from "../attendance.types";
+import type { AttendanceStatus, Student } from "../Attendance.types";
 import { Check, ShieldAlert, X } from "lucide-react";
 
 interface AttendanceStudentListProps {

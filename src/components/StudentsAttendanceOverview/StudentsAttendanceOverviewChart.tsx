@@ -1,4 +1,4 @@
-import "./StudentsAttendanceOverview.css";
+import "./StudentsAttendanceOverviewChart.css";
 import { useState } from "react";
 import {
     BarChart,

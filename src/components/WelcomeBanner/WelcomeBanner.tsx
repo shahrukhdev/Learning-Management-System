@@ -1,6 +1,7 @@
 import "./WelcomeBanner.css"
 import welcomeBannerImg from "../../assets/images/welcome-banner-img.png";
 import { Bell, Sparkle, SquareCheckBig } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 const WelcomeBanner = () => {
@@ -20,14 +21,15 @@ const WelcomeBanner = () => {
                     </p>
                     <div className="welcome-banner-actions">
 
-                        <button type="button" className="welcome-banner-btn"> 
+                        <Link to="/dashboard/attendance" className="welcome-banner-btn">
                             <SquareCheckBig color="#0E5A3D" size={16} strokeWidth={2.5} />
                             Mark Attendance
-                        </button>
-                        <button type="button" className="welcome-banner-btn">
+                        </Link>
+
+                        <Link to="/dashboard/notice" className="welcome-banner-btn">
                             <Bell color="#0E5A3D" size={16} strokeWidth={2.5} />
                             View Notices
-                        </button>
+                        </Link>
 
                     </div>
                     {/* Decorative Mosque Image */}

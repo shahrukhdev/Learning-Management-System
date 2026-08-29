@@ -35,6 +35,10 @@
     cursor: pointer;
 }
 
+.attendance-student-card.selected {
+    border-color: #4D822C;
+}
+
 .attendance-date {
     font-style: normal;
     font-weight: 600;

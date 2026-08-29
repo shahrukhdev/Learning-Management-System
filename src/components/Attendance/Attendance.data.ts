@@ -1,6 +1,6 @@
 import avatorImg from "../../assets/images/student-dummy-img.png";
 
-import type { Student } from "./attendance.types";
+import type { Student } from "./Attendance.types";
 
 export const classOptions = [
     "Class A · Morning",

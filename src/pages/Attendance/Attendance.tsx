@@ -1,16 +1,20 @@
 import { useMemo,useState } from "react";
 
 import AttendanceControls from "../../components/Attendance/AttendanceControls/AttendanceControls";
+import type { AttendanceTab } from "../../components/Attendance/AttendanceTabs/AttendanceTabs";
 import AttendanceStudentList from "../../components/Attendance/AttendanceStudentList/AttendanceStudentList";
 
-import { classOptions, students } from "../../components/Attendance/attendance.data";
-import type { AttendanceStatus } from "../../components/Attendance/attendance.types";
+import { classOptions, students } from "../../components/Attendance/Attendance.data";
+import type { AttendanceStatus } from "../../components/Attendance/Attendance.types";
 
 
 import FilterBar from "../../components/FilterBar/FilterBar";
 import SEO from "../../components/Seo/SEO";
+import AttendanceOverviewTable from "../../components/Attendance/AttendanceOverviewTable/AttendanceOverviewTable";
 
 const Attendance = () => {
+
+    const [activeTab, setActiveTab] = useState<AttendanceTab>("mark-attendance");
 
     const [search, setSearch] = useState("");
     const [classFilter, setClassFilter] = useState("all");
@@ -246,6 +250,7 @@ const Attendance = () => {
 
                         </div>
 
+
                         {/* Attendance Controls */}
                         <div className="col-12">
                             <AttendanceControls 
@@ -255,22 +260,37 @@ const Attendance = () => {
                                 onSelectAll={handleSelectAll}
                                 onMarkAttendance={handleMarkAttendance}
                                 attendance={attendance}
-
+                                activeTab={activeTab}
+                                onTabChange={setActiveTab}
                             />
                         </div>
 
-                        {/* Attendance Student List */}
-                        <div className="col-12">
-                            <AttendanceStudentList
-                                students={students}
-                                selectedClass={selectedClass}
-                                classOptions={classOptions}
-                                attendance={attendance}
-                                selectedStudents={selectedStudents}
-                                onClassChange={handleClassChange}
-                                onStudentSelect={handleStudentSelect}
-                            />
-                        </div>
+                        {activeTab === "mark-attendance" && (
+                            <>
+                                {/* Attendance Student List */}
+                                <div className="col-12">
+                                    <AttendanceStudentList
+                                        students={students}
+                                        selectedClass={selectedClass}
+                                        classOptions={classOptions}
+                                        attendance={attendance}
+                                        selectedStudents={selectedStudents}
+                                        onClassChange={handleClassChange}
+                                        onStudentSelect={handleStudentSelect}
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {activeTab === "attendance-overview" && (
+                            <>
+                                {/* Attendance Overview Table */}
+                                <div className="col-12">
+                                    <AttendanceOverviewTable />
+                                </div>
+                            </>
+                        )}
+
                     </div>
                 </div>
             </section>
