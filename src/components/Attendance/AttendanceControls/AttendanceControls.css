@@ -1,0 +1,178 @@
+/* ================================
+   Attendance Controls
+================================ */
+
+.attendance-controlS {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+/* ================================
+   Attendance Summary
+================================ */
+
+.attendance-summary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 8px 20px;
+    background: #EFECE0;
+    border-top: 1px solid #E5EEE8;
+    border-radius: 15px;
+}
+
+.attendance-stat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.attendance-stat-icon {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.attendance-stat-icon.total {
+    background-color: #F2FBF5;
+}
+
+.attendance-stat-icon.present {
+    background-color: #DFF6E8;
+}
+
+.attendance-stat-icon.late {
+    background-color: #FFE282;
+}
+
+.attendance-stat-icon.absent {
+    background-color: #FDEEEA;
+}
+
+.attendance-stat-icon.not-marked {
+    background-color: #F1F3F2;
+}
+
+.attendance-stat-content .count {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 20px;
+    color: #0F1C17;
+}
+
+.attendance-stat-content .label {
+    display: block;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 14px;
+    color: #96A39D;
+}
+
+/* ================================
+   Bulk Attendance Actions
+================================ */
+
+.attendance-bulk-actions {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 13px;
+}
+
+.attendance-buttons {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    gap: 8px;
+}
+
+.attendance-btn {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 20px;
+    color: #FFFFFF;
+    border: none;
+    outline: none;
+    width: 124px;
+    background: white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    transition: 0.3s;
+}
+
+.attendance-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.attendance-btn:hover {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.14);
+}
+
+.attendance-btn.present-btn {
+    background-color: #4D822C;
+}
+
+.attendance-btn.late-btn {
+    background-color: #F5C72E;
+    color: #424242;
+}
+
+.attendance-btn.absent-btn {
+    background-color: #CF0015;
+}
+
+.input-check {
+    display: none;
+}
+
+.select-all {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 6px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.3rem;
+    line-height: normal;
+    color: #636363;
+    cursor: pointer;
+}
+
+.input-check-square {
+    height: 22px;
+    width: 22px;
+    background: #F7F8ED;
+    border: 2px solid #747474;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-check-square svg {
+    opacity: 0;
+}
+
+.input-check:checked + .select-all .input-check-square svg {
+    opacity: 1;
+}
+
+.input-check:checked + .select-all .input-check-square {
+    background-color: #747474;
+}
+    

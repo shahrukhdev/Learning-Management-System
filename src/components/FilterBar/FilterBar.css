@@ -1,6 +1,5 @@
 .filter-bar {
     width: 100%;
-    min-height: 74px;
     display: flex;
     align-items: center;
     gap: 24px;
@@ -8,99 +7,67 @@
     border-radius: 20px;
     background: #EFECE0;
     box-shadow: 0px 10px 34px -18px rgba(15, 51, 39, 0.16);
+    flex-wrap: wrap;
+}
+
+.filter-wrapper {
+    flex: 1 1 20%;   
 }
 
 /* Search */
 
 .filter-search {
     position: relative;
-    flex: 1;
-    min-width: 180px;
 }
 
 .filter-search-icon {
     position: absolute;
     top: 50%;
-    left: 12px;
+    left: 15px;
     transform: translateY(-50%);
     color: #93AEA3;
-    pointer-events: none;
 }
 
-.filter-search-input {
+/* Select */
+
+.filter-select,.filter-date, .filter-search-input {
     width: 100%;
     height: 40px;
-    padding: 6px 14px 6px 34px;
-    background: #FFFDF6;
-    border: 1px solid #E1EFE7;
-    border-radius: 10px;
+    padding: 6px 14px 6px 14px;
     outline: none;
-    font-family: var(--font-inter);
-    font-size: 1.2rem;
+    font-style: normal;
     font-weight: 400;
-    color: #151C27;
+    font-size: 1.4rem;
+    line-height: 21px;
+    color: #171D17;
+    background-color: #FFFDF6;
+    border: 1px solid #E1EFE7;
+    border-radius: 14px;
+    border: 1px solid rgba(190, 201, 194, 0.3);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.filter-select:focus, input.filter-date:focus, .filter-search-input:focus {
+    border-color: #E1EFE7;
 }
 
 .filter-search-input::placeholder {
     color: #93AEA3;
 }
 
-.filter-search-input:focus {
-    border-color: #A5A58D;
-}
-
-/* Select */
-
-.filter-select-wrapper {
-    flex: 1;
-    min-width: 150px;
+input.filter-search-input {
+    padding-left: 40px;
 }
 
 .filter-select {
-    width: 100%;
-    height: 40px;
-    padding: 6px 32px 6px 14px;
-    background-color: #FFFDF6;
-    border: 1px solid #E1EFE7;
-    border-radius: 10px;
-    outline: none;
-    font-family: var(--font-inter);
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: #151C27;
-    cursor: pointer;
+    background-image: url("/src/assets/images/angle-down.png") !important;
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: auto;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
-
-.filter-select:focus {
-    border-color: #A5A58D;
-}
-
-/* Date */
-
-.filter-date-wrapper {
-    flex: 1;
-    min-width: 150px;
-}
-
-.filter-date {
-    width: 100%;
-    height: 40px;
-    padding: 6px 14px;
-    background: #FFFDF6;
-    border: 1px solid #E1EFE7;
-    border-radius: 10px;
-    outline: none;
-    font-family: var(--font-inter);
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: #151C27;
-    cursor: pointer;
-}
-
-.filter-date:focus {
-    border-color: #A5A58D;
-}
-
 
 /* Responsive */
 
