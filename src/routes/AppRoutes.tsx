@@ -6,6 +6,7 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Attendance from "../pages/Attendance/Attendance";
+import Notices from "../pages/Notices/Notices";
 
 
 const AppRoutes = () => {
@@ -24,9 +25,9 @@ const AppRoutes = () => {
 
                 {/* Future dashboard pages */}
                 <Route path="attendance" element={<Attendance />} />
-                
-                {/* <Route path="hifz" element="" />
-                <Route path="notices" element="" />
+                <Route path="notices" element={<Notices />} />
+
+                {/* <Route path="notices" element="" />
                 <Route path="students" element="" />
                 <Route path="admin" element="" /> */}
 
