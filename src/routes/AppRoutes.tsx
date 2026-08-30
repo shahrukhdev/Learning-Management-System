@@ -27,10 +27,6 @@ const AppRoutes = () => {
                 <Route path="attendance" element={<Attendance />} />
                 <Route path="notices" element={<Notices />} />
 
-                {/* <Route path="notices" element="" />
-                <Route path="students" element="" />
-                <Route path="admin" element="" /> */}
-
             </Route>
             
         </Routes>
