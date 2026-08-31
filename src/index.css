@@ -48,7 +48,7 @@ body {
     min-height: 100vh;
     display: flex;
     padding: 28px 0 28px 18px;
-    background-color: #FFFDF6;
+    background-color: #F7F8ED;
 }
 
 .dashboard-main {
@@ -244,6 +244,7 @@ body {
   font-size: 4rem;
   line-height: 70px;
   color: #0B4230;
+  margin: 0;
 }
 
 .user-avatar {

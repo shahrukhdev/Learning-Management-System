@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  --font-amiri: "Amiri", sans-serif;
+}
+
+.popup-wrapper {
+    background: rgba(0, 0, 0, 0.45);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-box {
+    max-width: 630px;
+    width: 100%;
+    min-height: 478px;
+    background: #F7F5EC;
+    border: 3px solid #DFDDBF;
+    border-radius: 30px;
+    padding: 30px 36px;
+}
+
+.popup-title {
+    font-family: var(--font-amiri);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 53px;
+    color: #0B4230;
+}

@@ -36,7 +36,8 @@
 }
 
 .attendance-student-card.selected {
-    border-color: #4D822C;
+    border: 2px solid #4D822C;
+    background: #4D822C33;
 }
 
 .attendance-date {
@@ -164,7 +165,7 @@
 .selected-icon {
     width: 20px;
     height: 20px;
-    background: white;
+    background: transparent;
     border-radius: 50px;
     display: flex;
     justify-content: center;
