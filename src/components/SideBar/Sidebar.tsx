@@ -1,5 +1,6 @@
 import "./Sidebar.css";
 import { NavLink } from "react-router-dom";
+import type { NavLinkRenderProps } from "react-router-dom";
 
 import Logo from "../../assets/images/dashboard-logo.svg";
 import NavIcon1 from "../../assets/images/nav-icon-1.svg";
@@ -41,27 +42,40 @@ const navItems = [
         title: "Admin",
         path: "/dashboard/admin",
         icon: NavIcon6,
-    }
-]
-
+    },
+];
 
 const Sidebar = () => {
 
-    const navLinkClass = ({ isActive }) => isActive ? "nav-link active" : "nav-link";
+    const navLinkClass = ({ isActive }: NavLinkRenderProps) =>
+        isActive ? "nav-link active" : "nav-link";
 
     return (
-
         <aside className="dashboard-sidebar">
 
             <div className="sidebar-logo text-center">
-                <img className="img-fluid" src={Logo} alt="logo" />
+                <img
+                    className="img-fluid"
+                    src={Logo}
+                    alt="logo"
+                />
             </div>
 
             <nav className="sidebar-nav">
 
                 {navItems.map((item, index) => (
-                    <NavLink key={index} className={navLinkClass} to={item.path} end={item.end} >
-                        <img className="img-fluid nav-icon" src={item.icon} alt={item.title} />
+                    <NavLink
+                        key={index}
+                        className={navLinkClass}
+                        to={item.path}
+                        end={item.end}
+                    >
+                        <img
+                            className="img-fluid nav-icon"
+                            src={item.icon}
+                            alt={item.title}
+                        />
+
                         {item.title}
                     </NavLink>
                 ))}
@@ -69,24 +83,40 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-bottom">
+
                 <div className="sidebar-user-info">
+
                     <div className="user-avatar">
                         AM
                     </div>
+
                     <div className="sidebar-user-details">
                         <h6 className="sidebar-user-name m-0">
                             Admin Madrassah
                         </h6>
+
                         <span className="sidebar-user-role">
                             Admin
                         </span>
                     </div>
+
                 </div>
-                <button type="button" className="secondary-btn sidebar-logout">
-                    <LogOut color="#41441B" size={20} strokeWidth={2} />
+
+                <button
+                    type="button"
+                    className="secondary-btn sidebar-logout"
+                >
+                    <LogOut
+                        color="#41441B"
+                        size={20}
+                        strokeWidth={2}
+                    />
+
                     <span>Sign out</span>
                 </button>
+
             </div>
+
         </aside>
     );
 };

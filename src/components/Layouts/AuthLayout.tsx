@@ -7,8 +7,19 @@ import TopImg2 from "../../assets/images/auth-top-img-2.png";
 import AuthLogo from "../../assets/images/auth-logo.png";
 import CenterBr from "../../assets/images/center-br-img.png";
 
+import type { ReactNode } from "react";
 
-const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
+interface AuthLayoutProps {
+    children: ReactNode;
+    sectionClassName?: string;
+    mainClassName?: string;
+}
+
+const AuthLayout = ({
+    children,
+    sectionClassName = "",
+    mainClassName = "",
+}: AuthLayoutProps) => {
     return (
         <main className={`auth-main ${mainClassName}`}>
             <section className={`auth-section ${sectionClassName}`}>
@@ -67,4 +78,3 @@ const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
 };
 
 export default AuthLayout;
-

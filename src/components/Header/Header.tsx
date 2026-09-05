@@ -4,30 +4,27 @@ import { useEffect, useRef, useState } from "react";
 import { Bell, Search, User, Settings, LogOut, Check } from "lucide-react";
 
 const Header = () => {
-
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-    const profileRef = useRef(null);
-    const notificationRef = useRef(null);
+
+    const profileRef = useRef<HTMLDivElement>(null);
+    const notificationRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-
-        const handleClickOutside = (event) => {
-
+        const handleClickOutside = (event: MouseEvent) => {
             if (
                 profileRef.current &&
-                !profileRef.current.contains(event.target)
+                !profileRef.current.contains(event.target as Node)
             ) {
                 setIsProfileOpen(false);
             }
 
             if (
                 notificationRef.current &&
-                !notificationRef.current.contains(event.target)
+                !notificationRef.current.contains(event.target as Node)
             ) {
                 setIsNotificationOpen(false);
             }
-
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -38,7 +35,6 @@ const Header = () => {
                 handleClickOutside
             );
         };
-
     }, []);
 
     return (
@@ -64,17 +60,25 @@ const Header = () => {
 
                             <div className="header-actions">
 
-                                <div className="notification-menu" ref={notificationRef}>
-
-                                    <button type="button"
+                                <div
+                                    className="notification-menu"
+                                    ref={notificationRef}
+                                >
+                                    <button
+                                        type="button"
                                         className="header-notification"
                                         onClick={() => {
-                                            setIsNotificationOpen(!isNotificationOpen);
+                                            setIsNotificationOpen(
+                                                !isNotificationOpen
+                                            );
                                             setIsProfileOpen(false);
                                         }}
                                         aria-label="Notifications"
                                     >
-                                        <Bell size={18} strokeWidth={2} />
+                                        <Bell
+                                            size={18}
+                                            strokeWidth={2}
+                                        />
 
                                         <span className="notification-dot"></span>
                                     </button>
@@ -85,7 +89,10 @@ const Header = () => {
                                             <div className="notification-dropdown-header">
                                                 <div>
                                                     <h6>Notifications</h6>
-                                                    <span>You have 3 new notifications</span>
+                                                    <span>
+                                                        You have 3 new
+                                                        notifications
+                                                    </span>
                                                 </div>
 
                                                 <button
@@ -97,9 +104,7 @@ const Header = () => {
                                                 </button>
                                             </div>
 
-
                                             <div className="notification-dropdown-divider"></div>
-
 
                                             <div className="notification-list">
 
@@ -112,16 +117,22 @@ const Header = () => {
                                                     </span>
 
                                                     <span className="notification-item-content">
-                                                        <strong>New notice posted</strong>
+                                                        <strong>
+                                                            New notice posted
+                                                        </strong>
+
                                                         <small>
-                                                            Ramadan Schedule has been updated.
+                                                            Ramadan Schedule
+                                                            has been updated.
                                                         </small>
-                                                        <time>5 minutes ago</time>
+
+                                                        <time>
+                                                            5 minutes ago
+                                                        </time>
                                                     </span>
 
                                                     <span className="notification-unread-dot"></span>
                                                 </button>
-
 
                                                 <button
                                                     type="button"
@@ -132,16 +143,24 @@ const Header = () => {
                                                     </span>
 
                                                     <span className="notification-item-content">
-                                                        <strong>New student registered</strong>
+                                                        <strong>
+                                                            New student
+                                                            registered
+                                                        </strong>
+
                                                         <small>
-                                                            Ahmed Al-Hassan joined the madrassah.
+                                                            Ahmed Al-Hassan
+                                                            joined the
+                                                            madrassah.
                                                         </small>
-                                                        <time>1 hour ago</time>
+
+                                                        <time>
+                                                            1 hour ago
+                                                        </time>
                                                     </span>
 
                                                     <span className="notification-unread-dot"></span>
                                                 </button>
-
 
                                                 <button
                                                     type="button"
@@ -152,19 +171,25 @@ const Header = () => {
                                                     </span>
 
                                                     <span className="notification-item-content">
-                                                        <strong>Attendance completed</strong>
+                                                        <strong>
+                                                            Attendance
+                                                            completed
+                                                        </strong>
+
                                                         <small>
-                                                            Today's attendance has been completed.
+                                                            Today's attendance
+                                                            has been completed.
                                                         </small>
-                                                        <time>3 hours ago</time>
+
+                                                        <time>
+                                                            3 hours ago
+                                                        </time>
                                                     </span>
                                                 </button>
 
                                             </div>
 
-
                                             <div className="notification-dropdown-divider"></div>
-
 
                                             <button
                                                 type="button"
@@ -177,13 +202,24 @@ const Header = () => {
                                     )}
                                 </div>
 
-                                <div className="profile-menu" ref={profileRef}>
-                                    
-                                    <button type="button" className="user-avatar profile-button" onClick={() => { setIsProfileOpen(!isProfileOpen); setIsNotificationOpen(false); }} aria-expanded={isProfileOpen}>
+                                <div
+                                    className="profile-menu"
+                                    ref={profileRef}
+                                >
+                                    <button
+                                        type="button"
+                                        className="user-avatar profile-button"
+                                        onClick={() => {
+                                            setIsProfileOpen(
+                                                !isProfileOpen
+                                            );
+                                            setIsNotificationOpen(false);
+                                        }}
+                                        aria-expanded={isProfileOpen}
+                                    >
                                         AM
                                     </button>
 
-                                    {/* Dropdown */}
                                     {isProfileOpen && (
                                         <div className="profile-dropdown">
 
@@ -191,10 +227,12 @@ const Header = () => {
                                                 <div className="user-avatar">
                                                     AM
                                                 </div>
+
                                                 <div className="sidebar-user-details">
                                                     <h6 className="sidebar-user-name m-0">
                                                         Admin Madrassah
                                                     </h6>
+
                                                     <span className="sidebar-user-role">
                                                         Admin
                                                     </span>
@@ -231,8 +269,8 @@ const Header = () => {
 
                                         </div>
                                     )}
-
                                 </div>
+
                             </div>
                         </div>
                     </div>
