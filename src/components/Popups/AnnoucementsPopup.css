@@ -26,6 +26,10 @@
     padding: 30px 36px;
 }
 
+.announcement-header {
+    margin-bottom: 17px;
+}
+
 .popup-title {
     font-family: var(--font-amiri);
     font-style: normal;
@@ -33,4 +37,131 @@
     font-size: 3rem;
     line-height: 53px;
     color: #0B4230;
+}
+
+/* ================================
+   Header
+================================ */
+
+.announcement-header {
+    margin-bottom: 20px;
+}
+
+/* ================================
+   Fields
+================================ */
+
+.announcement-field {
+    margin-bottom: 18px;
+}
+
+.announcement-field label {
+    display: block;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 20px;
+    letter-spacing: 0.14px;
+    color: #3E4A3E;
+    margin-bottom: 6px;
+}
+
+
+/* ================================
+   Input
+================================ */
+
+.announcement-field input,
+.announcement-field textarea {
+    background: #FFFDF6;
+    border: 1px solid #DFDDBF;
+    border-radius: 14px;
+    padding: 13px 17px;
+    min-height: 45px;
+    outline: none;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 18px;
+    color: #000;
+    width: 100%;
+}
+
+.announcement-field input::placeholder,
+.announcement-field textarea::placeholder {
+    color: #93AEA3;
+}
+
+.announcement-field textarea {
+    min-height: 175px;
+    resize: none;
+}
+
+/* ================================
+   Focus
+================================ */
+
+.announcement-field input:focus,
+.announcement-field textarea:focus {
+    border-color: #DFDDBF;
+}
+
+/* ================================
+   Actions
+================================ */
+
+.announcement-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 23px;
+}
+
+/* ================================
+   Buttons
+================================ */
+
+.announcement-btn {
+    height: 28px;
+    padding: 0 15px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    cursor: pointer;
+    min-width: 98px;
+    height: 42px;
+    background: #33452F;
+    border-radius: 8px;
+    padding: 8px 32px;
+    border: 1px solid transparent;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: normal;
+    color: #FFFFFF;
+    transition: 0.3s;
+}
+
+.announcement-btn.cancel {
+    color: #444841;
+    background: transparent;
+    border-color: #C4C8BE;
+}
+
+.announcement-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px #00000027;
+}
+
+.announcement-cls-btn {
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    border: none;
+    background: #F7F5EC;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }

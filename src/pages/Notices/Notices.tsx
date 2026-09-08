@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import SEO from "../../components/Seo/SEO";
 
@@ -8,8 +9,17 @@ import AnnoucementsPopup from "../../components/Popups/AnnoucementsPopup";
 
 const Notices = () => {
 
-    const handleNewNotice = () => {
-        console.log("New Notice");
+    const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
+
+    const handlePost = (data: {
+        title: string;
+        message: string;
+    }) => {
+        console.log("Post:", data);
+    }
+
+    const handleCloseAnnouncement = () => {
+        setIsAnnouncementOpen(false);
     }
 
     const handleEdit = (id: number) => {
@@ -41,7 +51,7 @@ const Notices = () => {
                                 <button 
                                     type="button"
                                     className="new-notice-btn"
-                                    onClick={() => handleNewNotice()}
+                                    onClick={() => setIsAnnouncementOpen(true)}
                                 >
                                     <Plus color="#fff" size={20} strokeWidth={2.5} />
                                     <span>New Notice</span>
@@ -67,7 +77,11 @@ const Notices = () => {
             </section>
 
             {/* Annoucements Popup */}
-            <AnnoucementsPopup />
+            <AnnoucementsPopup
+                isOpen={isAnnouncementOpen}
+                onClose={handleCloseAnnouncement}
+                onPost={handlePost}
+            />
 
         </>
     );

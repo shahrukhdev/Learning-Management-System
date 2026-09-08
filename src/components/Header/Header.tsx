@@ -2,6 +2,7 @@ import "./Header.css";
 
 import { useEffect, useRef, useState } from "react";
 import { Bell, Search, User, Settings, LogOut, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
 
@@ -165,13 +166,9 @@ const Header = () => {
 
                                             <div className="notification-dropdown-divider"></div>
 
-
-                                            <button
-                                                type="button"
-                                                className="view-all-notifications"
-                                            >
+                                            <Link to={`/dashboard/notices`} className="view-all-notifications text-decoration-none">
                                                 View all notifications
-                                            </button>
+                                            </Link>
 
                                         </div>
                                     )}
