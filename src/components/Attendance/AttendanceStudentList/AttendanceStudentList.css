@@ -49,32 +49,6 @@
     color: #151C27;
 }
 
-.attendance-class-select {
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1.7rem;
-    line-height: 23px;
-    color: #000000;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 8px 15px;
-    background-color: #DFDDBF;
-    border-radius: 30px;
-    max-width: 220px;
-    width: 100%;
-}
-
-.attendance-class-select:focus,
-.attendance-class-select:focus:not(:focus-visible),
-.attendance-class-select:focus-visible {
-    border-color: transparent !important;
-    outline: 0 !important;
-    box-shadow: unset !important;
-}
-
 .student-card-number {
     width: 25px;
     height: 25px;

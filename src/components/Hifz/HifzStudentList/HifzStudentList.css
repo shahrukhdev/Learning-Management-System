@@ -1,0 +1,13 @@
+.hifz-section .attendance-student-list {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.hifz-section .attendance-student-grid {
+    gap: 10px 10px;
+}
+
+.hifz-section .student-card-wrapper {
+    width: calc((100% - 20px) / 3);
+}
