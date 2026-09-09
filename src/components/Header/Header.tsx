@@ -2,6 +2,7 @@ import "./Header.css";
 
 import { useEffect, useRef, useState } from "react";
 import { Bell, Search, User, Settings, LogOut, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -191,12 +192,13 @@ const Header = () => {
 
                                             <div className="notification-dropdown-divider"></div>
 
+
                                             <button
                                                 type="button"
                                                 className="view-all-notifications"
                                             >
                                                 View all notifications
-                                            </button>
+                                            </Link>
 
                                         </div>
                                     )}

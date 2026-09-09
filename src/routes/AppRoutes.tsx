@@ -7,6 +7,7 @@ import DashboardLayout from "../components/Layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Attendance from "../pages/Attendance/Attendance";
 import Notices from "../pages/Notices/Notices";
+import Hifz from "../pages/Hifz/Hifz";
 
 
 const AppRoutes = () => {
@@ -26,6 +27,7 @@ const AppRoutes = () => {
                 {/* Future dashboard pages */}
                 <Route path="attendance" element={<Attendance />} />
                 <Route path="notices" element={<Notices />} />
+                <Route path="hifz" element={<Hifz />} />
 
             </Route>
             
