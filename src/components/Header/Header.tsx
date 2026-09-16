@@ -193,9 +193,10 @@ const Header = () => {
                                             <div className="notification-dropdown-divider"></div>
 
 
-                                            <button
-                                                type="button"
+                                            <Link
+                                                to="/dashboard/notifications"
                                                 className="view-all-notifications"
+                                                onClick={() => setIsNotificationOpen(false)}
                                             >
                                                 View all notifications
                                             </Link>
