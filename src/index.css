@@ -47,14 +47,14 @@ body {
 .dashboard-layout {
     min-height: 100vh;
     display: flex;
-    padding: 28px 0 28px 18px;
+    padding: 20px 0 20px 18px;
     background-color: #F7F8ED;
 }
 
 .dashboard-main {
     flex: 1;
     min-width: 0;
-    height: calc(100vh - 56px);
+    height: calc(100vh - 40px);
     overflow: auto;
 }
 
@@ -362,6 +362,7 @@ body {
     background-color: #DFDDBF;
     border-radius: 30px;
     max-width: 220px;
+    min-width: 200px;
     width: 100%;
 }
 
@@ -371,4 +372,41 @@ body {
     border-color: transparent !important;
     outline: 0 !important;
     box-shadow: unset !important;
+}
+
+.hifz-date-picker {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1000;
+    padding: 10px;
+    background: white;
+    border: 1px solid #C4C8BE;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.rdp-chevron {
+    fill: #3F4944 !important;
+    font-size: 1.2rem !important;
+}
+
+.rdp-month_caption {
+    margin-bottom: 10px;
+}
+
+.rdp-weekday {
+    opacity: 1;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.rdp-day_button {
+    font-size: 1.2rem !important;
+}
+
+.rdp-selected .rdp-day_button {
+    border-color: transparent !important;
+    color: #fff !important;
+    background: linear-gradient(104.94deg, #3F421A 0%, #535624 60%), rgba(255, 255, 255, 0.002);
 }

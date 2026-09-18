@@ -164,3 +164,18 @@
 .selected-icon.absent {
     background: #CF0015;
 }
+
+.attendance-btn.save-btn {
+    color: white;
+    background-color: #535624;
+    width: fit-content;
+    padding: 6px 20px;
+    font-weight: 500;
+}
+
+.attendance-class-header-right {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+}

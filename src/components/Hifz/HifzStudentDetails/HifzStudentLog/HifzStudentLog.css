@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+  --font-amiri: "Amiri", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+.hifz-student-log {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* =========================
+   Section
+========================= */
+
+.hifz-log-section {
+    margin-top: 12px;
+}
+
+.hifz-log-section:first-child {
+    margin-top: 0;
+}
+
+.hifz-log-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #C4C8BE;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.tab-content-title {
+    margin: 0;
+    font-family: var(--font-amiri);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 2.4rem;
+    line-height: 32px;
+    color: #33452F;
+}
+
+/* =========================
+   Status Radio
+========================= */
+
+.hifz-log-status-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Radio wrapper */
+
+.hifz-log-radio {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Actual radio completely hidden */
+
+.hifz-log-radio input {
+    display: none;
+}
+
+/* Status label */
+
+.hifz-log-radio-label {
+    font-family: var(--font-inter);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: normal;
+    color: #191D18;
+    padding: 8px 14px;
+    background-color: #FFFDF6;
+    border: 1px solid #DADBD3;
+    border-radius: 100px;
+    transition: background-color 0.2s ease;
+}
+
+.hifz-log-status-group
+/* Selected status */
+
+.hifz-log-radio:has(input:checked)
+.hifz-log-radio-label {
+    background-color: #535624;
+    color: white;
+}
+
+/* =========================
+   Form Grid
+========================= */
+
+.hifz-log-field {
+    margin-bottom: 25px;
+}
+
+.hifz-log-label {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 14px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #444841;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* =========================
+   Select / Input
+========================= */
+
+.hifz-log-select,
+.hifz-log-input,
+.hifz-log-textarea {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 24px;
+    color: #191D18;
+    outline: none;
+    padding: 12px 12px;
+    background-color: #FFFDF6;
+    border: 1px solid #C4C8BE;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.hifz-log-select:focus,
+.hifz-log-input:focus,
+.hifz-log-textarea:focus {
+    border-color: #9da177;
+}
+
+.hifz-log-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("../../../../assets/images/angle-down.png") !important;
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+
+/* =========================
+   Notes
+========================= */
+
+.hifz-log-textarea {
+    height: 128px;
+    resize: none;
+}
+
+/* =========================
+   Actions
+========================= */
+
+.hifz-log-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.hifz-log-cancel-btn,
+.hifz-log-save-btn {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 24px;
+    color: #FFFFFF;
+    padding: 5px 24px;
+    height: 42px;
+    border-radius: 8px;
+}
+
+.hifz-log-cancel-btn {
+    border: 1px solid #C4C8BE;
+    background: transparent;
+    color: #444841;
+}
+
+.hifz-log-save-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    background: #33452F;
+    color: #ffffff;
+}

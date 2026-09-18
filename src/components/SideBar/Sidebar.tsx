@@ -1,7 +1,8 @@
 import "./Sidebar.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
-import Logo from "../../assets/images/dashboard-logo.svg";
+// import Logo from "../../assets/images/dashboard-logo.svg";
+import Logo from "../../assets/images/logo.svg";
 import NavIcon1 from "../../assets/images/nav-icon-1.svg";
 import NavIcon2 from "../../assets/images/nav-icon-2.svg";
 import NavIcon3 from "../../assets/images/nav-icon-3.svg";
@@ -54,7 +55,9 @@ const Sidebar = () => {
         <aside className="dashboard-sidebar">
 
             <div className="sidebar-logo text-center">
-                <img className="img-fluid" src={Logo} alt="logo" />
+                <Link to="/dashboard">
+                    <img className="img-fluid" src={Logo} alt="logo" />
+                </Link>
             </div>
 
             <nav className="sidebar-nav">
