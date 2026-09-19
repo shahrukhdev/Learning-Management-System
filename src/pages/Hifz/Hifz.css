@@ -20,11 +20,15 @@
 }
 
 .hifz-box.hifz-empty-state {
-    height: 100%;
+    height: calc(100vh - 174px);
+}
+
+.hifz-student-details.hifz-box {
+    min-height: calc(100vh - 174px);
 }
 
 .hifz-box.hifz-student-list {
-    height: calc(100vh - 190px);
+    height: 100%;
     display: block;
     overflow: auto;
 }
@@ -35,3 +39,9 @@
     padding: 0;
     margin-bottom: 15px;
 }
+
+.hifz-student-details.hifz-box {
+    display: block;
+    text-align: inherit;
+}
+

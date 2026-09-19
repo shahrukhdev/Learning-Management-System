@@ -4,7 +4,8 @@ import HifzStudentList from "../../components/Hifz/HifzStudentList/HifzStudentLi
 import { students } from "../../components/Attendance/Attendance.data";
 import type { AttendanceStatus } from "../../components/Attendance/Attendance.types";
 import "./Hifz.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import HifzStudentDetails from "../../components/Hifz/HifzStudentDetails/HifzStudentDetails";
 
 const classOptions = [
     "Class A · Morning",
@@ -40,6 +41,24 @@ const Hifz = () => {
         setSelectedStudentId(studentId)
     )
 
+    const rightPanelRef = useRef<HTMLDivElement>(null);
+    const [rightPanelHeight, setRightPanelHeight] =
+        useState<number | null>(null);
+
+    useEffect(() => {
+        const rightPanel = rightPanelRef.current;
+
+        if (!rightPanel) return;
+
+        const observer = new ResizeObserver(([entry]) => {
+            setRightPanelHeight(entry.contentRect.height);
+        });
+
+        observer.observe(rightPanel);
+
+        return () => observer.disconnect();
+    }, [selectedStudentId]);
+
     return (
         <>
             <SEO
@@ -62,18 +81,36 @@ const Hifz = () => {
                                 </select>
                             </div>
                         </div>
+                    </div>
 
+                    <div className="row">
                         <div className="col-12 col-lg-6">
-                            <HifzStudentList 
-                                students={students}
-                                attendance={attendance}
-                                selectedStudentId={selectedStudentId}
-                                onStudentSelect={handleStudentSelect}
-                            />
+                            <div
+                                className="hifz-list-wrapper"
+                                style={{
+                                    height:
+                                        rightPanelHeight !== null
+                                            ? `${rightPanelHeight}px`
+                                            : undefined,
+                                }}
+                            >
+                                <HifzStudentList
+                                    students={students}
+                                    attendance={attendance}
+                                    selectedStudentId={selectedStudentId}
+                                    onStudentSelect={handleStudentSelect}
+                                />
+                            </div>
                         </div>
 
                         <div className="col-12 col-lg-6">
-                            <HifzEmptyState />
+                            <div ref={rightPanelRef}>
+                                {selectedStudentId === null ? (
+                                    <HifzEmptyState />
+                                ) : (
+                                    <HifzStudentDetails />
+                                )}
+                            </div>
                         </div>
                     </div>
                     

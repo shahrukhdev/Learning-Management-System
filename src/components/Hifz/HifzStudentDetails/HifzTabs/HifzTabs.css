@@ -1,0 +1,45 @@
+.hifz-student-tabs {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #C4C8BE;
+}
+
+.hifz-student-tab {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 24px;
+    color: #444841;
+    position: relative;
+    transition: color 0.2s ease;
+    padding: 16px 24px;
+    background-color: transparent;
+    border: none;
+}
+
+.hifz-student-tab:hover {
+    color: #33452F;
+}
+
+.hifz-student-tab:focus-visible {
+    outline: none;
+    border: none;
+}
+
+/* Active Tab */
+
+.hifz-student-tab.active {
+    color: #33452F;
+}
+
+/* Active underline */
+
+.hifz-student-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: #33452F;
+}

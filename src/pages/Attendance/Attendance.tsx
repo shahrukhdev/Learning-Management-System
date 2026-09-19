@@ -18,8 +18,15 @@ const Attendance = () => {
 
     const [search, setSearch] = useState("");
     const [classFilter, setClassFilter] = useState("all");
-    const [date, setDate] = useState("2023-10-24");
-    const [status, setStatus] = useState("all");
+    const today = new Date();
+
+    const currentDate = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    const [date, setDate] = useState(currentDate);
 
     /* --------------------------------
        Selected Class
@@ -198,7 +205,7 @@ const Attendance = () => {
                         <div className="col-12">
 
                             <FilterBar
-                                searchPlaceholder="Search students, teachers…"
+                                searchPlaceholder="Search students, teachers..."
                                 searchValue={search}
                                 onSearchChange={setSearch}
 
@@ -217,35 +224,14 @@ const Attendance = () => {
                                         value: "class-b",
                                         label: "Class B",
                                     },
-                                    {
-                                        value: "class-c",
-                                        label: "Class C",
-                                    },
-                                    {
-                                        value: "class-d",
-                                        label: "Class D",
-                                    }
                                 ]}
 
                                 dateValue={date}
                                 onDateChange={setDate}
 
-                                statusValue={status}
-                                onStatusChange={setStatus}
-                                statusOptions={[
-                                    {
-                                        value: "all",
-                                        label: "Status",
-                                    },
-                                    {
-                                        value: "active",
-                                        label: "Active",
-                                    },
-                                    {
-                                        value: "inactive",
-                                        label: "Inactive",
-                                    },
-                                ]}
+                                onFilterClick={() => {
+                                    console.log("Filter button clicked");
+                                }}
                             />
 
                         </div>

@@ -37,20 +37,27 @@ const AttendanceStudentList = ({
             {/* Class Header */}
             <div className="attendance-class-header">
 
-                <select className="form-select attendance-class-select" aria-label="Default select example" 
-                    value={selectedClass}
-                    onChange={(e) => onClassChange(e.target.value)}
-                >
-                    {classOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
+                <div className="attendance-class-header-left">
+                    <select className="form-select attendance-class-select" aria-label="Default select example" 
+                        value={selectedClass}
+                        onChange={(e) => onClassChange(e.target.value)}
+                    >
+                        {classOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-                <span className="attendance-date">
-                    Oct 24, 2023
-                </span>
+                <div className="attendance-class-header-right">
+                    <span className="attendance-date">
+                        Oct 24, 2023
+                    </span>
+                    <button className="attendance-btn save-btn" type="button">
+                        Save Attendance 
+                    </button>
+                </div>
 
             </div>
 
