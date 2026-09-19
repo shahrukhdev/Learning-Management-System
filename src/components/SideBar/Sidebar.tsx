@@ -1,7 +1,6 @@
 import "./Sidebar.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, type NavLinkRenderProps } from "react-router-dom";
 
-// import Logo from "../../assets/images/dashboard-logo.svg";
 import Logo from "../../assets/images/logo.svg";
 import NavIcon1 from "../../assets/images/nav-icon-1.svg";
 import NavIcon2 from "../../assets/images/nav-icon-2.svg";
@@ -9,6 +8,7 @@ import NavIcon3 from "../../assets/images/nav-icon-3.svg";
 import NavIcon4 from "../../assets/images/nav-icon-4.svg";
 import NavIcon5 from "../../assets/images/nav-icon-5.svg";
 import NavIcon6 from "../../assets/images/nav-icon-6.svg";
+
 import { LogOut } from "lucide-react";
 
 const navItems = [
@@ -42,33 +42,41 @@ const navItems = [
         title: "Admin",
         path: "/dashboard/admin",
         icon: NavIcon6,
-    }
-]
-
+    },
+];
 
 const Sidebar = () => {
-
-    const navLinkClass = ({ isActive }) => isActive ? "nav-link active" : "nav-link";
+    const navLinkClass = ({ isActive }: NavLinkRenderProps) =>
+        isActive ? "nav-link active" : "nav-link";
 
     return (
-
         <aside className="dashboard-sidebar">
-
             <div className="sidebar-logo text-center">
                 <Link to="/dashboard">
-                    <img className="img-fluid" src={Logo} alt="logo" />
+                    <img
+                        className="img-fluid"
+                        src={Logo}
+                        alt="logo"
+                    />
                 </Link>
             </div>
 
             <nav className="sidebar-nav">
-
-                {navItems.map((item, index) => (
-                    <NavLink key={index} className={navLinkClass} to={item.path} end={item.end} >
-                        <img className="img-fluid nav-icon" src={item.icon} alt={item.title} />
+                {navItems.map((item) => (
+                    <NavLink
+                        key={item.path}
+                        className={navLinkClass}
+                        to={item.path}
+                        end={item.end}
+                    >
+                        <img
+                            className="img-fluid nav-icon"
+                            src={item.icon}
+                            alt={item.title}
+                        />
                         {item.title}
                     </NavLink>
                 ))}
-
             </nav>
 
             <div className="sidebar-bottom">
@@ -76,17 +84,28 @@ const Sidebar = () => {
                     <div className="user-avatar">
                         AM
                     </div>
+
                     <div className="sidebar-user-details">
                         <h6 className="sidebar-user-name m-0">
                             Admin Madrassah
                         </h6>
+
                         <span className="sidebar-user-role">
                             Admin
                         </span>
                     </div>
                 </div>
-                <button type="button" className="secondary-btn sidebar-logout">
-                    <LogOut color="#41441B" size={20} strokeWidth={2} />
+
+                <button
+                    type="button"
+                    className="secondary-btn sidebar-logout"
+                >
+                    <LogOut
+                        color="#41441B"
+                        size={20}
+                        strokeWidth={2}
+                    />
+
                     <span>Sign out</span>
                 </button>
             </div>
