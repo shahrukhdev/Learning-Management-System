@@ -1,0 +1,140 @@
+.user-management-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-management-desc {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 16px;
+  color: #6B7A73;
+  margin-top: -10px !important;
+}
+
+/* Main Card */
+
+.user-management-card {
+  margin-top: 24px;
+  background: #FFFFFF;
+  border: 1px solid #E6E4D5;
+  box-shadow: 0px 2px 8px rgba(74, 93, 35, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+
+/* Controls */
+
+.user-management-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 16px;
+  border-bottom: 1px solid #E6E4D5;
+  background-color: #EFECE0;
+}
+
+
+/* Tabs */
+
+.user-management-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-management-tabs button {
+  height: 34px;
+  padding: 8px 16px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 16px;
+  letter-spacing: 0.24px;
+  color: #45483C;
+  transition: all 0.2s ease;
+  border-radius: 50px;
+  border: none;
+  background-color: transparent;
+}
+
+.user-management-tabs button:hover {
+  background-color: #EEF0E4;
+}
+
+.user-management-tabs button.active {
+  background-color: #535624;
+  color: #FFFFFF;
+}
+
+/* Search */
+
+.user-management-search {
+  position: relative;
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.user-management-search svg {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #7B8378;
+}
+
+.user-management-search input {
+  width: 100%;
+  height: 34px;
+  padding: 5px 10px 5px 32px;
+  border: 1px solid #AEB5AA;
+  border-radius: 6px;
+  outline: none;
+  background: #FCFBF5;
+  color: #30352F;
+  font-size: 1.2rem;
+}
+
+.user-management-search input::placeholder {
+  color: #8A9188;
+}
+
+.user-management-search input:focus {
+  border-color: #71835D;
+}
+
+.user-management-section .filter-bar {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  display: block;
+  max-width: 300px;
+  width: 100%;
+}
+
+/* Responsive */
+
+@media (max-width: 767px) {
+
+  .user-management-header {
+      flex-direction: column;
+  }
+
+  .user-management-controls {
+      flex-direction: column;
+      align-items: stretch;
+  }
+
+  .user-management-tabs {
+      overflow-x: auto;
+  }
+
+  .user-management-search {
+      width: 100%;
+  }
+
+}

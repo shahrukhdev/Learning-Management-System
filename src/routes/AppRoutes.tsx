@@ -8,6 +8,8 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Attendance from "../pages/Attendance/Attendance";
 import Notices from "../pages/Notices/Notices";
 import Hifz from "../pages/Hifz/Hifz";
+import Users from "../pages/Users/Users";
+import Roles from "../pages/Roles/Roles";
 
 
 const AppRoutes = () => {
@@ -28,6 +30,8 @@ const AppRoutes = () => {
                 <Route path="attendance" element={<Attendance />} />
                 <Route path="notices" element={<Notices />} />
                 <Route path="hifz" element={<Hifz />} />
+                <Route path="system/users" element={<Users />} />
+                <Route path="system/roles" element={<Roles />} />
 
             </Route>
             
