@@ -26,12 +26,12 @@ const Users = () => {
                     <div className="row">
 
                         <div className="col-12">
-                            <div className="notices-head">
+                            <div className="section-head">
                                 <div className="">
                                     <h1 className="section-title">
                                         User Management
                                     </h1>
-                                    <p className="notices-desc m-0">Manage staff, students, and system access.</p>
+                                    <p className="section-desc-para m-0">Manage staff, students, and system access.</p>
                                 </div> 
                                 <button 
                                     type="button"

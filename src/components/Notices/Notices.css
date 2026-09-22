@@ -8,22 +8,6 @@
   Notices Page css
 ========================================================= */
 
-.notices-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.notices-desc {
-  font-family: var(--font-inter);
-  font-style: normal;
-  font-weight: 400;
-  font-size: 1.3rem;
-  line-height: 16px;
-  color: #6B7A73;
-  margin-top: -15px !important;
-}
-
 .notice-box {
     min-height: 300px;
     background: #FFFDF6;

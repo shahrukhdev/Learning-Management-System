@@ -431,8 +431,25 @@ body {
   line-height: 16px;
   color: #FFFFFF;
   transition: 0.3s;
+  text-decoration: none;
 }
 
 .new-notice-btn:hover{
   transform: translateY(-2px);
+}
+
+.notices-head, .section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notices-desc, .section-desc-para {
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 16px;
+  color: #6B7A73;
+  margin-top: -15px !important;
 }

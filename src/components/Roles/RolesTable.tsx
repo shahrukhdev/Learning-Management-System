@@ -1,95 +1,53 @@
 import "../Table/Table.css";
 
 import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
-
-import { useMemo, useState } from "react";
-
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-import { users, type UserManagementData } from "./Users.data";
-
-import { userManagementColumns } from "./Users.columns";
+import { roles } from "./RolesTable.data";
+import { rolesColumns } from "./RolesTable.columns";
 
 
-interface UserManagementTableProps {
-    search: string;
-    activeTab: string;
-}
+const RolesTable = () => {
+
+    const [sorting, setSorting] =
+        useState<SortingState>([]);
 
 
-const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) => {
+    const table = useReactTable({
 
-    const [sorting, setSorting] = useState<SortingState>([]);
+        data: roles,
 
-    const filteredUsers = useMemo(() => {
+        columns: rolesColumns,
 
-        return users.filter((user) => {
+        state: {
+            sorting,
+        },
 
-            const matchesSearch =
-                user.name
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                user.email
-                    .toLowerCase()
-                    .includes(search.toLowerCase());
+        onSortingChange:
+            setSorting,
 
+        getCoreRowModel:
+            getCoreRowModel(),
 
-            const matchesTab =
-                activeTab === "all" ||
-                (
-                    activeTab === "teachers" &&
-                    (
-                        user.role === "Teacher" ||
-                        user.role === "Senior Teacher"
-                    )
-                ) ||
-                (
-                    activeTab === "students" &&
-                    user.role === "Student"
-                ) ||
-                (
-                    activeTab === "admins" &&
-                    user.role === "Admin"
-                );
+        getSortedRowModel:
+            getSortedRowModel(),
 
+        getPaginationRowModel:
+            getPaginationRowModel(),
 
-            return matchesSearch && matchesTab;
+        initialState: {
 
-        });
+            pagination: {
 
-    }, [search, activeTab]);
+                pageSize: 10,
 
+                pageIndex: 0,
 
-    const table =
-        useReactTable<UserManagementData>({
-
-            data: filteredUsers,
-
-            columns: userManagementColumns,
-
-            state: {
-                sorting,
             },
 
-            onSortingChange:
-                setSorting,
+        },
 
-            getCoreRowModel:
-                getCoreRowModel(),
-
-            getSortedRowModel:
-                getSortedRowModel(),
-
-            getPaginationRowModel:
-                getPaginationRowModel(),
-
-            initialState: {
-                pagination: {
-                    pageSize: 10,
-                },
-            },
-
-        });
+    });
 
 
     const pageIndex =
@@ -102,8 +60,9 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
             .pagination
             .pageSize;
 
+
     const totalResults =
-        filteredUsers.length;
+        roles.length;
 
 
     const firstResult =
@@ -183,7 +142,9 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                                 .map((row) => (
 
                                     <tr
-                                        key={row.id}
+                                        key={
+                                            row.id
+                                        }
                                     >
 
                                         {row
@@ -215,11 +176,13 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 
                                 <td
                                     colSpan={
-                                        userManagementColumns.length
+                                        rolesColumns.length
                                     }
                                     className="table-empty"
                                 >
-                                    No users found.
+
+                                    No roles found.
+
                                 </td>
 
                             </tr>
@@ -305,7 +268,7 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                         {totalResults}
                     </strong>
 
-                    {" "}users
+                    {" "}roles
 
                 </div>
 
@@ -377,4 +340,4 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 };
 
 
-export default UserManagementTable;
+export default RolesTable;

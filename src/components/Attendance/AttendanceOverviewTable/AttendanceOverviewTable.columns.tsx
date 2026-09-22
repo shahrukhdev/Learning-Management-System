@@ -1,16 +1,20 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
-
 import type { StudentsAttendanceOverview } from "./AttendanceOverviewTable.types";
-
 import AttendanceDot from "./AttendanceDot";
 
-export const attendanceOverviewColumns: ColumnDef<StudentsAttendanceOverview>[] = [
+
+export const attendanceOverviewColumns:
+    ColumnDef<StudentsAttendanceOverview>[] = [
+
+    /* Student */
+
     {
         accessorKey: "studentName",
 
         header: ({ column }) => (
+
             <button
                 type="button"
                 className="table-sort-button"
@@ -20,95 +24,191 @@ export const attendanceOverviewColumns: ColumnDef<StudentsAttendanceOverview>[] 
                     )
                 }
             >
-                <span>Student</span>
+
+                <span>
+                    Student
+                </span>
+
 
                 {column.getIsSorted() === "asc" && (
-                    <ChevronUp size={14} />
+
+                    <ChevronUp
+                        size={14}
+                    />
+
                 )}
+
 
                 {column.getIsSorted() === "desc" && (
-                    <ChevronDown size={14} />
+
+                    <ChevronDown
+                        size={14}
+                    />
+
                 )}
 
+
                 {!column.getIsSorted() && (
-                    <ChevronsUpDown size={14} />
+
+                    <ChevronsUpDown
+                        size={14}
+                    />
+
                 )}
+
             </button>
+
         ),
 
         cell: ({ row }) => {
-            const student = row.original;
+
+            const student =
+                row.original;
 
             return (
-                <div className="overview-student">
+
+                <div className="table-attendance-student">
+
                     <img
-                        className="student-img"
-                        src={student.studentImage}
-                        alt={student.studentName}
+                        src={
+                            student.studentImage
+                        }
+                        alt={
+                            student.studentName
+                        }
                     />
 
-                    <span className="student-name">
+                    <span className="table-attendance-student-name">
+
                         {student.studentName}
+
                     </span>
+
                 </div>
+
             );
+
         },
     },
 
+
+    /* Monday */
+
     {
-        accessorKey: "attendance.mon",
+        accessorKey:
+            "attendance.mon",
+
         header: "Mon (7)",
+
         cell: ({ row }) => (
+
             <AttendanceDot
-                status={row.original.attendance.mon}
+                status={
+                    row.original
+                        .attendance
+                        .mon
+                }
             />
+
         ),
     },
 
+
+    /* Tuesday */
+
     {
-        accessorKey: "attendance.tue",
+        accessorKey:
+            "attendance.tue",
+
         header: "Tue (8)",
+
         cell: ({ row }) => (
+
             <AttendanceDot
-                status={row.original.attendance.tue}
+                status={
+                    row.original
+                        .attendance
+                        .tue
+                }
             />
+
         ),
     },
 
+
+    /* Wednesday */
+
     {
-        accessorKey: "attendance.wed",
+        accessorKey:
+            "attendance.wed",
+
         header: "Wed (9)",
+
         cell: ({ row }) => (
+
             <AttendanceDot
-                status={row.original.attendance.wed}
+                status={
+                    row.original
+                        .attendance
+                        .wed
+                }
             />
+
         ),
     },
 
+
+    /* Thursday */
+
     {
-        accessorKey: "attendance.thu",
+        accessorKey:
+            "attendance.thu",
+
         header: "Thu (10)",
+
         cell: ({ row }) => (
+
             <AttendanceDot
-                status={row.original.attendance.thu}
+                status={
+                    row.original
+                        .attendance
+                        .thu
+                }
             />
+
         ),
     },
 
+
+    /* Friday */
+
     {
-        accessorKey: "attendance.fri",
+        accessorKey:
+            "attendance.fri",
+
         header: "Fri (11)",
+
         cell: ({ row }) => (
+
             <AttendanceDot
-                status={row.original.attendance.fri}
+                status={
+                    row.original
+                        .attendance
+                        .fri
+                }
             />
+
         ),
     },
+
+
+    /* Rate */
 
     {
         accessorKey: "rate",
 
         header: ({ column }) => (
+
             <button
                 type="button"
                 className="table-sort-button"
@@ -118,34 +218,64 @@ export const attendanceOverviewColumns: ColumnDef<StudentsAttendanceOverview>[] 
                     )
                 }
             >
-                <span>Rate</span>
+
+                <span>
+                    Rate
+                </span>
+
 
                 {column.getIsSorted() === "asc" && (
-                    <ChevronUp size={14} />
+
+                    <ChevronUp
+                        size={14}
+                    />
+
                 )}
+
 
                 {column.getIsSorted() === "desc" && (
-                    <ChevronDown size={14} />
+
+                    <ChevronDown
+                        size={14}
+                    />
+
                 )}
 
+
                 {!column.getIsSorted() && (
-                    <ChevronsUpDown size={14} />
+
+                    <ChevronsUpDown
+                        size={14}
+                    />
+
                 )}
+
             </button>
+
         ),
 
         cell: ({ row }) => {
-            const rate = row.original.rate;
+
+            const rate =
+                row.original.rate;
 
             return (
+
                 <span
                     className={`attendance-rate ${
-                        rate < 70 ? "low" : ""
+                        rate < 70
+                            ? "low"
+                            : ""
                     }`}
                 >
+
                     {rate}%
+
                 </span>
+
             );
+
         },
     },
+
 ];

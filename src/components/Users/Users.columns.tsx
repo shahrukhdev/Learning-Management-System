@@ -1,74 +1,85 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import type { UserManagementData } from "./Users.data";
 
-import {
-    ArrowUpDown,
-    Pencil,
-    Trash2,
-} from "lucide-react";
+export const userManagementColumns:
+    ColumnDef<UserManagementData>[] = [
 
-import type {
-    UserManagementData,
-} from "./Users.data";
-
-export const userManagementColumns: ColumnDef<UserManagementData>[] = [
+    /* User */
 
     {
         accessorKey: "name",
 
         header: ({ column }) => (
+
             <button
                 type="button"
-                className="user-table-sort-button"
+                className="table-sort-button"
                 onClick={() =>
                     column.toggleSorting(
                         column.getIsSorted() === "asc"
                     )
                 }
             >
+
                 User
 
                 <ArrowUpDown
                     size={14}
                     strokeWidth={2}
                 />
+
             </button>
+
         ),
 
         cell: ({ row }) => {
 
-            const user = row.original;
+            const user =
+                row.original;
 
             return (
-                <div className="user-table-user">
 
-                    <div className="user-table-avatar">
+                <div className="table-user">
+
+                    <div className="table-avatar">
+
                         {user.image ? (
+
                             <img
                                 src={user.image}
                                 alt={user.name}
                             />
+
                         ) : (
+
                             user.name.charAt(0)
+
                         )}
+
                     </div>
 
-                    <div className="user-table-user-content">
 
-                        <span className="user-table-user-name">
+                    <div className="table-user-content">
+
+                        <span className="table-user-name">
                             {user.name}
                         </span>
 
-                        <span className="user-table-user-email">
+                        <span className="table-user-email">
                             {user.email}
                         </span>
 
                     </div>
 
                 </div>
+
             );
         },
     },
 
+
+    /* Role */
 
     {
         accessorKey: "role",
@@ -77,10 +88,12 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
 
         cell: ({ row }) => {
 
-            const user = row.original;
+            const user =
+                row.original;
 
             return (
-                <div className="user-table-role">
+
+                <div className="table-user-role">
 
                     <span>
                         {user.role}
@@ -91,10 +104,14 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
                     </small>
 
                 </div>
+
             );
+
         },
     },
 
+
+    /* Status */
 
     {
         accessorKey: "status",
@@ -103,14 +120,16 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
 
         cell: ({ row }) => {
 
-            const status = row.original.status;
+            const status =
+                row.original.status;
 
             return (
+
                 <span
-                    className={`user-status ${status}`}
+                    className={`table-status ${status}`}
                 >
 
-                    <span className="user-status-dot"></span>
+                    <span className="table-status-dot"></span>
 
                     {status === "active"
                         ? "Active"
@@ -118,10 +137,14 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
                     }
 
                 </span>
+
             );
+
         },
     },
 
+
+    /* Last Login */
 
     {
         accessorKey: "lastLogin",
@@ -129,12 +152,18 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
         header: "Last Login",
 
         cell: ({ row }) => (
-            <span className="user-last-login">
+
+            <span className="table-last-login">
+
                 {row.original.lastLogin}
+
             </span>
+
         ),
     },
 
+
+    /* Actions */
 
     {
         id: "actions",
@@ -144,29 +173,37 @@ export const userManagementColumns: ColumnDef<UserManagementData>[] = [
         enableSorting: false,
 
         cell: () => (
-            <div className="user-table-actions">
+
+            <div className="table-actions">
 
                 <button
                     type="button"
                     aria-label="Edit user"
                 >
+
                     <Pencil
                         size={16}
                         strokeWidth={2.4}
                     />
+
                 </button>
+
 
                 <button
                     type="button"
                     aria-label="Delete user"
                 >
+
                     <Trash2
                         size={16}
                         strokeWidth={2.4}
                     />
+
                 </button>
 
             </div>
+
         ),
     },
+
 ];

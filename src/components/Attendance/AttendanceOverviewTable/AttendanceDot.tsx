@@ -9,7 +9,7 @@ const AttendanceDot = ({
 }: AttendanceDotProps) => {
     return (
         <span
-            className={`attendance-day-dot ${status}`}
+            className={`attendance-dot ${status}`}
             title={status}
         />
     );

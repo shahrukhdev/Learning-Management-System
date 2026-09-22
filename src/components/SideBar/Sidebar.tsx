@@ -7,16 +7,12 @@ import NavIcon2 from "../../assets/images/nav-icon-2.svg";
 import NavIcon3 from "../../assets/images/nav-icon-3.svg";
 import NavIcon4 from "../../assets/images/nav-icon-4.svg";
 import NavIcon5 from "../../assets/images/nav-icon-5.svg";
+import NavIcon6 from "../../assets/images/nav-icon-6.svg";
+import NavIcon7 from "../../assets/images/nav-icon-7.svg";
+import NavIcon8 from "../../assets/images/nav-icon-8.svg";
 
-import {
-    LogOut,
-    Settings,
-    ChevronDown,
-    Users,
-    ShieldCheck,
-    KeyRound,
-} from "lucide-react";
 
+import { LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const navItems = [
@@ -52,17 +48,17 @@ const systemItems = [
     {
         title: "Users",
         path: "/dashboard/system/users",
-        icon: Users,
+        icon: NavIcon5,
     },
     {
         title: "Roles",
         path: "/dashboard/system/roles",
-        icon: ShieldCheck,
+        icon: NavIcon6,
     },
     {
         title: "Permissions",
         path: "/dashboard/system/permissions",
-        icon: KeyRound,
+        icon: NavIcon8,
     },
 ];
 
@@ -157,11 +153,10 @@ const Sidebar = () => {
                         }}
                     >
 
-                        <Settings
-                            className="system-main-icon"
-                            size={20}
-                            strokeWidth={2}
-                        />
+                        <img 
+                        className="img-fluid nav-icon" 
+                        src={NavIcon7} 
+                        alt="System" />
 
                         <span>
                             System
@@ -188,8 +183,6 @@ const Sidebar = () => {
 
                         {systemItems.map((item) => {
 
-                            const Icon = item.icon;
-
                             return (
 
                                 <NavLink
@@ -202,9 +195,10 @@ const Sidebar = () => {
                                     }
                                 >
 
-                                    <Icon
-                                        size={18}
-                                        strokeWidth={2}
+                                    <img 
+                                        className="img-fluid"
+                                        src={item.icon} 
+                                        alt={item.title}
                                     />
 
                                     <span>

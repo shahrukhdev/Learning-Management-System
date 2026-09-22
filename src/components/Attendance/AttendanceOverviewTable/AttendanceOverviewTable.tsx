@@ -1,91 +1,141 @@
-import "./AttendanceOverviewTable.css";
+import "../../Table/Table.css";
 
-import {
-    flexRender,
-    getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-    type SortingState,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
 
 import { useState } from "react";
+
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 import { studentsAttendanceOverview } from "./AttendanceOverviewTable.data";
 
 import { attendanceOverviewColumns } from "./AttendanceOverviewTable.columns";
 
-import { ChevronLeft,  ChevronRight, ArrowRight } from "lucide-react";
-
 
 const StudentsAttendanceOverviewTable = () => {
 
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] =
+        useState<SortingState>([]);
+
 
     const table = useReactTable({
-        
-        data: studentsAttendanceOverview,
-        columns: attendanceOverviewColumns,
+
+        data:
+            studentsAttendanceOverview,
+
+        columns:
+            attendanceOverviewColumns,
 
         state: {
-            sorting
+            sorting,
         },
 
-        onSortingChange: 
+        onSortingChange:
             setSorting,
 
-        getCoreRowModel: 
+        getCoreRowModel:
             getCoreRowModel(),
 
-        getSortedRowModel: 
+        getSortedRowModel:
             getSortedRowModel(),
 
-        getPaginationRowModel: 
+        getPaginationRowModel:
             getPaginationRowModel(),
 
         initialState: {
+
             pagination: {
+
                 pageSize: 10,
+
             },
+
         },
 
-    })
+    });
+
+
+    const pageIndex =
+        table.getState()
+            .pagination
+            .pageIndex;
+
+    const pageSize =
+        table.getState()
+            .pagination
+            .pageSize;
+
+
+    const totalResults =
+        studentsAttendanceOverview.length;
+
+
+    const firstResult =
+        totalResults === 0
+            ? 0
+            : pageIndex * pageSize + 1;
+
+
+    const lastResult =
+        Math.min(
+            (pageIndex + 1) * pageSize,
+            totalResults
+        );
+
 
     return (
-        <div className="students-attendance-overview">
+
+        <div className="attendance-table-card">
 
             {/* Header */}
-            <div className="attendance-overview-header">
 
-                <div className="attendance-overview-header-content">
-                    <h2 className="attendance-overview-title">
+            <div className="attendance-table-header">
+
+                <div>
+
+                    <h2 className="attendance-table-title">
+
                         Weekly Overview
+
                     </h2>
 
-                    <span className="attendance-overview-date">
+                    <span className="attendance-table-date">
+
                         7 April - 13 April
+
                     </span>
+
                 </div>
 
-                <button 
-                    type="button" 
-                    className="view-history-btn"
+
+                <button
+                    type="button"
+                    className="attendance-history-button"
                 >
+
                     View Full History
-                    <ArrowRight size={16} strokeWidth={2.4} color="#33452F" />
+
+                    <ArrowRight
+                        size={16}
+                        strokeWidth={2.4}
+                    />
+
                 </button>
 
             </div>
 
 
             {/* Table */}
-            <div className="attendance-overview-table-wrapper">
 
-                <table className="attendance-overview-table">
+            <div className="attendance-table-wrapper">
+
+                <table className="data-table attendance-table">
 
                     <thead>
-                        {table.getHeaderGroups().map(
-                            (headerGroup) => (
+
+                        {table
+                            .getHeaderGroups()
+                            .map((headerGroup) => (
+
                                 <tr
                                     key={
                                         headerGroup.id
@@ -94,50 +144,91 @@ const StudentsAttendanceOverviewTable = () => {
 
                                     {headerGroup.headers.map(
                                         (header) => (
+
                                             <th
                                                 key={
                                                     header.id
                                                 }
                                             >
+
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
                                                         header.column.columnDef.header,
                                                         header.getContext()
-                                                    )}
+                                                    )
+                                                }
+
                                             </th>
+
                                         )
                                     )}
 
                                 </tr>
-                            )
-                        )}
+
+                            ))}
+
                     </thead>
 
 
                     <tbody>
 
-                        {table.getRowModel().rows.map(
-                            (row) => (
-                                <tr key={row.id}>
+                        {table
+                            .getRowModel()
+                            .rows
+                            .length > 0 ? (
 
-                                    {row.getVisibleCells().map(
-                                        (cell) => (
-                                            <td
-                                                key={
-                                                    cell.id
-                                                }
-                                            >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        )
-                                    )}
+                            table
+                                .getRowModel()
+                                .rows
+                                .map((row) => (
 
-                                </tr>
-                            )
+                                    <tr
+                                        key={
+                                            row.id
+                                        }
+                                    >
+
+                                        {row
+                                            .getVisibleCells()
+                                            .map((cell) => (
+
+                                                <td
+                                                    key={
+                                                        cell.id
+                                                    }
+                                                >
+
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+
+                                                </td>
+
+                                            ))}
+
+                                    </tr>
+
+                                ))
+
+                        ) : (
+
+                            <tr>
+
+                                <td
+                                    colSpan={
+                                        attendanceOverviewColumns.length
+                                    }
+                                    className="table-empty"
+                                >
+
+                                    No attendance records found.
+
+                                </td>
+
+                            </tr>
+
                         )}
 
                     </tbody>
@@ -147,10 +238,13 @@ const StudentsAttendanceOverviewTable = () => {
             </div>
 
 
-            {/* Pagination */}
-            <div className="attendance-table-footer">
+            {/* Footer */}
 
-                <div className="rows-per-page">
+            <div className="table-footer attendance-table-footer">
+
+                {/* Rows Per Page */}
+
+                <div className="table-rows-per-page">
 
                     <span>
                         Rows per page:
@@ -159,14 +253,20 @@ const StudentsAttendanceOverviewTable = () => {
                     <select
                         value={
                             table.getState()
-                                .pagination.pageSize
+                                .pagination
+                                .pageSize
                         }
                         onChange={(e) => {
+
                             table.setPageSize(
-                                Number(e.target.value)
+                                Number(
+                                    e.target.value
+                                )
                             );
+
                         }}
                     >
+
                         <option value="10">
                             10
                         </option>
@@ -182,18 +282,56 @@ const StudentsAttendanceOverviewTable = () => {
                         <option value="50">
                             50
                         </option>
+
                     </select>
 
                 </div>
 
 
+                {/* Showing Results */}
+
+                <div className="table-results">
+
+                    Showing{" "}
+
+                    <strong>
+                        {firstResult}
+                    </strong>
+
+                    {"–"}
+
+                    <strong>
+                        {lastResult}
+                    </strong>
+
+                    {" "}of{" "}
+
+                    <strong>
+                        {totalResults}
+                    </strong>
+
+                    {" "}students
+
+                </div>
+
+
+                {/* Pagination */}
+
                 <div className="table-pagination">
 
                     <span>
+
                         Page{" "}
-                        {table.getState().pagination.pageIndex + 1}
+
+                        {pageIndex + 1}
+
                         {" "}of{" "}
-                        {table.getPageCount()}
+
+                        {Math.max(
+                            table.getPageCount(),
+                            1
+                        )}
+
                     </span>
 
 
@@ -207,7 +345,12 @@ const StudentsAttendanceOverviewTable = () => {
                         }
                         aria-label="Previous page"
                     >
-                        <ChevronLeft size={16} strokeWidth={2.5} />
+
+                        <ChevronLeft
+                            size={16}
+                            strokeWidth={2.5}
+                        />
+
                     </button>
 
 
@@ -221,7 +364,12 @@ const StudentsAttendanceOverviewTable = () => {
                         }
                         aria-label="Next page"
                     >
-                        <ChevronRight size={16} strokeWidth={2.5} />
+
+                        <ChevronRight
+                            size={16}
+                            strokeWidth={2.5}
+                        />
+
                     </button>
 
                 </div>
@@ -229,8 +377,10 @@ const StudentsAttendanceOverviewTable = () => {
             </div>
 
         </div>
+
     );
 
 };
+
 
 export default StudentsAttendanceOverviewTable;
