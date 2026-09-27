@@ -147,10 +147,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="oldSabaqFromSurah"
                                 >
                                     FROM SURAH
@@ -159,7 +159,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="oldSabaqFromSurah"
                                     name="oldSabaqFromSurah"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {surahOptions.map((option) => (
@@ -182,10 +182,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="oldSabaqToSurah"
                                 >
                                     TO SURAH
@@ -194,7 +194,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="oldSabaqToSurah"
                                     name="oldSabaqToSurah"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {surahOptions.map((option) => (
@@ -217,10 +217,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="oldSabaqStrength"
                                 >
                                     STRENGTH
@@ -229,7 +229,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="oldSabaqStrength"
                                     name="oldSabaqStrength"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {strengthOptions.map((option) => (
@@ -252,10 +252,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="oldSabaqMistakes"
                                 >
                                     MISTAKES
@@ -265,7 +265,7 @@ const HifzStudentLog = () => {
                                     id="oldSabaqMistakes"
                                     name="oldSabaqMistakes"
                                     type="number"
-                                    className="hifz-log-input"
+                                    className="primary-control"
                                     defaultValue={0}
                                     min={0}
                                 />
@@ -337,10 +337,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="manzilFromSurah"
                                 >
                                     FROM SURAH
@@ -349,7 +349,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="manzilFromSurah"
                                     name="manzilFromSurah"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {manzilSurahOptions.map((option) => (
@@ -372,10 +372,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="manzilToSurah"
                                 >
                                     TO SURAH
@@ -384,7 +384,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="manzilToSurah"
                                     name="manzilToSurah"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {manzilSurahOptions.map((option) => (
@@ -407,10 +407,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="manzilStrength"
                                 >
                                     STRENGTH
@@ -419,7 +419,7 @@ const HifzStudentLog = () => {
                                 <select
                                     id="manzilStrength"
                                     name="manzilStrength"
-                                    className="hifz-log-select"
+                                    className="primary-select"
                                 >
 
                                     {manzilStrengthOptions.map((option) => (
@@ -442,10 +442,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="manzilMistakes"
                                 >
                                     MISTAKES
@@ -455,7 +455,7 @@ const HifzStudentLog = () => {
                                     id="manzilMistakes"
                                     name="manzilMistakes"
                                     type="number"
-                                    className="hifz-log-input"
+                                    className="primary-control"
                                     defaultValue={0}
                                     min={0}
                                 />
@@ -494,10 +494,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="newSabaqFromAyah"
                                 >
                                     FROM SURAH/AYAH
@@ -507,7 +507,7 @@ const HifzStudentLog = () => {
                                     id="newSabaqFromAyah"
                                     name="newSabaqFromAyah"
                                     type="text"
-                                    className="hifz-log-input"
+                                    className="primary-control"
                                     placeholder="e.g. 2:1"
                                 />
 
@@ -520,10 +520,10 @@ const HifzStudentLog = () => {
 
                         <div className="col-12 col-md-6">
 
-                            <div className="hifz-log-field">
+                            <div className="primary-field">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="newSabaqToAyah"
                                 >
                                     TO SURAH/AYAH
@@ -533,7 +533,7 @@ const HifzStudentLog = () => {
                                     id="newSabaqToAyah"
                                     name="newSabaqToAyah"
                                     type="text"
-                                    className="hifz-log-input"
+                                    className="primary-control"
                                     placeholder="e.g. 2:10"
                                 />
 
@@ -549,7 +549,7 @@ const HifzStudentLog = () => {
                             <div className="hifz-log-notes">
 
                                 <label
-                                    className="hifz-log-label"
+                                    className="primary-label"
                                     htmlFor="hifzNotes"
                                 >
                                     NOTES & OBSERVATIONS
@@ -558,7 +558,7 @@ const HifzStudentLog = () => {
                                 <textarea
                                     id="hifzNotes"
                                     name="hifzNotes"
-                                    className="hifz-log-textarea"
+                                    className="primary-textarea"
                                     placeholder="General observations for this session..."
                                 />
 
@@ -577,18 +577,18 @@ const HifzStudentLog = () => {
                 Actions
             ========================= */}
 
-            <div className="hifz-log-actions">
+            <div className="form-actions">
 
                 <button
                     type="button"
-                    className="hifz-log-cancel-btn"
+                    className="form-btn form-btn-cancel"
                 >
                     Cancel
                 </button>
 
                 <button
                     type="submit"
-                    className="hifz-log-save-btn"
+                    className="form-btn form-btn-primary"
                 >
                     Save & Next Student
 

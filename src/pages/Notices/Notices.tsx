@@ -5,7 +5,7 @@ import SEO from "../../components/Seo/SEO";
 import NoticeList from "../../components/Notices/NoticesList";
 import { notices } from "../../components/Notices/Notices.data";
 import "../../components/Notices/Notices.css";
-import AnnoucementsPopup from "../../components/Popups/AnnoucementsPopup";
+import AnnoucementsPopup from "../../components/Popups/AnnouncementsPopup/AnnoucementsPopup";
 
 const Notices = () => {
 

@@ -1,0 +1,18 @@
+.role-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 32px;
+    flex-shrink: 0;
+    margin-top: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #343A32;
+    cursor: pointer;
+}
+
+.role-back-btn:hover {
+    color: #3F421A;
+}

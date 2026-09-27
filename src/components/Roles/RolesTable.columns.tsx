@@ -1,8 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import type { Role } from "./RolesTable.data";
+import { Link } from "react-router-dom";
 
 export const rolesColumns:
+
     ColumnDef<Role>[] = [
 
     /* Role Name */
@@ -79,21 +81,17 @@ export const rolesColumns:
 
         enableSorting: false,
 
-        cell: () => (
+        cell: ({ row }) => (
 
-            <div className="table-actions">
+            <div className="table-actions">                
 
-                <button
-                    type="button"
-                    aria-label="Edit role"
-                >
-
+                <Link to={`/dashboard/system/roles/${row.original.id}/edit`}>
                     <Pencil
                         size={16}
                         strokeWidth={2.4}
                     />
 
-                </button>
+                </Link>
 
 
                 <button

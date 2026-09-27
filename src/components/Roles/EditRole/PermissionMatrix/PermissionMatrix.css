@@ -1,0 +1,850 @@
+/* =========================
+   Card
+========================= */
+
+.permission-matrix-card {
+
+    width: 100%;
+
+    background: #EFECE0;
+
+    border: 1px solid #E2E0D4;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 10px rgba(74, 93, 35, 0.08);
+
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.permission-matrix-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #E2E0D4;
+
+}
+
+
+/* =========================
+   Heading
+========================= */
+
+.permission-matrix-heading {
+
+    min-width: 0;
+
+}
+
+
+.permission-matrix-title-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.permission-matrix-icon {
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background: #E7E8D5;
+
+    color: #4A5D23;
+
+}
+
+
+.permission-matrix-title-row h2 {
+
+    margin: 0;
+
+    font-size: 1.8rem;
+
+    line-height: 22px;
+
+    font-weight: 700;
+
+    color: #191D18;
+
+}
+
+
+.permission-matrix-title-row p {
+
+    margin: 3px 0 0;
+
+    font-size: 1.3rem;
+
+    line-height: 18px;
+
+    color: #6B7067;
+
+}
+
+
+/* =========================
+   Quick Actions
+========================= */
+
+.permission-matrix-quick-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+
+}
+
+
+.permission-matrix-quick-actions span {
+
+    margin-right: 3px;
+
+    font-size: 1.3rem;
+
+    color: #444841;
+
+    font-weight: 500;
+
+}
+
+
+.permission-matrix-quick-actions button {
+
+    padding: 6px 10px;
+
+    border: 1px solid #DDDACE;
+
+    border-radius: 6px;
+
+    background: #FFFDF6;
+
+    color: #444841;
+
+    font-size: 1.2rem;
+
+    line-height: 16px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+
+}
+
+
+.permission-matrix-quick-actions button:hover {
+
+    background: #E7E5CB;
+
+    border-color: #C4C8BE;
+
+    color: #3F421A;
+
+}
+
+
+/* =========================
+   Table Wrapper
+========================= */
+
+.permission-matrix-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+/* =========================
+   Custom Horizontal Scrollbar
+========================= */
+
+.permission-matrix-wrapper::-webkit-scrollbar {
+
+    height: 5px;
+
+}
+
+
+.permission-matrix-wrapper::-webkit-scrollbar-track {
+
+    background: #E7E5CB;
+
+}
+
+
+.permission-matrix-wrapper::-webkit-scrollbar-thumb {
+
+    background: #9DA177;
+
+    border-radius: 10px;
+
+}
+
+
+.permission-matrix-wrapper::-webkit-scrollbar-thumb:hover {
+
+    background: #7E823D;
+
+}
+
+
+/* Firefox */
+
+.permission-matrix-wrapper {
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #9DA177
+        #E7E5CB;
+
+}
+
+
+/* =========================
+   Table
+========================= */
+
+.permission-matrix-table {
+
+    width: 100%;
+
+    min-width: 580px;
+
+    border-collapse: collapse;
+
+}
+
+
+/* =========================
+   Table Header
+========================= */
+
+.permission-matrix-table th {
+
+    padding: 12px 14px;
+
+    background: #FFFDF6;
+
+    border-bottom: 1px solid #DDDACE;
+
+    font-size: 1.2rem;
+
+    line-height: 18px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    color: #666D63;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+}
+
+
+.permission-matrix-table th:first-child {
+
+    width: 50%;
+
+    text-align: left;
+
+}
+
+
+/* =========================
+   Table Body
+========================= */
+
+.permission-matrix-table td {
+
+    padding: 13px 14px;
+
+    border-bottom: 1px solid #E8E7DD;
+
+    color: #444841;
+
+    text-align: center;
+
+    background-color: #FFFFFF;
+
+}
+
+
+.permission-matrix-table tbody tr:last-child td {
+
+    border-bottom: 0;
+
+}
+
+
+.permission-matrix-table tbody tr {
+
+    transition:
+        background-color 0.15s ease;
+
+}
+
+
+.permission-matrix-table tbody tr:hover td {
+
+    background-color: #FCFBF5;
+
+}
+
+
+/* =========================
+   Module Cell
+========================= */
+
+.permission-matrix-table td.permission-module-cell {
+
+    text-align: left;
+
+}
+
+
+/* =========================
+   Module
+========================= */
+
+.permission-module {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #343A32;
+
+    font-size: 1.4rem;
+
+    line-height: 20px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+}
+
+
+/* =========================
+   Module Dot
+========================= */
+
+.permission-module-dot {
+
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #4A5D23;
+
+}
+
+
+/* =========================
+   Permission Checkbox
+========================= */
+
+.permission-checkbox {
+
+    width: 18px;
+    height: 18px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #C9CCC1;
+
+    border-radius: 4px;
+
+    background: #FFFFFF;
+
+    color: #FFFFFF;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.1s ease;
+
+}
+
+
+.permission-checkbox:hover {
+
+    border-color: #7E823D;
+
+}
+
+
+.permission-checkbox:active {
+
+    transform: scale(0.94);
+
+}
+
+
+.permission-checkbox.checked {
+
+    background: #3F421A;
+
+    border-color: #3F421A;
+
+}
+
+
+.permission-checkbox.checked:hover {
+
+    background: #535624;
+
+    border-color: #535624;
+
+}
+
+
+/* =========================
+   Empty State
+========================= */
+
+.permission-empty-row {
+
+    padding: 35px 20px !important;
+
+    text-align: center !important;
+
+    color: #8A8E85 !important;
+
+    font-size: 1.3rem;
+
+}
+
+
+/* =========================
+   Footer
+========================= */
+
+.permission-matrix-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 12px 20px;
+
+    background: #EFECE0;
+
+    border-top: 1px solid #E2E0D4;
+
+}
+
+
+/* =========================
+   Rows Per Page
+========================= */
+
+.permission-rows-per-page {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+
+}
+
+
+.permission-rows-per-page span {
+
+    font-size: 1.2rem;
+
+    line-height: 18px;
+
+    color: #747870;
+
+    white-space: nowrap;
+
+}
+
+
+.permission-rows-per-page select {
+
+    height: 30px;
+
+    padding: 0 8px;
+
+    border: 1px solid #D7D8CC;
+
+    border-radius: 6px;
+
+    background: #FFFDF6;
+
+    color: #596057;
+
+    font-size: 1.2rem;
+
+    cursor: pointer;
+
+    outline: none;
+
+}
+
+
+.permission-rows-per-page select:focus {
+
+    border-color: #9DA177;
+
+}
+
+
+/* =========================
+   Results
+========================= */
+
+.permission-results {
+
+    font-size: 1.2rem;
+
+    line-height: 18px;
+
+    color: #747870;
+
+    white-space: nowrap;
+
+}
+
+
+.permission-results strong {
+
+    color: #444841;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================
+   Pagination
+========================= */
+
+.permission-pagination {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+
+}
+
+
+.permission-pagination span {
+
+    margin-right: 3px;
+
+    font-size: 1.2rem;
+
+    line-height: 18px;
+
+    color: #747870;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================
+   Pagination Buttons
+========================= */
+
+.permission-pagination button {
+
+    width: 30px;
+
+    height: 30px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #D7D8CC;
+
+    border-radius: 6px;
+
+    background: #FFFDF6;
+
+    color: #596057;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.permission-pagination button:hover:not(:disabled) {
+
+    background: #E7E5CB;
+
+    border-color: #9DA177;
+
+    color: #3F421A;
+
+}
+
+
+.permission-pagination button:disabled {
+
+    opacity: 0.4;
+
+    cursor: not-allowed;
+
+    background: #F4F3EA;
+
+    border-color: #DDDACE;
+
+    color: #858A81;
+
+}
+
+
+/* =========================
+   Focus
+========================= */
+
+.permission-pagination button:focus-visible,
+.permission-rows-per-page select:focus-visible {
+
+    outline: 2px solid #9DA177;
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 991px) {
+
+    .permission-matrix-header {
+        align-items: flex-start;
+    }
+
+    .permission-matrix-quick-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .permission-matrix-footer {
+        gap: 15px;
+    }
+
+    .permission-results {
+        order: 2;
+    }
+
+    .permission-pagination {
+        order: 3;
+    }
+
+}
+
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 767px) {
+
+    .permission-matrix-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .permission-matrix-quick-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .permission-matrix-footer {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+    }
+
+    .permission-rows-per-page {
+        width: auto;
+    }
+
+    .permission-results {
+        width: auto;
+    }
+
+    .permission-pagination {
+        width: auto;
+        margin-left: auto;
+    }
+
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 575px) {
+
+    .permission-matrix-header {
+        padding: 15px;
+    }
+
+    .permission-matrix-footer {
+        padding: 12px 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .permission-matrix-title-row {
+        gap: 8px;
+    }
+
+    .permission-matrix-title-row h2 {
+        font-size: 1.6rem;
+    }
+
+    .permission-matrix-title-row p {
+        font-size: 1.2rem;
+    }
+
+    .permission-matrix-quick-actions {
+        gap: 5px;
+    }
+
+    .permission-matrix-quick-actions span {
+        width: 100%;
+        margin-bottom: 2px;
+    }
+
+    .permission-rows-per-page {
+        width: 100%;
+    }
+
+    .permission-results {
+        width: 100%;
+    }
+
+    .permission-pagination {
+        width: 100%;
+        margin-left: 0;
+        justify-content: space-between;
+    }
+
+}
+
+
+/* =========================
+   Small Mobile
+========================= */
+
+@media (max-width: 400px) {
+
+    .permission-matrix-title-row h2 {
+        font-size: 1.45rem;
+    }
+
+    .permission-matrix-title-row p {
+        font-size: 1.1rem;
+    }
+
+    .permission-matrix-quick-actions {
+        width: 100%;
+    }
+
+    .permission-matrix-quick-actions button {
+        flex: 1;
+    }
+
+    .permission-pagination {
+        gap: 8px;
+    }
+
+    .permission-pagination button {
+        width: 32px;
+        height: 32px;
+    }
+
+}

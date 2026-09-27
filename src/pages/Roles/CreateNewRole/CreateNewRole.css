@@ -1,0 +1,228 @@
+/* =========================
+   Create New Role
+========================= */
+
+.create-role-section {
+    padding: 0 0 40px;
+}
+
+.create-new-role-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   Page Header
+========================= */
+
+.create-role-page-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.create-role-head {
+    flex: 1;
+}
+
+
+/* =========================
+   Cards
+========================= */
+
+.create-role-card {
+    width: 100%;
+    margin-bottom: 25px;
+    padding: 30px 30px;
+    background: #EFECE0;
+    border: 1px solid #E2E0D4;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(74, 93, 35, 0.08);
+}
+
+.create-role-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #C4C8BE;
+}
+
+.create-role-card-title {
+    color: #191D18;
+    font-size: 2rem;
+    line-height: 24px;
+    font-weight: 700;
+    margin: 0;
+    font-family: var(--font-amiri);
+}
+
+.create-role-card-body {
+    width: 100%;
+}
+
+
+/* =========================
+   Permission Header
+========================= */
+
+.permission-helper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: #E7E5CB;
+    color: #59633F;
+    font-size: 1.2rem;
+    line-height: 16px;
+    white-space: nowrap;
+}
+
+/* =========================
+   Permission Card
+========================= */
+
+.role-permission-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    min-height: 88px;
+    padding: 20px 20px;
+    border: 1px solid #C4C8BE;
+    border-radius: 12px;
+    background: #FFFDF6;
+    box-shadow: 0 5px 5px 0 #0000001a;
+}
+
+.role-permission-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+}
+
+.role-permission-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 100%;
+    background: #E7E8D5;
+    color: #596B45;
+}
+
+.role-permission-info {
+    min-width: 0;
+}
+
+.role-permission-info-title {
+    margin: 2px 0 5px;
+    color: #191D18;
+    font-size: 1.6rem;
+    line-height: 16px;
+    font-weight: 700;
+}
+
+.role-permission-info-para {
+    margin: 0;
+    color: #4A5148;
+    font-size: 1.4rem;
+    line-height: 18px;
+    font-weight: 400;
+}
+
+/* =========================
+   Permission Toggle
+========================= */
+
+.role-permission-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    background: #D9DDD7;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.role-permission-toggle span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.role-permission-toggle.active {
+    background: #3F5A19;
+}
+
+.role-permission-toggle.active span {
+    transform: translateX(18px);
+}
+
+/* =========================
+   Form Actions
+========================= */
+
+.create-role-form-actions {
+    padding-top: 0;
+    border-top: 1px solid #C4C8BE;
+}
+
+.create-role-form-actions .form-actions {
+    margin-top: 20px;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 767px) {
+
+    .create-new-role-section {
+        padding: 16px 0 30px;
+    }
+
+    .create-new-role-container {
+        max-width: 100%;
+    }
+
+    .create-role-page-header {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .create-role-card {
+        padding: 16px;
+    }
+
+    .create-role-card-header {
+        align-items: flex-start;
+    }
+
+    .permission-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+}

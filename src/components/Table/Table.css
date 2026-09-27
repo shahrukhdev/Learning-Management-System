@@ -109,7 +109,8 @@
   gap: 14px;
 }
 
-.table-actions button {
+.table-actions button,
+.table-actions a {
   display: flex;
   align-items: center;
   justify-content: center;

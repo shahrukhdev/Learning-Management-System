@@ -15,6 +15,7 @@ import Users from "../pages/Users/Users";
 
 import Roles from "../pages/Roles/Roles";
 import CreateNewRole from "../pages/Roles/CreateNewRole/CreateNewRole";
+import EditRole from "../pages/Roles/EditRole/EditRole";
 
 
 const AppRoutes = () => {
@@ -84,6 +85,11 @@ const AppRoutes = () => {
                 <Route
                     path="system/roles/create-new"
                     element={<CreateNewRole />}
+                />
+
+                <Route
+                    path="system/roles/:roleId/edit"
+                    element={<EditRole />}
                 />
 
             </Route>

@@ -26,7 +26,7 @@ const WelcomeBanner = () => {
                             Mark Attendance
                         </Link>
 
-                        <Link to="/dashboard/notice" className="welcome-banner-btn">
+                        <Link to="/dashboard/notices" className="welcome-banner-btn">
                             <Bell color="#0E5A3D" size={16} strokeWidth={2.5} />
                             View Notices
                         </Link>

@@ -1,0 +1,110 @@
+/* =========================
+   Edit Role Section
+========================= */
+
+/* =========================
+   Page Header
+========================= */
+
+.edit-role-page-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 28px;
+}
+
+/* =========================
+   Header Left
+========================= */
+
+.edit-role-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+/* =========================
+   Heading
+========================= */
+
+.edit-role-heading {
+    min-width: 0;
+}
+
+.edit-role-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.edit-role-title-row .section-title {
+    margin: 0;
+}
+
+/* =========================
+   Status
+========================= */
+
+.edit-role-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #E7E8D5;
+    color: #59633F;
+    font-size: 1.2rem;
+    line-height: 16px;
+    font-weight: 500;
+}
+
+/* =========================
+   Header Actions
+========================= */
+
+.edit-role-actions {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 991px) {
+
+    .edit-role-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .edit-role-actions {
+        justify-content: flex-start;
+    }
+
+}
+
+@media (max-width: 575px) {
+
+    .edit-role-header-left {
+        gap: 8px;
+    }
+
+    .edit-role-title-row {
+        gap: 7px;
+    }
+
+    .edit-role-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .edit-role-actions .form-btn {
+        flex: 1;
+    }
+
+}

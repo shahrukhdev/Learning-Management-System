@@ -392,23 +392,23 @@ body {
 }
 
 .rdp-month_caption {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .rdp-weekday {
-    opacity: 1;
-    font-weight: 700;
-    font-size: 1.4rem;
+  opacity: 1;
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 .rdp-day_button {
-    font-size: 1.2rem !important;
+  font-size: 1.2rem !important;
 }
 
 .rdp-selected .rdp-day_button {
-    border-color: transparent !important;
-    color: #fff !important;
-    background: linear-gradient(104.94deg, #3F421A 0%, #535624 60%), rgba(255, 255, 255, 0.002);
+  border-color: transparent !important;
+  color: #fff !important;
+  background: linear-gradient(104.94deg, #3F421A 0%, #535624 60%), rgba(255, 255, 255, 0.002);
 }
 
 .new-notice-btn {
@@ -452,4 +452,124 @@ body {
   line-height: 16px;
   color: #6B7A73;
   margin-top: -15px !important;
+}
+
+/* =========================
+   Primary Field
+========================= */
+
+.primary-field {
+  margin-bottom: 25px;
+}
+
+.primary-label {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 14px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #444841;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* =========================
+   Primary Controls
+========================= */
+
+.primary-control,
+.primary-select,
+.primary-textarea {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 24px;
+  color: #191D18;
+  outline: none;
+  padding: 12px;
+  background-color: #FFFDF6;
+  border: 1px solid #C4C8BE;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.primary-control:focus,
+.primary-select:focus,
+.primary-textarea:focus {
+  border-color: #9da177;
+}
+
+/* =========================
+   Primary Select
+========================= */
+
+.primary-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("../../../../assets/images/angle-down.png") !important;
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
+/* =========================
+   Primary Textarea
+========================= */
+
+.primary-textarea {
+  height: 128px;
+  resize: none;
+}
+
+/* =========================
+   Form Actions
+========================= */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* =========================
+   Buttons
+========================= */
+
+.form-btn {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 24px;
+  padding: 5px 24px;
+  height: 42px;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.form-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px #00000027;
+}
+
+/* Cancel */
+
+.form-btn-cancel {
+  border: 1px solid #C4C8BE;
+  background: transparent;
+  color: #444841;
+}
+
+/* Save / Primary */
+
+.form-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  background: #535624;
+  color: #FFFFFF;
 }

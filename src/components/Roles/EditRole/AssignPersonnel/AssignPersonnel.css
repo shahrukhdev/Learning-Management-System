@@ -1,0 +1,343 @@
+/* =========================
+   Card
+========================= */
+
+.assign-personnel-card {
+    width: 100%;
+    background: #EFECE0;
+    border: 1px solid #E2E0D4;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+        0 3px 10px rgba(74, 93, 35, 0.08);
+}
+
+/* =========================
+   Header
+========================= */
+
+.assign-personnel-header {
+    display: flex;
+    align-items: center;
+    padding: 18px 18px 15px;
+    border-bottom: 1px solid #E2E1D5;
+}
+
+.assign-personnel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* =========================
+   Header Icon
+========================= */
+
+.assign-personnel-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #E7E8D5;
+    color: #4A5D23;
+}
+
+/* =========================
+   Header Text
+========================= */
+
+.assign-personnel-title h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    line-height: 22px;
+    font-weight: 700;
+    color: #191D18;
+}
+
+.assign-personnel-title p {
+    margin: 3px 0 0;
+    font-size: 1.2rem;
+    line-height: 17px;
+    color: #747870;
+}
+
+/* =========================
+   Search
+========================= */
+
+.personnel-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 14px 18px;
+    color: #777C72;
+}
+
+.personnel-search-wrapper svg {
+    position: absolute;
+    left: 11px;
+    pointer-events: none;
+}
+
+.personnel-search-wrapper input {
+    width: 100%;
+    height: 38px;
+    padding: 8px 10px 8px 34px;
+    border: 1px solid #C4C8BE;
+    border-radius: 8px;
+    outline: none;
+    background: #FFFDF6;
+    color: #191D18;
+    font-size: 1.3rem;
+    line-height: 18px;
+}
+
+.personnel-search-wrapper input::placeholder {
+    color: #969A91;
+}
+
+.personnel-search-wrapper input:focus {
+    border-color: #9DA177;
+}
+
+/* =========================
+   Personnel Section
+========================= */
+
+.personnel-section {
+    padding: 0 18px;
+}
+
+/* =========================
+   Available Section
+========================= */
+
+.personnel-available-section {
+    margin-top: 14px;
+    padding-top: 16px;
+    padding-bottom: 10px;
+    border-top: 1px solid #E2E1D5;
+}
+
+/* =========================
+   Section Title
+========================= */
+
+.personnel-section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+    line-height: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #666D63;
+}
+
+/* =========================
+   List
+========================= */
+
+.personnel-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 175px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* =========================
+   Custom Scrollbar
+========================= */
+
+.personnel-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.personnel-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.personnel-list::-webkit-scrollbar-thumb {
+    background: #B8BBA8;
+    border-radius: 10px;
+}
+
+.personnel-list::-webkit-scrollbar-thumb:hover {
+    background: #8F956F;
+}
+
+/* Firefox */
+
+.personnel-list {
+    scrollbar-width: thin;
+    scrollbar-color:
+        #B8BBA8
+        transparent;
+}
+
+/* =========================
+   Person
+========================= */
+
+.personnel-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 58px;
+    padding: 8px 0;
+    border-bottom: 1px solid #EEEDE5;
+    cursor: pointer;
+}
+
+.personnel-item:last-child {
+    border-bottom: 0;
+}
+
+/* =========================
+   Avatar
+========================= */
+
+.personnel-avatar {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #E7E5CB;
+    color: #596B45;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.personnel-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* =========================
+   Information
+========================= */
+
+.personnel-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.personnel-name {
+    overflow: hidden;
+    color: #343A32;
+    font-size: 1.3rem;
+    line-height: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.personnel-department {
+    overflow: hidden;
+    margin-top: 1px;
+    color: #7B8177;
+    font-size: 1.1rem;
+    line-height: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* =========================
+   Checkbox
+========================= */
+
+.personnel-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin: 0;
+    border: 1px solid #C4C8BE;
+    border-radius: 5px;
+    background: #FFFDF6;
+    cursor: pointer;
+    position: relative;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+/* Checked */
+
+.personnel-checkbox:checked {
+    background: #3F421A;
+    border-color: #3F421A;
+}
+
+/* Check Icon */
+
+.personnel-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 9px;
+    left: 6px;
+    top: 2px;
+    border: solid #FFFFFF;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Hover */
+
+.personnel-checkbox:hover {
+    border-color: #7E823D;
+}
+
+.personnel-checkbox:checked:hover {
+    border-color: #3F421A;
+    background: #4A5D23;
+}
+
+/* =========================
+   Empty
+========================= */
+
+.personnel-empty {
+    margin: 8px 0 12px;
+    color: #8A8E85;
+    font-size: 1.2rem;
+    line-height: 18px;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 575px) {
+
+    .assign-personnel-header {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .personnel-section {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .personnel-search-wrapper {
+        margin-left: 14px;
+        margin-right: 14px;
+    }
+
+}
