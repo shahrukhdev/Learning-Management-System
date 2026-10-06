@@ -1,0 +1,222 @@
+/* ================================
+   Sessions Wrapper
+================================ */
+
+.hifz-student-sessions {
+    width: 100%;
+}
+
+/* ================================
+   Session Card
+================================ */
+
+.hifz-session-card {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 24px;
+    min-height: 110px;
+    background: #FFFDF6;
+    border: 1px solid #C4C8BE;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+/* ================================
+   Left Side
+================================ */
+
+.hifz-session-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ================================
+   Date
+================================ */
+
+.hifz-session-date {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 24px;
+    color: #444841;
+}
+
+/* ================================
+   Rating
+================================ */
+
+.hifz-session-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    min-width: 110px;
+    max-width: 110px;
+}
+
+/* ================================
+   Rating Label
+================================ */
+
+.hifz-session-rating-label {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 24px;
+}
+
+/* ================================
+   Rating Symbol
+================================ */
+
+.hifz-session-rating-symbol {
+    font-size: 1.2rem;
+    line-height: 13px;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+/* ================================
+   Strong
+================================ */
+
+.hifz-session-strong
+.hifz-session-rating {
+    background: #E3E8DD;
+}
+
+.hifz-session-strong
+.hifz-session-rating-label,
+.hifz-session-strong
+.hifz-session-rating-symbol {
+    color: #354B36;
+}
+
+/* ================================
+   Good
+================================ */
+
+.hifz-session-good
+.hifz-session-rating {
+    background: #F0EEDB;
+}
+
+.hifz-session-good
+.hifz-session-rating-label,
+.hifz-session-good
+.hifz-session-rating-symbol {
+    color: #735C00;
+}
+
+/* ================================
+   Needs Work
+================================ */
+
+.hifz-session-needs-work
+.hifz-session-rating {
+    background: #F3E7D3;
+}
+
+.hifz-session-needs-work
+.hifz-session-rating-label,
+.hifz-session-needs-work
+.hifz-session-rating-symbol {
+    color: #9A6B27;
+}
+
+/* ================================
+   Weak
+================================ */
+
+.hifz-session-weak
+.hifz-session-rating {
+    background: #F1DDDD;
+}
+
+.hifz-session-weak
+.hifz-session-rating-label,
+.hifz-session-weak
+.hifz-session-rating-symbol {
+    color: #A04444;
+}
+
+/* ================================
+   Content
+================================ */
+
+.hifz-session-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* ================================
+   Portion
+================================ */
+
+.hifz-session-portion {
+    font-family: var(--font-amiri);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.8rem;
+    line-height: 24px;
+    color: #191D18;
+}
+
+/* ================================
+   Description
+================================ */
+
+.hifz-session-description {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 24px;
+    color: #444841;
+}
+
+/* ================================
+   Mistakes
+================================ */
+
+.hifz-session-mistakes {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 20px;
+    color: #BA1A1A;
+}
+
+.hifz-session-mistakes span:nth-child(2) {
+    font-weight: 500;
+}
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 575px) {
+
+    .hifz-session-date {
+        font-size: 9px;
+    }
+
+    .hifz-session-rating {
+        padding: 4px 5px;
+    }
+
+    .hifz-session-rating-label,
+    .hifz-session-rating-symbol {
+        font-size: 9px;
+    }
+}

@@ -60,17 +60,21 @@ const manzilSurahOptions: SelectOption[] = [
 
 const strengthOptions: SelectOption[] = [
     {
+        value: "strong",
+        label: "Strong ★★★",
+    },
+    {
         value: "good",
         label: "Good ★★",
     },
     {
-        value: "excellent",
-        label: "Excellent ★★★",
+        value: "needs-work",
+        label: "Needs Word ★",
     },
     {
-        value: "needs-practice",
-        label: "Needs Practice ★",
-    },
+        value: "Weak",
+        label: "Weak ✗",
+    }
 ];
 
 const manzilStrengthOptions: SelectOption[] = [

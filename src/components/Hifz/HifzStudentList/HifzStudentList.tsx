@@ -2,7 +2,7 @@ import "../../Attendance/AttendanceStudentList/AttendanceStudentList.css";
 import "./HifzStudentList.css";
 import type { AttendanceStatus, Student } from "../../Attendance/Attendance.types";
 
-import { Check, ShieldAlert, X } from "lucide-react";
+import { Check } from "lucide-react";
 import FilterBar from "../../FilterBar/FilterBar";
 
 import { useState } from "react";
@@ -68,37 +68,17 @@ const HifzStudentList = ({
                                 >
 
                                     {/* Attendance Status Icon */}
+                                    {/* Student Selection */}
                                     <div className="student-select-checkbox">
-
-                                        <span
-                                            className={`selected-icon ${status}`}
-                                        >
-
-                                            {status === "present" && (
-                                                <Check
-                                                    color="#fff"
-                                                    size={14}
-                                                    strokeWidth={2.5}
-                                                />
-                                            )}
-
-                                            {status === "late" && (
-                                                <ShieldAlert
-                                                    color="#424242"
-                                                    size={14}
-                                                    strokeWidth={2.5}
-                                                />
-                                            )}
-
-                                            {status === "absent" && (
-                                                <X
-                                                    color="#fff"
-                                                    size={14}
-                                                    strokeWidth={2.5}
-                                                />
-                                            )}
-
-                                        </span>
+                                        {isSelected && (
+                                            <span className="selected-icon">
+                                                    <Check
+                                                        color="#fff"
+                                                        size={14}
+                                                        strokeWidth={2.5}
+                                                    />
+                                            </span>
+                                        )}
 
                                     </div>
 

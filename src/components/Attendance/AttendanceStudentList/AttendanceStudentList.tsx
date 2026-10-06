@@ -1,6 +1,6 @@
 import "./AttendanceStudentList.css";
 import type { AttendanceStatus, Student } from "../Attendance.types";
-import { Check, ShieldAlert, X } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface AttendanceStudentListProps {
     students: Student[];
@@ -87,20 +87,16 @@ const AttendanceStudentList = ({
 
                                 {/* Student Selection */}
                                 <div className="student-select-checkbox">
-                                    <span className={`selected-icon ${status}`}>
+                                    {isSelected && (
+                                        <span className="selected-icon">
+                                                <Check
+                                                    color="#fff"
+                                                    size={14}
+                                                    strokeWidth={2.5}
+                                                />
+                                        </span>
+                                    )}
 
-                                        {status === "present" && (
-                                            <Check color="#fff" size={14} strokeWidth={2.5} />
-                                        )}
-
-                                        {status === "late" && (
-                                            <ShieldAlert color="##424242" size={14} strokeWidth={2.5} />
-                                        )}
-
-                                        {status === "absent" && (
-                                            <X color="#fff" size={14} strokeWidth={2.5} />
-                                        )}
-                                    </span>
                                 </div>
 
                                 {/* Small Number / Badge */}

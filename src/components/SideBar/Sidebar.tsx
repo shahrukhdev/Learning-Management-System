@@ -42,6 +42,11 @@ const navItems = [
         path: "/dashboard/students",
         icon: NavIcon5,
     },
+    {
+        title: "Progress",
+        path: "/dashboard/progress",
+        icon: NavIcon5,
+    },
 ];
 
 const systemItems = [

@@ -139,7 +139,7 @@
 .selected-icon {
     width: 20px;
     height: 20px;
-    background: transparent;
+    background: #4D822C;
     border-radius: 50px;
     display: flex;
     justify-content: center;
@@ -147,22 +147,6 @@
     position: absolute;
     top: 10px;
     right: 10px;
-}
-
-.selected-icon.present {
-    background: #4D822C;
-}
-
-.selected-icon.late {
-    background: #F5C72E;
-}
-
-.selected-icon.late svg {
-    stroke: #424242;
-}
-
-.selected-icon.absent {
-    background: #CF0015;
 }
 
 .attendance-btn.save-btn {

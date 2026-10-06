@@ -4,6 +4,8 @@ import HifzStudentHeader from "./HifzStudentHeader/HifzStudentHeader";
 import HifzStudentStates from "./HifzStudentStates/HifzStudentStates";
 import HifzStudentTabs, { type HifzStudentTab } from "./HifzTabs/HifzTabs";
 import HifzStudentLog from "./HifzStudentLog/HifzStudentLog";
+import HifzStudentSessions from "./HifzStudentSessions/HifzStudentSessions";
+import QuranMap from "./QuranMap/QuranMap";
 
 
 const HifzStudentDetails = () => {
@@ -35,10 +37,7 @@ const HifzStudentDetails = () => {
                 )}
 
                 {activeTab === "quran-map" && (
-                    <div className="text-center">
-                        <h1>Quran Map</h1>
-                        <h4>Coming Soon!</h4>
-                    </div>
+                    <QuranMap />
                 )}
 
                 {activeTab === "surah-list" && (
@@ -49,10 +48,7 @@ const HifzStudentDetails = () => {
                 )}
 
                 {activeTab === "sessions" && (
-                    <div className=" text-center">
-                        <h1>Sessions</h1>
-                        <h4>Coming Soon!</h4>
-                    </div>
+                    <HifzStudentSessions /> 
                 )}
 
             </div>

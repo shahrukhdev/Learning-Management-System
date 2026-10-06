@@ -1,0 +1,223 @@
+/* =====================================================
+   QURAN MAP
+===================================================== */
+
+.quran-map-content {
+    width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    background: #FFFDF6;
+    border: 1px solid #C4C8BE;
+    border-radius: 12px;
+}
+
+/* =====================================================
+   TOP LEGEND
+===================================================== */
+
+.quran-map-toolbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.quran-map-legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.quran-map-legend span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 20px;
+    color: #444841;
+}
+
+.map-legend-dot {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.map-legend-dot.memorised {
+    background: #33452F;
+}
+
+.map-legend-dot.progress {
+    background: #735C00;
+}
+
+.map-legend-dot.not-started {
+    background: #E0E4DC;
+    border: 1px solid #C4C8BE;
+}
+
+.tap-to-edit {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 20px;
+    color: #444841;
+}
+
+/* =====================================================
+   JUZ
+===================================================== */
+
+.juz-map-row {
+    margin-bottom: 24px;
+}
+
+.juz-label {
+    margin-bottom: 8px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 16px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #444841;
+}
+
+.juz-surahs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+}
+
+/* =====================================================
+   SURAH NUMBER
+===================================================== */
+
+.quran-surah-number {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dfe1d8;
+    border-radius: 4px;
+    background: #fffef9;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 24px;
+    text-align: center;
+    color: #444841;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.quran-surah-number:hover {
+    transform: translateY(-1px);
+    border-color: #8c9b75;
+}
+
+/* =====================================================
+   MEMORISED
+===================================================== */
+
+.quran-surah-number.memorised {
+    border-color: #33452F;
+    background: #33452F;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* =====================================================
+   IN PROGRESS
+===================================================== */
+
+.quran-surah-number.progress {
+    border-color: #735C00;
+    background: #735C00;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* =====================================================
+   NOT STARTED
+===================================================== */
+
+.quran-surah-number.not-started {
+    background: #E0E4DC;
+    border-color: #C4C8BE;
+    color: #626960;
+    font-weight: 500;
+}
+
+/* =====================================================
+   TABLET / MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .quran-map-content {
+        padding: 18px;
+    }
+
+    .quran-map-toolbar {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .quran-map-legend {
+        flex-wrap: wrap;
+        gap: 12px 18px;
+    }
+
+    .quran-map-legend span,
+    .tap-to-edit {
+        font-size: 1.2rem;
+    }
+
+    .quran-surah-number {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+    }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 430px) {
+
+    .quran-map-content {
+        padding: 14px;
+    }
+
+    .quran-map-toolbar {
+        flex-direction: column;
+    }
+
+    .quran-map-legend {
+        width: 100%;
+    }
+
+    .tap-to-edit {
+        align-self: flex-end;
+    }
+
+    .quran-surah-number {
+        width: 30px;
+        height: 30px;
+        font-size: 1.1rem;
+    }
+}

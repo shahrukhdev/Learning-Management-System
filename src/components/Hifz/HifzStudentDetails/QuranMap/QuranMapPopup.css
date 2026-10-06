@@ -1,0 +1,144 @@
+/* =====================================================
+   QURAN MAP POPUP
+===================================================== */
+
+/* ================================
+   Popup Box
+================================ */
+
+.quran-map-popup-box {
+    max-width: 630px;
+}
+
+/* ================================
+   Arabic
+================================ */
+
+.quran-popup-arabic {
+    margin-top: 4px;
+    text-align: center;
+    color: #0B4230;
+    font-size: 3rem;
+    line-height: 1.5;
+}
+
+/* ================================
+   Surah Meta
+================================ */
+
+.quran-popup-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 4px;
+    color: #3E4A3E;
+    font-size: 1.2rem;
+    line-height: 18px;
+}
+
+/* ================================
+   Status Options
+================================ */
+
+.quran-popup-status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.quran-popup-status button {
+    min-height: 43px;
+    padding: 9px 12px;
+    border: 1px solid #DFDDBF;
+    border-radius: 10px;
+    background: #FFFDF6;
+    color: #667168;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.quran-popup-status button:hover {
+    border-color: #AEB6A9;
+    background: #F1F0E5;
+    transform: translateY(-1px);
+}
+
+/* ================================
+   Active Status
+================================ */
+
+.quran-popup-status button.active {
+    font-weight: 600;
+}
+
+/* ================================
+   Memorised
+================================ */
+
+.quran-popup-status button.active.memorised {
+    border-color: #496B39;
+    background: #E7EEDC;
+    color: #3F5E32;
+}
+
+/* ================================
+   In Progress
+================================ */
+
+.quran-popup-status button.active.in-progress {
+    border-color: #9A7D10;
+    background: #F5F0DC;
+    color: #78610B;
+}
+
+/* ================================
+   Not Started
+================================ */
+
+.quran-popup-status button.active.not-started {
+    border-color: #AEB3AA;
+    background: #ECEDE8;
+    color: #60665E;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .quran-popup-arabic {
+        font-size: 2.7rem;
+    }
+
+    .quran-popup-status {
+        gap: 8px;
+    }
+
+}
+
+
+@media (max-width: 575px) {
+
+    .quran-popup-arabic {
+        font-size: 2.4rem;
+    }
+
+    .quran-popup-status {
+        grid-template-columns: 1fr;
+    }
+
+    .quran-popup-status button {
+        width: 100%;
+    }
+
+}
