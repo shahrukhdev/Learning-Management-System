@@ -1,0 +1,218 @@
+/* =========================================================
+   SURAH LIST
+========================================================= */
+
+.surah-list-card {
+    margin-top: 0;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.surah-list-wrapper {
+    max-height: 460px;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.surah-list-table {
+    min-width: 750px;
+}
+
+.data-table td:last-child {
+    text-align: start;
+}
+
+.surah-list-table .data-table th:last-child {
+    text-align: start;
+}
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+.surah-number-column {
+    width: 55px;
+}
+
+.surah-arabic-column {
+    width: 150px;
+}
+
+.surah-juz-column {
+    width: 75px;
+}
+
+.surah-ayahs-column {
+    width: 80px;
+}
+
+.surah-status-column {
+    width: 180px;
+}
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.surah-number {
+    color: #596157 !important;
+}
+
+/* =========================================================
+   SURAH NAME
+========================================================= */
+
+.surah-name {
+    color: #343b34 !important;
+    font-weight: 500 !important;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   ARABIC
+========================================================= */
+
+.surah-arabic {
+    font-family: var(--font-amiri);
+    font-size: 1.4rem !important;
+    color: #30372f !important;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   JUZ
+========================================================= */
+
+.surah-juz {
+    color: #555d54 !important;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   AYAHS
+========================================================= */
+
+.surah-ayahs {
+    color: #555d54 !important;
+}
+
+/* =========================================================
+   STATUS CELL
+========================================================= */
+
+.surah-status-cell {
+    white-space: nowrap;
+    text-align: left;
+}
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+.surah-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    line-height: 18px;
+    font-weight: 500;
+    white-space: nowrap;
+    height: inherit;
+}
+
+/* =========================================================
+   MEMORISED
+========================================================= */
+
+.surah-status-badge.memorised {
+    background: #e5e8df;
+    border: 1px solid #d0d5c8;
+    color: #4a5d45;
+}
+
+/* =========================================================
+   IN PROGRESS
+========================================================= */
+
+.surah-status-badge.progress {
+    background: #f8f0d5;
+    border: 1px solid #dfc978;
+    color: #806600;
+}
+
+/* =========================================================
+   NOT STARTED
+========================================================= */
+
+.surah-status-badge.not-started {
+    background: #f0f0ea;
+    border: 1px solid #ecece5;
+    color: #898d85;
+}
+
+/* =========================================================
+   STATUS DOT
+========================================================= */
+
+.surah-status-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #a4a79f;
+}
+
+/* =========================================================
+   SCROLL TEXT
+========================================================= */
+
+.surah-list-scroll-text {
+    display: none;
+    padding: 7px 10px;
+    text-align: left;
+    color: #8a8d86;
+    font-size: 1rem;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.surah-list-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.surah-list-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.surah-list-wrapper::-webkit-scrollbar-thumb {
+    background: #c4c8be;
+    border-radius: 10px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .surah-list-wrapper {
+        max-height: 430px;
+    }
+
+    .surah-list-table {
+        min-width: 720px;
+    }
+
+}

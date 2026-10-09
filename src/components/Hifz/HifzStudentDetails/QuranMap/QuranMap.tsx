@@ -1,44 +1,43 @@
 import { useMemo, useState } from "react";
-import "./QuranMap.css";
-
-import { DEFAULT_STATUS, JUZ_DATA, SURAH_DATA, type Surah, type SurahStatus } from "./QuranMap.data";
-
+import type { Dispatch, SetStateAction } from "react";
+import { JUZ_DATA, SURAH_DATA, type Surah, type SurahStatus } from "./QuranMap.data";
 import QuranMapPopup from "./QuranMapPopup";
+import "./QuranMap.css";
 
 interface SelectedSurah {
     surah: Surah;
     juzNumber: number;
 }
 
-export default function QuranMap() {
+interface QuranMapProps {
+    statuses: Record<number, SurahStatus>;
+    setStatuses: Dispatch<SetStateAction<Record<number, SurahStatus>>>;
+}
 
-    const [statuses, setStatuses] = useState<Record<number, SurahStatus>>(DEFAULT_STATUS);
+export default function QuranMap({
+    statuses,
+    setStatuses,
+}: QuranMapProps) {
+    const [selectedSurah, setSelectedSurah] =
+        useState<SelectedSurah | null>(null);
 
-    const [selectedSurah, setSelectedSurah] = useState<SelectedSurah | null>(null);
+    const [selectedStatus, setSelectedStatus] =
+        useState<SurahStatus>("not-started");
 
-    const [selectedStatus, setSelectedStatus] = useState<SurahStatus>("not-started");
-
-    /*
-     * Create a quick lookup map:
-     * Surah number -> Surah data
-     */
     const surahMap = useMemo(() => {
         return new Map(
-            SURAH_DATA.map((surah) => [surah.number, surah])
+            SURAH_DATA.map((surah) => [
+                surah.number,
+                surah,
+            ])
         );
     }, []);
 
-    /*
-     * Get current status of a Surah
-     */
     const getStatus = (surahNumber: number): SurahStatus => {
         return statuses[surahNumber] ?? "not-started";
     };
 
-    /*
-     * Open popup
-     */
-    const handleSurahClick = ( surah: Surah, juzNumber: number ) => {
+    const handleSurahClick = (surah: Surah, juzNumber: number) => {
         setSelectedSurah({
             surah,
             juzNumber,
@@ -49,9 +48,6 @@ export default function QuranMap() {
         );
     };
 
-    /*
-     * Update Surah status
-     */
     const handleUpdate = () => {
         if (!selectedSurah) return;
 
@@ -63,9 +59,6 @@ export default function QuranMap() {
         setSelectedSurah(null);
     };
 
-    /*
-     * Close popup
-     */
     const handleClosePopup = () => {
         setSelectedSurah(null);
     };
@@ -73,15 +66,8 @@ export default function QuranMap() {
     return (
         <>
             <div className="quran-map-content">
-
-                {/* ================================
-                    TOP LEGEND
-                ================================= */}
-
                 <div className="quran-map-toolbar">
-
                     <div className="quran-map-legend">
-
                         <span>
                             <i className="map-legend-dot memorised" />
                             Memorised
@@ -96,48 +82,36 @@ export default function QuranMap() {
                             <i className="map-legend-dot not-started" />
                             Not Started
                         </span>
-
                     </div>
 
                     <span className="tap-to-edit">
                         Tap to edit
                     </span>
-
                 </div>
 
-
-                {/* ================================
-                    JUZ MAP
-                ================================= */}
-
                 <div className="juz-map">
-
                     {JUZ_DATA.map((juz) => {
-
                         const surahs = juz.surahNumbers
                             .map((number) =>
                                 surahMap.get(number)
                             )
-                            .filter(Boolean) as Surah[];
+                            .filter(
+                                (surah): surah is Surah =>
+                                    surah !== undefined
+                            );
 
                         return (
-                            <div
-                                className="juz-map-row"
-                                key={juz.number}
-                            >
-
+                            <div className="juz-map-row" key={juz.number} >
+                                
                                 <div className="juz-label">
                                     JUZ {juz.number}
                                 </div>
 
                                 <div className="juz-surahs">
-
                                     {surahs.map((surah) => {
-
-                                        const status =
-                                            getStatus(
-                                                surah.number
-                                            );
+                                        const status = getStatus(
+                                            surah.number
+                                        );
 
                                         return (
                                             <button
@@ -156,21 +130,12 @@ export default function QuranMap() {
                                             </button>
                                         );
                                     })}
-
                                 </div>
-
                             </div>
                         );
                     })}
-
                 </div>
-
             </div>
-
-
-            {/* ================================
-                QURAN MAP POPUP
-            ================================= */}
 
             {selectedSurah && (
                 <QuranMapPopup

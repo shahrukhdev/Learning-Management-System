@@ -4,7 +4,7 @@ import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, 
 
 import { useState } from "react";
 
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { studentsAttendanceOverview } from "./AttendanceOverviewTable.data";
 
@@ -105,21 +105,6 @@ const StudentsAttendanceOverviewTable = () => {
                     </span>
 
                 </div>
-
-
-                <button
-                    type="button"
-                    className="attendance-history-button"
-                >
-
-                    View Full History
-
-                    <ArrowRight
-                        size={16}
-                        strokeWidth={2.4}
-                    />
-
-                </button>
 
             </div>
 

@@ -17,7 +17,7 @@ const WelcomeBanner = () => {
                         Assalamu Alaikum, Admin
                     </h1>
                     <p className="welcome-banner-text mb-0">
-                        Tuesday, 28 July 2026 — madrassah ki mojooda soorat-e-haal yeh hai
+                        Tuesday, 28 July 2026 — The Current State of the Madrassah
                     </p>
                     <div className="welcome-banner-actions">
 
