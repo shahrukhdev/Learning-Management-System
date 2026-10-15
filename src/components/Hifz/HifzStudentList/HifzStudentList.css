@@ -11,3 +11,11 @@
 .hifz-section .student-card-wrapper {
     width: calc((100% - 20px) / 3);
 }
+
+.hifz-student-empty {
+    text-align: center;
+    color: #777766;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 15px auto 0;
+}

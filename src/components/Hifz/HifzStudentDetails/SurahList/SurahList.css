@@ -29,7 +29,7 @@
     text-align: start;
 }
 
-.surah-list-table .data-table th:last-child {
+.surah-list-table.data-table th:last-child {
     text-align: start;
 }
 

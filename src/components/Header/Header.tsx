@@ -1,7 +1,7 @@
 import "./Header.css";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Search, User, Settings, LogOut, Check } from "lucide-react";
+import { Bell, Search, User, LogOut, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
@@ -200,21 +200,10 @@ const Header = () => {
 
                                             <div className="profile-dropdown-divider"></div>
 
-                                            <button
-                                                type="button"
-                                                className="profile-dropdown-item"
-                                            >
+                                            <Link to={`/dashboard/system/profile`} className="profile-dropdown-item text-decoration-none">
                                                 <User size={18} />
                                                 <span>Profile</span>
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="profile-dropdown-item"
-                                            >
-                                                <Settings size={18} />
-                                                <span>Settings</span>
-                                            </button>
+                                            </Link>
 
                                             <div className="profile-dropdown-divider"></div>
 
