@@ -17,6 +17,7 @@ import Roles from "../pages/Roles/Roles";
 import CreateNewRole from "../pages/Roles/CreateNewRole/CreateNewRole";
 import EditRole from "../pages/Roles/EditRole/EditRole";
 import Profile from "../pages/Profile/Profile";
+import StudentProgress from "../pages/StudentProgress/StudentProgress";
 
 
 const AppRoutes = () => {
@@ -70,6 +71,15 @@ const AppRoutes = () => {
                     element={<Hifz />}
                 />
 
+                <Route
+                    path="students-progress"
+                    element={<StudentProgress />}
+                />
+
+                <Route
+                    path="profile"
+                    element={<Profile />}
+                />
 
                 {/* System */}
 
@@ -91,11 +101,6 @@ const AppRoutes = () => {
                 <Route
                     path="system/roles/:roleId/edit"
                     element={<EditRole />}
-                />
-
-                <Route
-                    path="system/profile"
-                    element={<Profile />}
                 />
 
             </Route>

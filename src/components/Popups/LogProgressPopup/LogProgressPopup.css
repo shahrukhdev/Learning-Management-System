@@ -1,0 +1,408 @@
+
+.log-progress-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(18, 29, 23, 0.58);
+    backdrop-filter: blur(3px);
+}
+
+.log-progress-popup {
+    width: 100%;
+    max-width: 660px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px;
+    border: 1px solid #d9dcc5;
+    border-radius: 20px;
+    background: #f7f5ec;
+    box-shadow: 0 20px 60px rgba(11, 40, 29, 0.22);
+    color: #26372c;
+}
+
+.log-progress-popup::-webkit-scrollbar {
+    width: 5px;
+}
+
+.log-progress-popup::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #c4c8be;
+}
+
+.log-progress-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.log-progress-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.log-progress-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #e7e5cb;
+    color: #535624;
+}
+
+.log-progress-heading h2 {
+    margin: 0;
+    color: #0b4230;
+    font-family: "AlQalam Nabeel", Georgia, serif;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.log-progress-heading p {
+    margin: 4px 0 0;
+    color: #7a8375;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.log-progress-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #42634f;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.log-progress-close:hover {
+    border-color: #dedfca;
+    background: #e7e5cb;
+}
+
+.log-progress-student-section {
+    padding: 15px;
+    margin-bottom: 23px;
+    border: 1px solid #e0dfce;
+    border-radius: 14px;
+    background: #f0eee2;
+}
+
+.log-progress-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #56624c;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.35px;
+}
+
+.log-progress-select-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.log-progress-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 13px;
+    border: 1px solid #d9dcc8;
+    border-radius: 9px;
+    outline: none;
+    background: #fffdf6;
+    color: #303b30;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.log-progress-input:focus {
+    border-color: #81916a;
+    box-shadow: 0 0 0 3px rgba(83, 86, 36, 0.08);
+}
+
+.log-progress-input::placeholder {
+    color: #9ba395;
+}
+
+.log-progress-select-wrap select {
+    appearance: none;
+    padding-right: 38px;
+    cursor: pointer;
+}
+
+.log-progress-select-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    color: #66775c;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.log-progress-student-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 13px;
+}
+
+.log-progress-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #535624;
+    color: #fffdf6;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.log-progress-student-info > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.log-progress-student-info strong {
+    color: #2e3a2b;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.log-progress-student-info > div span {
+    color: #7c8577;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.log-progress-entries-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.log-progress-entries-heading h3 {
+    margin: 0;
+    color: #27382c;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.log-progress-entries-heading p {
+    margin: 4px 0 0;
+    color: #828a7b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.log-progress-entry-count {
+    flex-shrink: 0;
+    padding: 6px 9px;
+    border: 1px solid #d9dcc5;
+    border-radius: 20px;
+    background: #e9e8d6;
+    color: #535f36;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.log-progress-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.log-progress-entry {
+    padding: 15px;
+    border: 1px solid #e0dfce;
+    border-radius: 13px;
+    background: #fbfaf3;
+}
+
+.log-progress-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.log-progress-entry-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #34452f;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.log-progress-entry-number::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #718047;
+    content: "";
+}
+
+.log-progress-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+}
+
+.log-progress-field {
+    min-width: 0;
+}
+
+.log-progress-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.log-progress-textarea {
+    min-height: 76px;
+    resize: vertical;
+}
+
+.log-progress-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #e4e2d4;
+}
+
+.log-progress-cancel,
+.log-progress-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 19px;
+    border: 1px solid #cbd0bf;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.log-progress-cancel {
+    background: transparent;
+    color: #56604f;
+}
+
+.log-progress-cancel:hover {
+    background: #eae9dc;
+}
+
+.log-progress-save {
+    border-color: #535624;
+    background: #535624;
+    color: #fffdf6;
+}
+
+.log-progress-save:hover:not(:disabled) {
+    border-color: #41451b;
+    background: #41451b;
+    transform: translateY(-1px);
+}
+
+.log-progress-save:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .log-progress-overlay {
+        padding: 10px;
+    }
+
+    .log-progress-popup {
+        max-height: calc(100vh - 20px);
+        padding: 17px;
+        border-radius: 16px;
+    }
+
+    .log-progress-heading {
+        gap: 9px;
+    }
+
+    .log-progress-heading-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .log-progress-heading h2 {
+        font-size: 21px;
+    }
+
+    .log-progress-heading p {
+        font-size: 11px;
+    }
+
+    .log-progress-student-section {
+        padding: 12px;
+    }
+
+    .log-progress-entry {
+        padding: 12px;
+    }
+
+    .log-progress-fields-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .log-progress-field.full-width {
+        grid-column: auto;
+    }
+
+    .log-progress-actions {
+        position: sticky;
+        bottom: -17px;
+        padding: 13px 0 3px;
+        background: #f7f5ec;
+    }
+
+    .log-progress-cancel,
+    .log-progress-save {
+        flex: 1;
+        padding-inline: 10px;
+    }
+}

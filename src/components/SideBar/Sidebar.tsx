@@ -38,13 +38,8 @@ const navItems = [
         icon: NavIcon4,
     },
     {
-        title: "Students",
-        path: "/dashboard/students",
-        icon: NavIcon5,
-    },
-    {
-        title: "Progress",
-        path: "/dashboard/progress",
+        title: "Students Progress",
+        path: "/dashboard/students-progress",
         icon: NavIcon5,
     },
 ];

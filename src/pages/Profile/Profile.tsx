@@ -1,14 +1,7 @@
 
 import { useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import {
-    Camera,
-    Eye,
-    EyeOff,
-    Mail,
-    Phone,
-    UserRound
-} from "lucide-react";
+import { Camera, Eye, EyeOff, Mail, Phone, UserRound } from "lucide-react";
 
 import "./Profile.css";
 import SEO from "../../components/Seo/SEO";
@@ -38,8 +31,7 @@ const INITIAL_PROFILE: ProfileData = {
 };
 
 const Profile = () => {
-    const [profile, setProfile] =
-        useState<ProfileData>(INITIAL_PROFILE);
+    const [profile, setProfile] = useState<ProfileData>(INITIAL_PROFILE);
 
     const [form, setForm] = useState<ProfileFormData>({
         fullName: INITIAL_PROFILE.fullName,
@@ -50,10 +42,8 @@ const Profile = () => {
     });
 
     const [avatarPreview, setAvatarPreview] = useState("");
-    const [showCurrentPassword, setShowCurrentPassword] =
-        useState(false);
-    const [showNewPassword, setShowNewPassword] =
-        useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -123,13 +113,10 @@ const Profile = () => {
             profilePicture: fileInputRef.current?.files?.[0] ?? null,
         };
 
-        // Console mein form ka submitted data dekhein.
         console.log("Profile form submitted:", submittedData);
 
-        // Screen par updated profile show karein.
         setProfile(updatedProfile);
 
-        // Password fields save ke baad clear kar dein.
         setForm((previous) => ({
             ...previous,
             currentPassword: "",
