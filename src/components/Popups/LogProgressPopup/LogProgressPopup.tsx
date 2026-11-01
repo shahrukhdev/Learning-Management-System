@@ -1,11 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-import {
-    X,
-    BookOpen,
-    ChevronDown,
-} from "lucide-react";
+import { X, BookOpen, ChevronDown } from "lucide-react";
 
 import "./LogProgressPopup.css";
 
@@ -62,6 +58,7 @@ const GRADES = [
 ];
 
 const getInitials = (name: string) => {
+
     const words = name.trim().split(/\s+/).filter(Boolean);
 
     if (words.length === 0) return "";
@@ -76,12 +73,8 @@ const getInitials = (name: string) => {
     ).toUpperCase();
 };
 
-const LogProgressPopup = ({
-    students,
-    selectedStudentId,
-    onClose,
-    onSave,
-}: LogProgressPopupProps) => {
+const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogProgressPopupProps) => {
+
     const [subject, setSubject] = useState("Quran");
     const [lesson, setLesson] = useState("");
     const [grade, setGrade] = useState("A");
@@ -112,22 +105,22 @@ const LogProgressPopup = ({
     };
 
     return (
-        <div
-            className="log-progress-overlay"
+        
+        <div className="log-progress-overlay"
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget) {
                     onClose();
                 }
             }}
         >
-            <section
+            <div
                 className="log-progress-popup"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="log-progress-title"
             >
                 {/* Header */}
-                <header className="log-progress-header">
+                <div className="log-progress-header">
                     <div className="log-progress-heading">
                         <span className="log-progress-heading-icon">
                             <BookOpen size={20} />
@@ -152,7 +145,7 @@ const LogProgressPopup = ({
                     >
                         <X size={20} />
                     </button>
-                </header>
+                </div>
 
                 <form
                     className="log-progress-form"
@@ -160,9 +153,6 @@ const LogProgressPopup = ({
                 >
                     {/* Selected Student */}
                     <div className="log-progress-student-section">
-                        <label className="log-progress-label">
-                            Selected Student
-                        </label>
 
                         {selectedStudent ? (
                             <div className="log-progress-student-info">
@@ -202,9 +192,6 @@ const LogProgressPopup = ({
                             </p>
                         </div>
 
-                        <span className="log-progress-entry-count">
-                            1 Entry
-                        </span>
                     </div>
 
                     <div className="log-progress-entry">
@@ -325,7 +312,7 @@ const LogProgressPopup = ({
                     </div>
 
                     {/* Actions */}
-                    <footer className="log-progress-actions">
+                    <div className="log-progress-actions">
                         <button
                             type="button"
                             className="log-progress-cancel"
@@ -341,9 +328,9 @@ const LogProgressPopup = ({
                         >
                             Save Progress
                         </button>
-                    </footer>
+                    </div>
                 </form>
-            </section>
+            </div>
         </div>
     );
 };

@@ -1,19 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import {
-    BookOpen,
-    CheckCircle2,
-    Eye,
-    Plus,
-    UserRound,
-} from "lucide-react";
+import { BookOpen, CheckCircle2, Eye, Plus, UserRound } from "lucide-react";
 
 import SEO from "../../components/Seo/SEO";
 
-import LogProgressPopup, {
-    type ProgressStudent,
-    type LogProgressPayload,
-} from "../../components/Popups/LogProgressPopup/LogProgressPopup";
+import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../components/Popups/LogProgressPopup/LogProgressPopup";
 
 import "./StudentProgress.css";
 
@@ -30,7 +22,7 @@ interface StudentProgressData {
     absent: number;
 }
 
-const INITIAL_STUDENTS: StudentProgressData[] = [
+export const INITIAL_STUDENTS: StudentProgressData[] = [
     {
         id: 1,
         name: "Ahmad Al-Hassan",
@@ -161,15 +153,14 @@ const getInitials = (name: string) => {
 };
 
 const StudentProgress = () => {
-    const [students] = useState<StudentProgressData[]>(
-        INITIAL_STUDENTS
-    );
+
+    const navigate = useNavigate();
+
+    const [students] = useState<StudentProgressData[]>( INITIAL_STUDENTS );
 
     const [showLogProgress, setShowLogProgress] = useState(false);
 
-    const [selectedStudentId, setSelectedStudentId] = useState<
-        number | null
-    >(null);
+    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
 
     /*
      * Popup ke liye student data ka format.
@@ -223,9 +214,12 @@ const StudentProgress = () => {
     };
 
     const handleViewProgress = (student: StudentProgressData) => {
-        console.log("View Progress - Selected Student:", student);
-
-        // View Progress page/popup baad mein connect kar sakte hain.
+        navigate(`/dashboard/students-progress/${student.id}`, {
+            state: {
+                student,
+                progressEntries,
+            },
+        });
     };
 
     return (
@@ -265,7 +259,7 @@ const StudentProgress = () => {
                         const hasImage = Boolean(student.image);
 
                         return (
-                            <article
+                            <div
                                 className="student-progress-card"
                                 key={student.id}
                             >
@@ -387,7 +381,7 @@ const StudentProgress = () => {
                                         <span>View Progress</span>
                                     </button>
                                 </div>
-                            </article>
+                            </div>
                         );
                     })}
                 </div>
