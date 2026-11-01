@@ -18,6 +18,7 @@ import CreateNewRole from "../pages/Roles/CreateNewRole/CreateNewRole";
 import EditRole from "../pages/Roles/EditRole/EditRole";
 import Profile from "../pages/Profile/Profile";
 import StudentProgress from "../pages/StudentProgress/StudentProgress";
+import StudentProgressDetails from "../pages/StudentProgress/StudentProgressDetails/StudentProgressDetails";
 
 
 const AppRoutes = () => {
@@ -74,6 +75,11 @@ const AppRoutes = () => {
                 <Route
                     path="students-progress"
                     element={<StudentProgress />}
+                />
+
+                <Route
+                    path="students-progress/:studentId"
+                    element={<StudentProgressDetails /> }
                 />
 
                 <Route

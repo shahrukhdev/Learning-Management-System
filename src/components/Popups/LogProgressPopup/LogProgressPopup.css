@@ -63,16 +63,15 @@
 .log-progress-heading h2 {
     margin: 0;
     color: #0b4230;
-    font-family: "AlQalam Nabeel", Georgia, serif;
-    font-size: 25px;
+    font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.3;
 }
 
 .log-progress-heading p {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
     color: #7a8375;
-    font-size: 12px;
+    font-size: 1.2rem;
     line-height: 1.5;
 }
 
@@ -109,7 +108,7 @@
     display: block;
     margin-bottom: 7px;
     color: #56624c;
-    font-size: 11px;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: 0.35px;
 }
@@ -131,7 +130,7 @@
     background: #fffdf6;
     color: #303b30;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 1.3rem;
     line-height: 1.5;
     transition:
         border-color 0.2s ease,
@@ -165,8 +164,7 @@
 .log-progress-student-info {
     display: flex;
     align-items: center;
-    gap: 11px;
-    margin-top: 13px;
+    gap: 10px;
 }
 
 .log-progress-avatar {
@@ -180,60 +178,45 @@
     background: #535624;
     color: #fffdf6;
     font-family: Georgia, serif;
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 700;
 }
 
 .log-progress-student-info > div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 0;
     min-width: 0;
 }
 
 .log-progress-student-info strong {
     color: #2e3a2b;
-    font-size: 13px;
+    font-size: 1.4rem;
     overflow-wrap: anywhere;
 }
 
 .log-progress-student-info > div span {
     color: #7c8577;
-    font-size: 11px;
+    font-size: 1.2rem;
     overflow-wrap: anywhere;
 }
 
 .log-progress-entries-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
     margin-bottom: 12px;
 }
 
 .log-progress-entries-heading h3 {
     margin: 0;
     color: #27382c;
-    font-size: 15px;
+    font-size: 1.8rem;
     font-weight: 700;
 }
 
 .log-progress-entries-heading p {
     margin: 4px 0 0;
     color: #828a7b;
-    font-size: 11px;
+    font-size: 1.1rem;
     line-height: 1.5;
-}
-
-.log-progress-entry-count {
-    flex-shrink: 0;
-    padding: 6px 9px;
-    border: 1px solid #d9dcc5;
-    border-radius: 20px;
-    background: #e9e8d6;
-    color: #535f36;
-    font-size: 10px;
-    font-weight: 700;
 }
 
 .log-progress-entries {
@@ -262,7 +245,7 @@
     align-items: center;
     gap: 7px;
     color: #34452f;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 700;
 }
 
@@ -313,7 +296,7 @@
     border: 1px solid #cbd0bf;
     border-radius: 9px;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 700;
     cursor: pointer;
     transition:
@@ -369,11 +352,11 @@
     }
 
     .log-progress-heading h2 {
-        font-size: 21px;
+        font-size: 2.1rem;
     }
 
     .log-progress-heading p {
-        font-size: 11px;
+        font-size: 1.1rem;
     }
 
     .log-progress-student-section {
