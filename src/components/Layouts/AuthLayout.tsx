@@ -1,4 +1,7 @@
+
 import "../../pages/Auth/Auth.css";
+
+import type { ReactNode } from "react";
 
 import Copyright from "../Copyright";
 
@@ -7,13 +10,25 @@ import TopImg2 from "../../assets/images/auth-top-img-2.png";
 import AuthLogo from "../../assets/images/auth-logo.png";
 import CenterBr from "../../assets/images/center-br-img.png";
 
+interface AuthLayoutProps {
+    children: ReactNode;
+    sectionClassName?: string;
+    mainClassName?: string;
+}
 
-const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
+const AuthLayout = ({
+    children,
+    sectionClassName = "",
+    mainClassName = ""
+}: AuthLayoutProps) => {
+
     return (
         <main className={`auth-main ${mainClassName}`}>
+
             <section className={`auth-section ${sectionClassName}`}>
 
                 <div className="auth-top-imgs">
+
                     <img
                         className="auth-top-img top-img-1"
                         src={TopImg1}
@@ -25,15 +40,19 @@ const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
                         src={TopImg2}
                         alt=""
                     />
+
                 </div>
 
                 <div className="container">
+
                     <div className="row">
+
                         <div className="col-12">
 
                             <div className="login-main">
 
                                 <div className="login-top text-center">
+
                                     <img
                                         className="img-fluid auth-logo"
                                         src={AuthLogo}
@@ -47,6 +66,7 @@ const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
                                         src={CenterBr}
                                         alt=""
                                     />
+
                                 </div>
 
                                 {children}
@@ -58,13 +78,15 @@ const AuthLayout = ({children, sectionClassName="", mainClassName=""}) => {
                             </div>
 
                         </div>
+
                     </div>
+
                 </div>
 
             </section>
+
         </main>
     );
 };
 
 export default AuthLayout;
-
