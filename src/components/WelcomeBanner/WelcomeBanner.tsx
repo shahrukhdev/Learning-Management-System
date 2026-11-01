@@ -21,12 +21,12 @@ const WelcomeBanner = () => {
                     </p>
                     <div className="welcome-banner-actions">
 
-                        <Link to="/dashboard/attendance" className="welcome-banner-btn">
+                        <Link to="/admin/dashboard/attendance" className="welcome-banner-btn">
                             <SquareCheckBig color="#0E5A3D" size={16} strokeWidth={2.5} />
                             Mark Attendance
                         </Link>
 
-                        <Link to="/dashboard/notices" className="welcome-banner-btn">
+                        <Link to="/admin/dashboard/notices" className="welcome-banner-btn">
                             <Bell color="#0E5A3D" size={16} strokeWidth={2.5} />
                             View Notices
                         </Link>

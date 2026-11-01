@@ -200,7 +200,7 @@ const Header = () => {
 
                                             <div className="profile-dropdown-divider"></div>
 
-                                            <Link to={`/dashboard/profile`} className="profile-dropdown-item text-decoration-none">
+                                            <Link to={`/admin/dashboard/profile`} className="profile-dropdown-item text-decoration-none">
                                                 <User size={18} />
                                                 <span>Profile</span>
                                             </Link>

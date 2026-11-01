@@ -94,7 +94,7 @@ const Sidebar = () => {
 
             <div className="sidebar-logo text-center">
 
-                <Link to="/dashboard">
+                <Link to="/admin/dashboard">
 
                     <img
                         className="img-fluid"
