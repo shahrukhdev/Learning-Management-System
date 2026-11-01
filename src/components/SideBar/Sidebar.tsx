@@ -18,28 +18,28 @@ import { useEffect, useState } from "react";
 const navItems = [
     {
         title: "Dashboard",
-        path: "/dashboard",
+        path: "/admin/dashboard",
         icon: NavIcon1,
         end: true,
     },
     {
         title: "Attendance",
-        path: "/dashboard/attendance",
+        path: "/admin/dashboard/attendance",
         icon: NavIcon2,
     },
     {
         title: "Hifz",
-        path: "/dashboard/hifz",
+        path: "/admin/dashboard/hifz",
         icon: NavIcon3,
     },
     {
         title: "Notices",
-        path: "/dashboard/notices",
+        path: "/admin/dashboard/notices",
         icon: NavIcon4,
     },
     {
         title: "Students Progress",
-        path: "/dashboard/students-progress",
+        path: "/admin/dashboard/students-progress",
         icon: NavIcon5,
     },
 ];
@@ -47,17 +47,17 @@ const navItems = [
 const systemItems = [
     {
         title: "Users",
-        path: "/dashboard/system/users",
+        path: "/admin/dashboard/system/users",
         icon: NavIcon5,
     },
     {
         title: "Roles",
-        path: "/dashboard/system/roles",
+        path: "/admin/dashboard/system/roles",
         icon: NavIcon6,
     },
     {
         title: "Permissions",
-        path: "/dashboard/system/permissions",
+        path: "/admin/dashboard/system/permissions",
         icon: NavIcon8,
     },
 ];

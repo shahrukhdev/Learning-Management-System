@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import SEO from "../../components/Seo/SEO";
+import SEO from "../../../components/Seo/SEO";
 
-import NoticeList from "../../components/Notices/NoticesList";
-import { notices } from "../../components/Notices/Notices.data";
-import "../../components/Notices/Notices.css";
-import AnnoucementsPopup from "../../components/Popups/AnnouncementsPopup/AnnoucementsPopup";
+import NoticeList from "../../../components/Notices/NoticesList";
+import { notices } from "../../../components/Notices/Notices.data";
+import "../../../components/Notices/Notices.css";
+import AnnoucementsPopup from "../../../components/Popups/AnnouncementsPopup/AnnoucementsPopup";
 
 const Notices = () => {
 

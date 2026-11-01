@@ -6,19 +6,19 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 
-import Dashboard from "../pages/Dashboard/Dashboard";
-import Attendance from "../pages/Attendance/Attendance";
-import Notices from "../pages/Notices/Notices";
-import Hifz from "../pages/Hifz/Hifz";
+import Dashboard from "../pages/Admin/Dashboard/Dashboard";
+import Attendance from "../pages/Admin/Attendance/Attendance";
+import Notices from "../pages/Admin/Notices/Notices";
+import Hifz from "../pages/Admin/Hifz/Hifz";
 
-import Users from "../pages/Users/Users";
+import Users from "../pages/Admin/Users/Users";
 
-import Roles from "../pages/Roles/Roles";
-import CreateNewRole from "../pages/Roles/CreateNewRole/CreateNewRole";
-import EditRole from "../pages/Roles/EditRole/EditRole";
-import Profile from "../pages/Profile/Profile";
-import StudentProgress from "../pages/StudentProgress/StudentProgress";
-import StudentProgressDetails from "../pages/StudentProgress/StudentProgressDetails/StudentProgressDetails";
+import Roles from "../pages/Admin/Roles/Roles";
+import CreateNewRole from "../pages/Admin/Roles/CreateNewRole/CreateNewRole";
+import EditRole from "../pages/Admin/Roles/EditRole/EditRole";
+import Profile from "../pages/Admin/Profile/Profile";
+import StudentProgress from "../pages/Admin/StudentProgress/StudentProgress";
+import StudentProgressDetails from "../pages/Admin/StudentProgress/StudentProgressDetails/StudentProgressDetails";
 
 
 const AppRoutes = () => {
@@ -48,7 +48,7 @@ const AppRoutes = () => {
             {/* Dashboard Routes */}
 
             <Route
-                path="/dashboard"
+                path="/admin/dashboard"
                 element={<DashboardLayout />}
             >
 

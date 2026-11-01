@@ -2,16 +2,16 @@ import { useState } from "react";
 
 import { UserPlus } from "lucide-react";
 
-import SEO from "../../components/Seo/SEO";
+import SEO from "../../../components/Seo/SEO";
 
 import "./Users.css";
 
-import UserManagementTabs from "../../components/Users/UserTabs";
-import UserManagementTable from "../../components/Users/UsersTable";
-import FilterBar from "../../components/FilterBar/FilterBar";
-import AddUserPopup from "../../components/Popups/AddUserPopup/AddUserPopup";
+import UserManagementTabs from "../../../components/Users/UserTabs";
+import UserManagementTable from "../../../components/Users/UsersTable";
+import FilterBar from "../../../components/FilterBar/FilterBar";
+import AddUserPopup from "../../../components/Popups/AddUserPopup/AddUserPopup";
 
-import { students } from "../../components/Attendance/Attendance.data";
+import { students } from "../../../components/Attendance/Attendance.data";
 
 const Users = () => {
 

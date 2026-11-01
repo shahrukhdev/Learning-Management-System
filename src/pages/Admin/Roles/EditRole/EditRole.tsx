@@ -1,10 +1,10 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import SEO from "../../../components/Seo/SEO";
+import SEO from "../../../../components/Seo/SEO";
 
-import PermissionMatrix from "../../../components/Roles/EditRole/PermissionMatrix/PermissionMatrix";
-import AssignPersonnel from "../../../components/Roles/EditRole/AssignPersonnel/AssignPersonnel";
+import PermissionMatrix from "../../../../components/Roles/EditRole/PermissionMatrix/PermissionMatrix";
+import AssignPersonnel from "../../../../components/Roles/EditRole/AssignPersonnel/AssignPersonnel";
 
 import "./EditRole.css";
 
@@ -38,7 +38,7 @@ const EditRole = () => {
                                 <div className="edit-role-header-left">
 
                                     <Link
-                                        to="/dashboard/system/roles"
+                                        to="/admin/dashboard/system/roles"
                                         className="role-back-btn"
                                         aria-label="Back to roles"
                                     >

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import { BookOpen, CheckCircle2, Eye, Plus, UserRound } from "lucide-react";
 
-import SEO from "../../components/Seo/SEO";
+import SEO from "../../../components/Seo/SEO";
 
-import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../components/Popups/LogProgressPopup/LogProgressPopup";
+import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../../components/Popups/LogProgressPopup/LogProgressPopup";
 
 import "./StudentProgress.css";
 
@@ -214,7 +214,7 @@ const StudentProgress = () => {
     };
 
     const handleViewProgress = (student: StudentProgressData) => {
-        navigate(`/dashboard/students-progress/${student.id}`, {
+        navigate(`/admin/dashboard/students-progress/${student.id}`, {
             state: {
                 student,
                 progressEntries,

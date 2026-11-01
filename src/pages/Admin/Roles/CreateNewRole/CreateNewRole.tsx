@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-import SEO from "../../../components/Seo/SEO";
+import SEO from "../../../../components/Seo/SEO";
 
-import RoleInformation from "../../../components/Roles/CreateRole/RoleInformation";
-import RolePermissions from "../../../components/Roles/CreateRole/RolePermissions";
+import RoleInformation from "../../../../components/Roles/CreateRole/RoleInformation";
+import RolePermissions from "../../../../components/Roles/CreateRole/RolePermissions";
 
-import type { RoleFormData, RolePermission } from "../../../components/Roles/CreateRole/CreateRole.types";
+import type { RoleFormData, RolePermission } from "../../../../components/Roles/CreateRole/CreateRole.types";
 
 import "./CreateNewRole.css";
 
@@ -145,7 +145,7 @@ const CreateNewRole = () => {
                             <div className="create-role-page-header">
 
                                 <Link 
-                                    to="/dashboard/system/roles"
+                                    to="/admin/dashboard/system/roles"
                                     className="role-back-btn"
                                 >
                                     <ArrowLeft

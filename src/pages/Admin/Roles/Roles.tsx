@@ -1,8 +1,8 @@
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router-dom";
-import SEO from "../../components/Seo/SEO";
+import SEO from "../../../components/Seo/SEO";
 import "./Roles.css";
-import RolesTable from "../../components/Roles/RolesTable";
+import RolesTable from "../../../components/Roles/RolesTable";
 
 const Roles = () => {
 
@@ -25,7 +25,7 @@ const Roles = () => {
                                     <p className="section-desc-para m-0">Define and control access levels across the Madrasah portal.</p>
                                 </div> 
                                 <Link
-                                    to="/dashboard/system/roles/create-new"
+                                    to="/admin/dashboard/system/roles/create-new"
                                     className="new-notice-btn"
                                 >
                                     <CirclePlus

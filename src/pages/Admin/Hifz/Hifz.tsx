@@ -1,11 +1,11 @@
-import SEO from "../../components/Seo/SEO";
-import HifzEmptyState from "../../components/Hifz/HifzEmptyState/HifzEmptyState";
-import HifzStudentList from "../../components/Hifz/HifzStudentList/HifzStudentList";
-import { students } from "../../components/Attendance/Attendance.data";
-import type { AttendanceStatus } from "../../components/Attendance/Attendance.types";
+import SEO from "../../../components/Seo/SEO";
+import HifzEmptyState from "../../../components/Hifz/HifzEmptyState/HifzEmptyState";
+import HifzStudentList from "../../../components/Hifz/HifzStudentList/HifzStudentList";
+import { students } from "../../../components/Attendance/Attendance.data";
+import type { AttendanceStatus } from "../../../components/Attendance/Attendance.types";
 import "./Hifz.css";
 import { useEffect, useRef, useState } from "react";
-import HifzStudentDetails from "../../components/Hifz/HifzStudentDetails/HifzStudentDetails";
+import HifzStudentDetails from "../../../components/Hifz/HifzStudentDetails/HifzStudentDetails";
 
 const classOptions = [
     "Class A · Morning",
