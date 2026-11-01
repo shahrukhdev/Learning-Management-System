@@ -11,7 +11,6 @@ import NavIcon6 from "../../assets/images/nav-icon-6.svg";
 import NavIcon7 from "../../assets/images/nav-icon-7.svg";
 import NavIcon8 from "../../assets/images/nav-icon-8.svg";
 
-
 import { LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
