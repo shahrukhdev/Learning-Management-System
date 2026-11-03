@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <>
       <SEO
-          title="Role Selection | Noor Ul Imaan Masjid"
+          title="Noor Ul Imaan Masjid"
           description="Select your role to sign in to Noor Ul Imaan Masjid Madrassah Portal."
       />
       
