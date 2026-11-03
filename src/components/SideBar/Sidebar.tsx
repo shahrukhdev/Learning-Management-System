@@ -14,6 +14,8 @@ import NavIcon8 from "../../assets/images/nav-icon-8.svg";
 import { LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { useLogout } from "../../hooks/useLogout";
+
 const navItems = [
     {
         title: "Dashboard",
@@ -64,6 +66,8 @@ const systemItems = [
 const Sidebar = () => {
 
     const location = useLocation();
+
+    const { signOut, isLoggingOut } = useLogout();
 
     const isSystemActive = systemItems.some((item) =>
         location.pathname.startsWith(item.path)
@@ -247,6 +251,9 @@ const Sidebar = () => {
                 <button
                     type="button"
                     className="secondary-btn sidebar-logout"
+                    onClick={signOut}
+                    disabled={isLoggingOut}
+                    aria-busy={isLoggingOut}
                 >
 
                     <LogOut

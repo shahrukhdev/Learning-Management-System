@@ -2,10 +2,16 @@
 import AuthLayout from "../../components/Layouts/AuthLayout";
 import SEO from "../../components/Seo/SEO";
 
-import { useState } from "react";
-import type { FormEvent } from "react";
+import { useRef, useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { login } from "../../services/authService";
+import { setToken } from "../../utils/tokenStorage";
+import { getFirstFieldErrors, parseApiError } from "../../utils/apiError";
+import type { LoginFormErrors, LoginRequest } from "../../types/auth.types";
 
 import {
     Mail,
@@ -21,12 +27,84 @@ const Login = () => {
 
     const { role } = useParams<{ role: string }>();
 
+    const navigate = useNavigate();
+
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const [formData, setFormData] = useState<LoginRequest>({
+        email: "",
+        password: "",
+    });
+
+    const [errors, setErrors] = useState<LoginFormErrors>({});
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Synchronous guard against double submits (state updates are async)
+    const isSubmittingRef = useRef(false);
+
+    const dashboardPath =
+        role === "teacher" ? "/teacher/dashboard" : "/admin/dashboard";
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const field = e.target.name as keyof LoginRequest;
+        const { value } = e.target;
+
+        setFormData((prev) => ({ ...prev, [field]: value }));
+
+        // Clear this field's previous error once the user edits it
+        if (errors[field]) {
+            setErrors((prev) => ({ ...prev, [field]: undefined }));
+        }
+    };
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log("Login role:", role);
+        if (isSubmittingRef.current) return;
+
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        setErrors({});
+
+        try {
+            const response = await login(formData);
+
+            setToken(response.data.token);
+
+            toast.success(response.message || "Login successful.");
+
+            navigate(dashboardPath);
+
+        } catch (error) {
+
+            const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 422 && validationErrors) {
+
+                const fieldErrors = getFirstFieldErrors<keyof LoginRequest>(validationErrors);
+
+                setErrors({
+                    email: fieldErrors.email,
+                    password: fieldErrors.password,
+                });
+
+                // Only toast if the backend flagged something we can't show inline
+                const hasInlineError = Boolean(fieldErrors.email || fieldErrors.password);
+
+                if (!hasInlineError) {
+                    toast.error(message);
+                }
+
+            } else {
+                // 401 (invalid credentials), 500, other errors, and network errors
+                toast.error(message);
+            }
+
+        } finally {
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -42,7 +120,7 @@ const Login = () => {
                 mainClassName="login-main"
             >
 
-                <form onSubmit={handleSubmit} className="m-0">
+                <form onSubmit={handleSubmit} className="m-0" noValidate>
 
                     <div className="login-center login-box">
 
@@ -76,15 +154,22 @@ const Login = () => {
                                 <input
                                     type="email"
                                     id="email"
+                                    name="email"
                                     className="form-control"
                                     placeholder="teacher@nooracademy.edu"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    autoComplete="email"
+                                    aria-invalid={Boolean(errors.email)}
                                 />
 
                             </div>
 
-                            <span className="error-text d-none">
-                                Please enter your email address.
-                            </span>
+                            {errors.email && (
+                                <span className="error-text">
+                                    {errors.email}
+                                </span>
+                            )}
 
                         </div>
 
@@ -122,8 +207,13 @@ const Login = () => {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     id="password"
+                                    name="password"
                                     className="form-control"
                                     placeholder="••••••••••"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    autoComplete="current-password"
+                                    aria-invalid={Boolean(errors.password)}
                                 />
 
                                 <button
@@ -149,9 +239,11 @@ const Login = () => {
 
                             </div>
 
-                            <span className="error-text d-none">
-                                Please enter your password.
-                            </span>
+                            {errors.password && (
+                                <span className="error-text">
+                                    {errors.password}
+                                </span>
+                            )}
 
                         </div>
 
@@ -189,8 +281,10 @@ const Login = () => {
                         <button
                             type="submit"
                             className="btn primary-btn w-100 mt-4"
+                            disabled={isSubmitting}
+                            aria-busy={isSubmitting}
                         >
-                            Sign In
+                            {isSubmitting ? "Signing In..." : "Sign In"}
 
                             <ArrowRight
                                 color="#fff"

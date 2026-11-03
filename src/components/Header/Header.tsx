@@ -11,7 +11,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { useLogout } from "../../hooks/useLogout";
+
 const Header = () => {
+
+    const { signOut, isLoggingOut } = useLogout();
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -306,6 +310,9 @@ const Header = () => {
                                             <button
                                                 type="button"
                                                 className="profile-dropdown-item logout"
+                                                onClick={signOut}
+                                                disabled={isLoggingOut}
+                                                aria-busy={isLoggingOut}
                                             >
                                                 <LogOut size={18} />
                                                 <span>Sign out</span>
