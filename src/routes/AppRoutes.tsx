@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
+import RoleBasedRoute from "./RoleBasedRoute";
 
 import Home from "../pages/Auth/Home";
 import Login from "../pages/Auth/Login";
@@ -65,127 +66,81 @@ const AppRoutes = () => {
 
             <Route element={<ProtectedRoute />}>
 
-            {/* Admin Routes */}
+            {/* App Routes: prefix-free URLs inside the shared dashboard layout.
+                Pages with role-specific versions pick one via RoleBasedRoute. */}
 
-            <Route
-                path="/admin/dashboard"
-                element={<DashboardLayout />}
-            >
+            <Route element={<DashboardLayout />}>
 
                 <Route
-                    index
-                    element={<Dashboard />}
+                    path="/dashboard"
+                    element={<RoleBasedRoute admin={<Dashboard />} teacher={<TeacherDashboard />} />}
                 />
 
                 <Route
-                    path="attendance"
-                    element={<Attendance />}
+                    path="/attendance"
+                    element={<RoleBasedRoute admin={<Attendance />} teacher={<TeacherAttendance />} />}
                 />
 
                 <Route
-                    path="notices"
-                    element={<Notices />}
+                    path="/notices"
+                    element={<RoleBasedRoute admin={<Notices />} teacher={<TeacherNotices />} />}
                 />
 
                 <Route
-                    path="hifz"
-                    element={<Hifz />}
+                    path="/hifz"
+                    element={<RoleBasedRoute admin={<Hifz />} teacher={<TeacherHifz />} />}
                 />
 
                 <Route
-                    path="students-progress"
-                    element={<StudentProgress />}
+                    path="/students-progress"
+                    element={<RoleBasedRoute admin={<StudentProgress />} teacher={<TeacherStudentProgress />} />}
                 />
 
                 <Route
-                    path="students-progress/:studentId"
-                    element={<StudentProgressDetails /> }
+                    path="/students-progress/:studentId"
+                    element={<RoleBasedRoute admin={<StudentProgressDetails />} teacher={<TeacherStudentProgressDetails />} />}
                 />
 
                 <Route
-                    path="profile"
-                    element={<Profile />}
+                    path="/profile"
+                    element={<RoleBasedRoute admin={<Profile />} teacher={<TeacherProfile />} />}
                 />
 
-                {/* System */}
+                {/* System (admin pages only) */}
 
                 <Route
-                    path="system/users"
+                    path="/system/users"
                     element={<Users />}
                 />
 
                 <Route
-                    path="system/roles"
+                    path="/system/roles"
                     element={<Roles />}
                 />
 
                 <Route
-                    path="system/roles/create-new"
+                    path="/system/roles/create-new"
                     element={<CreateNewRole />}
                 />
 
                 <Route
-                    path="system/roles/:roleId/edit"
+                    path="/system/roles/:roleId/edit"
                     element={<EditRole />}
                 />
 
                 <Route
-                    path="system/permissions"
+                    path="/system/permissions"
                     element={<Permissions />}
                 />
 
                 <Route
-                    path="system/permissions/create-new"
+                    path="/system/permissions/create-new"
                     element={<CreateNewPermission />}
                 />
 
                 <Route
-                    path="system/permissions/:permissionId/edit"
+                    path="/system/permissions/:permissionId/edit"
                     element={<EditPermission />}
-                />
-
-            </Route>
-
-            {/* Teacher Routes */}
-
-            <Route
-                path="/teacher/dashboard"
-                element={<DashboardLayout />}
-            >
-
-                <Route
-                    index
-                    element={<TeacherDashboard />}
-                />
-
-                <Route
-                    path="attendance"
-                    element={<TeacherAttendance />}
-                />
-
-                <Route
-                    path="hifz"
-                    element={<TeacherHifz />}
-                />
-
-                <Route
-                    path="notices"
-                    element={<TeacherNotices />}
-                />
-
-                <Route
-                    path="students-progress"
-                    element={<TeacherStudentProgress />}
-                />
-
-                <Route
-                    path="students-progress/:studentId"
-                    element={<TeacherStudentProgressDetails /> }
-                />
-
-                <Route
-                    path="profile"
-                    element={<TeacherProfile />}
                 />
 
             </Route>

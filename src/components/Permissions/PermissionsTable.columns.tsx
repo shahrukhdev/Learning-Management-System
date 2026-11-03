@@ -40,7 +40,7 @@ export const permissionsColumns: ColumnDef<Permission>[] = [
         cell: ({ row }) => (
             <div className="table-actions">
                 <Link
-                    to={`/admin/dashboard/system/permissions/${row.original.id}/edit`}
+                    to={`/system/permissions/${row.original.id}/edit`}
                     aria-label={`Edit ${row.original.name}`}
                 >
                     <Pencil size={16} strokeWidth={2.4} />

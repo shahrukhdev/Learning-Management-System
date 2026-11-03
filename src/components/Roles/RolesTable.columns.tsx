@@ -85,7 +85,7 @@ export const rolesColumns:
 
             <div className="table-actions">                
 
-                <Link to={`/admin/dashboard/system/roles/${row.original.id}/edit`}>
+                <Link to={`/system/roles/${row.original.id}/edit`}>
                     <Pencil
                         size={16}
                         strokeWidth={2.4}

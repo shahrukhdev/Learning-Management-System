@@ -38,7 +38,7 @@ const EditRole = () => {
                                 <div className="edit-role-header-left">
 
                                     <Link
-                                        to="/admin/dashboard/system/roles"
+                                        to="/system/roles"
                                         className="role-back-btn"
                                         aria-label="Back to roles"
                                     >

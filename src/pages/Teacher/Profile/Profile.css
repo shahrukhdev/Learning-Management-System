@@ -261,3 +261,38 @@
         width: 100%;
     }
 }
+
+/* Loading / load-error state */
+.profile-status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    min-height: 240px;
+    font-family: 'Plus Jakarta Sans';
+    font-size: 1.4rem;
+    color: #767C69;
+}
+
+.profile-status .spinner-border {
+    color: #4A5D23;
+}
+
+.profile-remove-photo {
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #4A5D23;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.profile-remove-photo:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

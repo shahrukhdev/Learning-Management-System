@@ -16,32 +16,34 @@ import { useEffect, useState } from "react";
 
 import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import AvatarContent from "../Avatar/AvatarContent";
 
 const navItems = [
     {
         title: "Dashboard",
-        path: "/admin/dashboard",
+        path: "/dashboard",
         icon: NavIcon1,
         end: true,
     },
     {
         title: "Attendance",
-        path: "/admin/dashboard/attendance",
+        path: "/attendance",
         icon: NavIcon2,
     },
     {
         title: "Hifz",
-        path: "/admin/dashboard/hifz",
+        path: "/hifz",
         icon: NavIcon3,
     },
     {
         title: "Notices",
-        path: "/admin/dashboard/notices",
+        path: "/notices",
         icon: NavIcon4,
     },
     {
         title: "Students Progress",
-        path: "/admin/dashboard/students-progress",
+        path: "/students-progress",
         icon: NavIcon5,
     },
 ];
@@ -49,17 +51,17 @@ const navItems = [
 const systemItems = [
     {
         title: "Users",
-        path: "/admin/dashboard/system/users",
+        path: "/system/users",
         icon: NavIcon5,
     },
     {
         title: "Roles",
-        path: "/admin/dashboard/system/roles",
+        path: "/system/roles",
         icon: NavIcon6,
     },
     {
         title: "Permissions",
-        path: "/admin/dashboard/system/permissions",
+        path: "/system/permissions",
         icon: NavIcon8,
     },
 ];
@@ -100,7 +102,7 @@ const Sidebar = () => {
 
             <div className="sidebar-logo text-center">
 
-                <Link to="/admin/dashboard">
+                <Link to="/dashboard">
 
                     <img
                         className="img-fluid"
@@ -146,7 +148,7 @@ const Sidebar = () => {
                 <div className="system-dropdown">
 
                     <NavLink
-                        to="/dashboard/system"
+                        to="/system"
                         className={`nav-link system-toggle ${
                             isSystemActive ? "active" : ""
                         }`}
@@ -231,7 +233,12 @@ const Sidebar = () => {
                 <div className="sidebar-user-info">
 
                     <div className="user-avatar">
-                        AM
+                        <AvatarContent
+                            src={resolveImageUrl(user?.image)}
+                            alt={user?.name ?? "User"}
+                            fallback="AM"
+                            className="user-avatar-img"
+                        />
                     </div>
 
                     <div className="sidebar-user-details">

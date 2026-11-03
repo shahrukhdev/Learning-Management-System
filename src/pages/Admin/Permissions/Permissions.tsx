@@ -23,7 +23,7 @@ const Permissions = () => (
                                 </p>
                             </div>
                             <Link
-                                to="/admin/dashboard/system/permissions/create-new"
+                                to="/system/permissions/create-new"
                                 className="new-notice-btn"
                             >
                                 <CirclePlus color="#fff" size={20} strokeWidth={2.5} />

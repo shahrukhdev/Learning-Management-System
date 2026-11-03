@@ -13,6 +13,8 @@ import { setToken } from "../../utils/tokenStorage";
 import { getFirstFieldErrors, parseApiError } from "../../utils/apiError";
 import type { LoginFormErrors, LoginRequest } from "../../types/auth.types";
 import { useAuth } from "../../hooks/useAuth";
+import { toAuthUser } from "../../utils/authUser";
+import { DEFAULT_DASHBOARD_PATH } from "../../routes/paths";
 
 import {
     Mail,
@@ -46,8 +48,8 @@ const Login = () => {
     // Synchronous guard against double submits (state updates are async)
     const isSubmittingRef = useRef(false);
 
-    const dashboardPath =
-        role === "teacher" ? "/teacher/dashboard" : "/admin/dashboard";
+    // Same URL for every role; the dashboard shown is based on the user's role
+    const dashboardPath = DEFAULT_DASHBOARD_PATH;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const field = e.target.name as keyof LoginRequest;
@@ -102,8 +104,7 @@ const Login = () => {
             setToken(response.data.token);
 
             // Store only the fields the app needs, before navigating
-            const { id, name, email, phone_no, role: userRole } = response.data.user;
-            setUser({ id, name, email, phone_no: phone_no ?? null, role: userRole });
+            setUser(toAuthUser(response.data.user));
 
             toast.success(response.message || "Login successful.");
 

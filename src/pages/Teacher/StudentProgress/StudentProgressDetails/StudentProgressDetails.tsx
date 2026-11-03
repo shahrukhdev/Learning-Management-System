@@ -118,7 +118,7 @@ const StudentProgressDetails = () => {
     };
 
     const handleBack = () => {
-        navigate("/dashboard/students-progress", {
+        navigate("/students-progress", {
             state: { progressEntries },
         });
     };

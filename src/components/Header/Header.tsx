@@ -13,12 +13,16 @@ import { Link } from "react-router-dom";
 
 import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import AvatarContent from "../Avatar/AvatarContent";
 
 const Header = () => {
 
     const { signOut, isLoggingOut } = useLogout();
 
     const { user } = useAuth();
+
+    const avatarUrl = resolveImageUrl(user?.image);
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -237,7 +241,7 @@ const Header = () => {
 
                                             {/* View All */}
                                             <Link
-                                                to="/admin/dashboard/notices"
+                                                to="/notices"
                                                 className="view-all-notifications text-decoration-none"
                                                 onClick={() => setIsNotificationOpen(false)}
                                             >
@@ -267,7 +271,12 @@ const Header = () => {
                                         aria-label={user ? `${user.name} profile menu` : "User profile menu"}
                                         title={user?.name}
                                     >
-                                        AM
+                                        <AvatarContent
+                                            src={avatarUrl}
+                                            alt={user?.name ?? "User"}
+                                            fallback="AM"
+                                            className="user-avatar-img"
+                                        />
                                     </button>
 
                                     {/* Profile Dropdown */}
@@ -279,7 +288,12 @@ const Header = () => {
                                             <div className="sidebar-user-info">
 
                                                 <div className="user-avatar">
-                                                    AM
+                                                    <AvatarContent
+                                                        src={avatarUrl}
+                                                        alt={user?.name ?? "User"}
+                                                        fallback="AM"
+                                                        className="user-avatar-img"
+                                                    />
                                                 </div>
 
                                                 <div className="sidebar-user-details">
@@ -300,7 +314,7 @@ const Header = () => {
 
                                             {/* Profile Link */}
                                             <Link
-                                                to="/admin/dashboard/profile"
+                                                to="/profile"
                                                 className="profile-dropdown-item text-decoration-none"
                                                 onClick={() => setIsProfileOpen(false)}
                                             >

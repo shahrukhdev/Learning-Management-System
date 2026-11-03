@@ -35,7 +35,7 @@ const CreateNewPermission = () => {
                         <div className="col-12">
                             <div className="create-role-page-header">
                                 <Link
-                                    to="/admin/dashboard/system/permissions"
+                                    to="/system/permissions"
                                     className="role-back-btn"
                                     aria-label="Back to permissions"
                                 >
@@ -59,7 +59,7 @@ const CreateNewPermission = () => {
                                             type="button"
                                             className="form-btn form-btn-cancel"
                                             onClick={() =>
-                                                navigate("/admin/dashboard/system/permissions")
+                                                navigate("/system/permissions")
                                             }
                                         >
                                             Cancel

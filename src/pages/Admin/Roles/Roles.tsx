@@ -25,7 +25,7 @@ const Roles = () => {
                                     <p className="section-desc-para m-0">Define and control access levels across the Madrasah portal.</p>
                                 </div> 
                                 <Link
-                                    to="/admin/dashboard/system/roles/create-new"
+                                    to="/system/roles/create-new"
                                     className="new-notice-btn"
                                 >
                                     <CirclePlus

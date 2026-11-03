@@ -5,6 +5,9 @@ import type { AuthUser } from "../types/auth.types";
 
 const USER_KEY = "auth_user";
 
+const isOptionalString = (value: unknown): boolean =>
+    typeof value === "string" || value === null || value === undefined;
+
 // Validates a parsed value and returns a clean AuthUser, or null if invalid
 const toAuthUser = (value: unknown): AuthUser | null => {
     if (typeof value !== "object" || value === null) return null;
@@ -16,10 +19,9 @@ const toAuthUser = (value: unknown): AuthUser | null => {
         typeof user.name === "string" &&
         typeof user.email === "string" &&
         typeof user.role === "string" &&
-        // Missing phone_no is allowed (records saved before it was added)
-        (typeof user.phone_no === "string" ||
-            user.phone_no === null ||
-            user.phone_no === undefined);
+        // Missing phone_no / image is allowed (records saved before they were added)
+        isOptionalString(user.phone_no) &&
+        isOptionalString(user.image);
 
     if (!isValid) return null;
 
@@ -29,6 +31,7 @@ const toAuthUser = (value: unknown): AuthUser | null => {
         email: user.email as string,
         phone_no: (user.phone_no as string | null | undefined) ?? null,
         role: user.role as string,
+        image: (user.image as string | null | undefined) ?? null,
     };
 };
 

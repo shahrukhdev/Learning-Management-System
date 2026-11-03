@@ -16,7 +16,7 @@ export interface AuthenticatedUser {
 }
 
 // The subset of user info kept in AuthContext (and persisted for refresh)
-export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "phone_no" | "role">;
+export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "phone_no" | "role" | "image">;
 
 export interface LoginResponseData {
     user: AuthenticatedUser;

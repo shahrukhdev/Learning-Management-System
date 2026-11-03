@@ -214,7 +214,7 @@ const StudentProgress = () => {
     };
 
     const handleViewProgress = (student: StudentProgressData) => {
-        navigate(`/admin/dashboard/students-progress/${student.id}`, {
+        navigate(`/students-progress/${student.id}`, {
             state: {
                 student,
                 progressEntries,

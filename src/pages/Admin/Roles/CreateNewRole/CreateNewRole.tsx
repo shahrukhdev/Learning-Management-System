@@ -116,7 +116,7 @@ const CreateNewRole = () => {
 
     const handleCancel = () => {
         navigate(
-            "/dashboard/system/roles"
+            "/system/roles"
         );
 
     };
@@ -145,7 +145,7 @@ const CreateNewRole = () => {
                             <div className="create-role-page-header">
 
                                 <Link 
-                                    to="/admin/dashboard/system/roles"
+                                    to="/system/roles"
                                     className="role-back-btn"
                                 >
                                     <ArrowLeft
