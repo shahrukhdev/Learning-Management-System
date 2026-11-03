@@ -1,16 +1,16 @@
 import { useMemo,useState } from "react";
 
-import AttendanceControls from "../../components/Attendance/AttendanceControls/AttendanceControls";
-import type { AttendanceTab } from "../../components/Attendance/AttendanceTabs/AttendanceTabs";
-import AttendanceStudentList from "../../components/Attendance/AttendanceStudentList/AttendanceStudentList";
+import AttendanceControls from "../../../components/Attendance/AttendanceControls/AttendanceControls";
+import type { AttendanceTab } from "../../../components/Attendance/AttendanceTabs/AttendanceTabs";
+import AttendanceStudentList from "../../../components/Attendance/AttendanceStudentList/AttendanceStudentList";
 
-import { classOptions, students } from "../../components/Attendance/Attendance.data";
-import type { AttendanceStatus } from "../../components/Attendance/Attendance.types";
+import { classOptions, students } from "../../../components/Attendance/Attendance.data";
+import type { AttendanceStatus } from "../../../components/Attendance/Attendance.types";
 
 
-import FilterBar from "../../components/FilterBar/FilterBar";
-import SEO from "../../components/Seo/SEO";
-import AttendanceOverviewTable from "../../components/Attendance/AttendanceOverviewTable/AttendanceOverviewTable";
+import FilterBar from "../../../components/FilterBar/FilterBar";
+import SEO from "../../../components/Seo/SEO";
+import AttendanceOverviewTable from "../../../components/Attendance/AttendanceOverviewTable/AttendanceOverviewTable";
 
 const Attendance = () => {
 

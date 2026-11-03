@@ -4,7 +4,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Camera, Eye, EyeOff, Mail, Phone, UserRound } from "lucide-react";
 
 import "./Profile.css";
-import SEO from "../../components/Seo/SEO";
+import SEO from "../../../components/Seo/SEO";
 
 interface ProfileData {
     fullName: string;

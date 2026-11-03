@@ -230,7 +230,7 @@ const Header = () => {
 
                                             {/* View All */}
                                             <Link
-                                                to="/dashboard/notices"
+                                                to="/admin/dashboard/notices"
                                                 className="view-all-notifications text-decoration-none"
                                                 onClick={() => setIsNotificationOpen(false)}
                                             >
@@ -292,7 +292,7 @@ const Header = () => {
 
                                             {/* Profile Link */}
                                             <Link
-                                                to="/dashboard/profile"
+                                                to="/admin/dashboard/profile"
                                                 className="profile-dropdown-item text-decoration-none"
                                                 onClick={() => setIsProfileOpen(false)}
                                             >

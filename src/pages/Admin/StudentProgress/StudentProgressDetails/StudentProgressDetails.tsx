@@ -4,9 +4,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { ArrowLeft, Award, BookOpen, CalendarDays, ClipboardList, GraduationCap, Plus, UserRound } from "lucide-react";
 
-import SEO from "../../../components/Seo/SEO";
+import SEO from "../../../../components/Seo/SEO";
 
-import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../../components/Popups/LogProgressPopup/LogProgressPopup";
+import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../../../components/Popups/LogProgressPopup/LogProgressPopup";
 
 import { INITIAL_STUDENTS } from "../StudentProgress";
 import "./StudentProgressDetails.css";
