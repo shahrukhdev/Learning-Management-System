@@ -187,7 +187,7 @@ const Login = () => {
 
                                 <Link
                                     className="forgot-password"
-                                    to={`/reset-password/${role}`}
+                                    to={role ? `/reset-password/${role}` : "/reset-password"}
                                 >
                                     Forgot Password?
                                 </Link>

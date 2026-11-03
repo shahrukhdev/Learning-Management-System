@@ -34,8 +34,9 @@ const RoleSelection = () => {
 
   const navigate = useNavigate();
 
-  const handleRoleSelect = (role: string) => {
-      navigate(`/login/${role}`);
+  // Every role goes to the same login page
+  const handleRoleSelect = () => {
+      navigate("/login");
   };
 
   return (
@@ -46,7 +47,7 @@ const RoleSelection = () => {
             type="radio"
             name="role"
             value={role.id}
-            onChange={() => handleRoleSelect(role.id)}
+            onChange={handleRoleSelect}
           />
 
           <div className="role-card-content">

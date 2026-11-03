@@ -46,7 +46,7 @@ const ResetPassword = () => {
                         <div className="login-divider"></div>
 
                         <div className="account-text text-center login-text md">
-                            <Link className="login-text md d-flex justify-content-center align-items-center gap-2" to={`/login/${role}`}>
+                            <Link className="login-text md d-flex justify-content-center align-items-center gap-2" to={role ? `/login/${role}` : "/login"}>
                                 <ArrowLeft color="#525523" size={18} strokeWidth={2.5} />
                                 Back to Login
                             </Link>

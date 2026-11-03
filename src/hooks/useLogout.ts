@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { logout as logoutRequest } from "../services/authService";
@@ -13,14 +13,10 @@ let isLogoutInFlight = false;
 export const useLogout = () => {
 
     const navigate = useNavigate();
-    const { pathname } = useLocation();
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    // Return to the login page for the current portal (admin / teacher)
-    const loginPath = pathname.startsWith("/teacher")
-        ? "/login/teacher"
-        : "/login/admin";
+    const loginPath = "/login";
 
     const signOut = async (): Promise<void> => {
 

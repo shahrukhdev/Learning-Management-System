@@ -44,12 +44,12 @@ const AppRoutes = () => {
             />
 
             <Route
-                path="/login/:role"
+                path="/login/:role?"
                 element={<Login />}
             />
 
             <Route
-                path="/reset-password/:role"
+                path="/reset-password/:role?"
                 element={<ResetPassword />}
             />
 
