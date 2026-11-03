@@ -5,17 +5,31 @@ import type { AuthUser } from "../types/auth.types";
 
 const USER_KEY = "auth_user";
 
-const isAuthUser = (value: unknown): value is AuthUser => {
-    if (typeof value !== "object" || value === null) return false;
+// Validates a parsed value and returns a clean AuthUser, or null if invalid
+const toAuthUser = (value: unknown): AuthUser | null => {
+    if (typeof value !== "object" || value === null) return null;
 
     const user = value as Record<string, unknown>;
 
-    return (
+    const isValid =
         typeof user.id === "number" &&
         typeof user.name === "string" &&
         typeof user.email === "string" &&
-        typeof user.role === "string"
-    );
+        typeof user.role === "string" &&
+        // Missing phone_no is allowed (records saved before it was added)
+        (typeof user.phone_no === "string" ||
+            user.phone_no === null ||
+            user.phone_no === undefined);
+
+    if (!isValid) return null;
+
+    return {
+        id: user.id as number,
+        name: user.name as string,
+        email: user.email as string,
+        phone_no: (user.phone_no as string | null | undefined) ?? null,
+        role: user.role as string,
+    };
 };
 
 export const getStoredUser = (): AuthUser | null => {
@@ -24,8 +38,7 @@ export const getStoredUser = (): AuthUser | null => {
     if (!raw) return null;
 
     try {
-        const parsed: unknown = JSON.parse(raw);
-        return isAuthUser(parsed) ? parsed : null;
+        return toAuthUser(JSON.parse(raw));
     } catch {
         return null; // corrupted value
     }

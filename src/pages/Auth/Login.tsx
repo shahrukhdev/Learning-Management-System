@@ -102,8 +102,8 @@ const Login = () => {
             setToken(response.data.token);
 
             // Store only the fields the app needs, before navigating
-            const { id, name, email, role: userRole } = response.data.user;
-            setUser({ id, name, email, role: userRole });
+            const { id, name, email, phone_no, role: userRole } = response.data.user;
+            setUser({ id, name, email, phone_no: phone_no ?? null, role: userRole });
 
             toast.success(response.message || "Login successful.");
 
