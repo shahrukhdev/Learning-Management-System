@@ -15,6 +15,7 @@ import { LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useLogout } from "../../hooks/useLogout";
+import { useAuth } from "../../hooks/useAuth";
 
 const navItems = [
     {
@@ -68,6 +69,8 @@ const Sidebar = () => {
     const location = useLocation();
 
     const { signOut, isLoggingOut } = useLogout();
+
+    const { user } = useAuth();
 
     const isSystemActive = systemItems.some((item) =>
         location.pathname.startsWith(item.path)
@@ -234,11 +237,11 @@ const Sidebar = () => {
                     <div className="sidebar-user-details">
 
                         <h6 className="sidebar-user-name m-0">
-                            Admin Madrassah
+                            {user?.name}
                         </h6>
 
                         <span className="sidebar-user-role">
-                            Admin
+                            {user?.role}
                         </span>
 
                     </div>

@@ -12,10 +12,13 @@ import {
 import { Link } from "react-router-dom";
 
 import { useLogout } from "../../hooks/useLogout";
+import { useAuth } from "../../hooks/useAuth";
 
 const Header = () => {
 
     const { signOut, isLoggingOut } = useLogout();
+
+    const { user } = useAuth();
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -261,7 +264,8 @@ const Header = () => {
                                             setIsNotificationOpen(false);
                                         }}
                                         aria-expanded={isProfileOpen}
-                                        aria-label="User profile menu"
+                                        aria-label={user ? `${user.name} profile menu` : "User profile menu"}
+                                        title={user?.name}
                                     >
                                         AM
                                     </button>
@@ -281,11 +285,11 @@ const Header = () => {
                                                 <div className="sidebar-user-details">
 
                                                     <h6 className="sidebar-user-name m-0">
-                                                        Admin Madrassah
+                                                        {user?.name}
                                                     </h6>
 
                                                     <span className="sidebar-user-role">
-                                                        Admin
+                                                        {user?.role}
                                                     </span>
 
                                                 </div>

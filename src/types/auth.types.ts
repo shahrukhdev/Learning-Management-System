@@ -14,6 +14,9 @@ export interface AuthenticatedUser {
     role: string;
 }
 
+// The subset of user info kept in AuthContext (and persisted for refresh)
+export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "role">;
+
 export interface LoginResponseData {
     user: AuthenticatedUser;
     token: string;

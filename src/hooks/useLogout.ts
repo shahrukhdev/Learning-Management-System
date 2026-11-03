@@ -7,6 +7,7 @@ import { removeToken } from "../utils/tokenStorage";
 import { parseApiError } from "../utils/apiError";
 import { SESSION_EXPIRED_MESSAGE, SESSION_EXPIRED_TOAST_ID } from "../utils/authEvents";
 import { LOGIN_PATH } from "../routes/paths";
+import { useAuth } from "./useAuth";
 
 // Shared across every component using this hook (Header + Sidebar), so
 // clicking both buttons can never fire two logout requests at once.
@@ -15,6 +16,8 @@ let isLogoutInFlight = false;
 export const useLogout = () => {
 
     const navigate = useNavigate();
+
+    const { clearUser } = useAuth();
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -31,6 +34,7 @@ export const useLogout = () => {
             const response = await logoutRequest();
 
             removeToken();
+            clearUser();
             toast.success(response.message || "Logged out successfully.");
             navigate(loginPath, { replace: true });
 
@@ -44,6 +48,7 @@ export const useLogout = () => {
                 // here is harmless and covers the case where no token was sent.
                 // The shared toastId stops a second "session expired" toast.
                 removeToken();
+                clearUser();
                 toast.info(SESSION_EXPIRED_MESSAGE, { toastId: SESSION_EXPIRED_TOAST_ID });
                 navigate(loginPath, { replace: true });
             } else {

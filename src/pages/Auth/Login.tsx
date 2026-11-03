@@ -12,6 +12,7 @@ import { login } from "../../services/authService";
 import { setToken } from "../../utils/tokenStorage";
 import { getFirstFieldErrors, parseApiError } from "../../utils/apiError";
 import type { LoginFormErrors, LoginRequest } from "../../types/auth.types";
+import { useAuth } from "../../hooks/useAuth";
 
 import {
     Mail,
@@ -28,6 +29,8 @@ const Login = () => {
     const { role } = useParams<{ role: string }>();
 
     const navigate = useNavigate();
+
+    const { setUser } = useAuth();
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -97,6 +100,10 @@ const Login = () => {
             });
 
             setToken(response.data.token);
+
+            // Store only the fields the app needs, before navigating
+            const { id, name, email, role: userRole } = response.data.user;
+            setUser({ id, name, email, role: userRole });
 
             toast.success(response.message || "Login successful.");
 
