@@ -1,5 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
+import GuestRoute from "./GuestRoute";
+import ProtectedRoute from "./ProtectedRoute";
+
 import Home from "../pages/Auth/Home";
 import Login from "../pages/Auth/Login";
 import ResetPassword from "../pages/Auth/ResetPassword";
@@ -36,7 +39,9 @@ const AppRoutes = () => {
 
         <Routes>
 
-            {/* Auth Routes */}
+            {/* Auth Routes (guest-only: signed-in users go to the dashboard) */}
+
+            <Route element={<GuestRoute />}>
 
             <Route
                 path="/"
@@ -53,6 +58,12 @@ const AppRoutes = () => {
                 element={<ResetPassword />}
             />
 
+            </Route>
+
+
+            {/* Protected Routes (require a token) */}
+
+            <Route element={<ProtectedRoute />}>
 
             {/* Admin Routes */}
 
@@ -176,6 +187,8 @@ const AppRoutes = () => {
                     path="profile"
                     element={<TeacherProfile />}
                 />
+
+            </Route>
 
             </Route>
 
