@@ -58,17 +58,43 @@ const Login = () => {
         }
     };
 
+    // Client-side required checks (messages mirror the backend's wording)
+    const validateForm = (data: LoginRequest): LoginFormErrors => {
+        const validationErrors: LoginFormErrors = {};
+
+        if (!data.email.trim()) {
+            validationErrors.email = "The email field is required.";
+        }
+
+        if (!data.password.trim()) {
+            validationErrors.password = "The password field is required.";
+        }
+
+        return validationErrors;
+    };
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (isSubmittingRef.current) return;
+
+        // Validate before hitting the API; stop here if anything is missing
+        const clientErrors = validateForm(formData);
+
+        if (Object.keys(clientErrors).length > 0) {
+            setErrors(clientErrors);
+            return;
+        }
 
         isSubmittingRef.current = true;
         setIsSubmitting(true);
         setErrors({});
 
         try {
-            const response = await login(formData);
+            const response = await login({
+                email: formData.email.trim(),
+                password: formData.password,
+            });
 
             setToken(response.data.token);
 
