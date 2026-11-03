@@ -153,21 +153,21 @@ const Sidebar = () => {
                     >
 
                         <img 
-                        className="img-fluid nav-icon" 
-                        src={NavIcon7} 
-                        alt="System" />
+                            className="img-fluid nav-icon" 
+                            src={NavIcon7} 
+                            alt="System" />
 
-                        <span>
-                            System
-                        </span>
+                            <span>
+                                System
+                            </span>
 
-                        <ChevronDown
-                            className={`system-chevron ${
-                                isSystemOpen ? "open" : ""
-                            }`}
-                            size={18}
-                            strokeWidth={2}
-                        />
+                            <ChevronDown
+                                className={`system-chevron ${
+                                    isSystemOpen ? "open" : ""
+                                }`}
+                                size={18}
+                                strokeWidth={2}
+                            />
 
                     </NavLink>
 
