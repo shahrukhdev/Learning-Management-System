@@ -143,7 +143,7 @@ const AppRoutes = () => {
                 />
 
                 <Route
-                    path="/system/permissions/create-new"
+                    path="/system/permissions/create"
                     element={<CreateNewPermission />}
                 />
 

@@ -189,7 +189,7 @@ const Users = () => {
     return (
         <>
             <SEO
-                title="User Management | Noor Ul Imaan Masjid"
+                title="Users Management - Noor Ul Imaan Masjid"
                 description="Manage users in Noor Ul Imaan Masjid Madrassah Portal."
             />
 

@@ -97,7 +97,7 @@ const Roles = () => {
     return (
         <>
             <SEO
-                title="Roles Management | Noor Ul Imaan Masjid"
+                title="Roles Management - Noor Ul Imaan Masjid"
                 description="Define and control access levels across the Madrasah portal."
             />
 

@@ -3,13 +3,17 @@ export interface PermissionFormData {
     description: string;
 }
 
+// Inline validation messages (only `name` is validated/submitted for now)
+export type PermissionFormErrors = Partial<Record<keyof PermissionFormData, string>>;
+
 interface PermissionInformationProps {
     formData: PermissionFormData;
     onChange: (field: keyof PermissionFormData, value: string) => void;
+    errors?: PermissionFormErrors;
 }
 
-const PermissionInformation = ({ formData, onChange }: PermissionInformationProps) => (
-    
+const PermissionInformation = ({ formData, onChange, errors = {} }: PermissionInformationProps) => (
+
     <div className="col-12">
         <div className="create-role-card">
             <div className="create-role-card-header">
@@ -27,20 +31,24 @@ const PermissionInformation = ({ formData, onChange }: PermissionInformationProp
                         placeholder="e.g. Manage Students"
                         value={formData.name}
                         onChange={(event) => onChange("name", event.target.value)}
+                        aria-invalid={Boolean(errors.name)}
                         required
                     />
+                    {errors.name && (
+                        <span className="error-text d-block">{errors.name}</span>
+                    )}
                 </div>
                 <div className="primary-field mb-0">
                     <label htmlFor="permission-description" className="primary-label">
                         Description
                     </label>
+                    {/* Optional; not submitted yet */}
                     <textarea
                         id="permission-description"
                         className="primary-textarea"
                         placeholder="Briefly describe this permission..."
                         value={formData.description}
                         onChange={(event) => onChange("description", event.target.value)}
-                        required
                     />
                 </div>
             </div>

@@ -1,5 +1,18 @@
 import api from "../api/api";
-import type { PermissionsListParams, PermissionsListResponse } from "../types/permission.types";
+import type {
+    CreatePermissionRequest,
+    CreatePermissionResponse,
+    PermissionsListParams,
+    PermissionsListResponse,
+} from "../types/permission.types";
+
+// POST /v1/permissions
+export const createPermission = async (
+    payload: CreatePermissionRequest
+): Promise<CreatePermissionResponse> => {
+    const response = await api.post<CreatePermissionResponse>("/v1/permissions", payload);
+    return response.data;
+};
 
 // GET /v1/permissions (Permissions Management listing). Pass an AbortSignal so
 // superseded requests can be cancelled.

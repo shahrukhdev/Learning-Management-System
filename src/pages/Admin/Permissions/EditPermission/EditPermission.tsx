@@ -29,8 +29,8 @@ const EditPermission = () => {
     return (
         <>
             <SEO
-                title="Edit Permission - Madrasah Portal"
-                description="Edit permission in the Madrasah Portal"
+                title="Edit Permission - Noor Ul Imaan Masjid"
+                description="Edit a permission in the Noor Ul Imaan Masjid Madrassah Portal."
             />
             <section className="admin create-role-section">
                 <div className="container-fluid">

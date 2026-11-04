@@ -16,8 +16,8 @@ const EditRole = () => {
         <>
 
             <SEO
-                title="Edit Role - Madrasah Portal"
-                description="Edit role in the Madrasah Portal"
+                title="Role Permissions - Noor Ul Imaan Masjid"
+                description="Manage role permissions in the Noor Ul Imaan Masjid Madrassah Portal."
             />
 
 

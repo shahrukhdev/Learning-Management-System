@@ -31,7 +31,7 @@ const Permissions = () => {
     return (
     <>
         <SEO
-            title="Permissions Management | Noor Ul Imaan Masjid"
+            title="Permissions Management - Noor Ul Imaan Masjid"
             description="Define and control permissions across the Madrasah portal."
         />
         <section className="admin permissions-section">
@@ -46,11 +46,11 @@ const Permissions = () => {
                                 </p>
                             </div>
                             <Link
-                                to="/system/permissions/create-new"
+                                to="/system/permissions/create"
                                 className="new-notice-btn"
                             >
                                 <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
-                                <span>Create New Permission</span>
+                                <span>Create Permission</span>
                             </Link>
                         </div>
                     </div>

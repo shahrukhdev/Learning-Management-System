@@ -160,8 +160,8 @@ const CreateNewRole = () => {
         <>
 
             <SEO
-                title="Create Role - Madrasah Portal"
-                description="Create a new role in the Madrasah Portal"
+                title="Create Role - Noor Ul Imaan Masjid"
+                description="Create a role in the Noor Ul Imaan Masjid Madrassah Portal."
             />
 
 
