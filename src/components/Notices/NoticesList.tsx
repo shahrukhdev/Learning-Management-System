@@ -1,11 +1,20 @@
 import { PenLine, X } from "lucide-react";
 
-import type { Notice } from "./Notices.types";
+// Minimal shape shown by a notice row. Both the API notices (Admin page) and
+// the existing mock notices (Teacher page) fit it.
+export interface NoticeListItem {
+    id: number;
+    title: string;
+    description: string;
+}
 
 interface NoticeItemPros {
-    notice: Notice;
+    notice: NoticeListItem;
+    // Optional meta line (API notices only): status badge + backend date
+    isActive?: boolean;
+    date?: string;
     onEdit?: (id: number) => void;
-    onDelete?: (id: number) => void; 
+    onDelete?: (id: number) => void;
 }
 
 const noticeColors = [
@@ -16,13 +25,15 @@ const noticeColors = [
     "red",
 ];
 
-const NoticeList = ({notice, onEdit, onDelete}: NoticeItemPros) => {
+const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) => {
 
-    const color = noticeColors[(notice.id - 1) % noticeColors.length];
-    
+    const color = noticeColors[Math.abs(notice.id - 1) % noticeColors.length];
+
+    const hasMeta = isActive !== undefined || Boolean(date);
+
     return (
         <div className="notice-item">
-            
+
             {/* Notice Dot */}
             <span className={`notice-dot ${color}`}></span>
 
@@ -37,6 +48,26 @@ const NoticeList = ({notice, onEdit, onDelete}: NoticeItemPros) => {
                     {notice.description}
                 </p>
 
+                {/* Status (existing table status styling) + date as sent by the API */}
+                {hasMeta && (
+                    <div className="notice-meta">
+
+                        {isActive !== undefined && (
+                            <span className={`table-status ${isActive ? "active" : "inactive"}`}>
+                                <span className="table-status-dot"></span>
+                                {isActive ? "Active" : "Inactive"}
+                            </span>
+                        )}
+
+                        {date && (
+                            <span className="notice-date">
+                                {date}
+                            </span>
+                        )}
+
+                    </div>
+                )}
+
             </div>
 
             {/* Notice Actions */}
@@ -46,6 +77,7 @@ const NoticeList = ({notice, onEdit, onDelete}: NoticeItemPros) => {
                     type="button"
                     className="notice-action-btn"
                     onClick={() => onEdit?.(notice.id)}
+                    aria-label={`Edit ${notice.title}`}
                 >
                     <PenLine size={16} strokeWidth={2.2} color="#231F20" />
                 </button>
@@ -54,6 +86,7 @@ const NoticeList = ({notice, onEdit, onDelete}: NoticeItemPros) => {
                     type="button"
                     className="notice-action-btn"
                     onClick={() => onDelete?.(notice.id)}
+                    aria-label={`Delete ${notice.title}`}
                 >
                     <X size={16} strokeWidth={2.2} color="#231F20" />
                 </button>

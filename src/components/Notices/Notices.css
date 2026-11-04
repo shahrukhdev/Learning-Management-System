@@ -107,3 +107,49 @@
     justify-content: center;
     align-items: center;
 }
+/* =========================================================
+  API-driven listing: meta line, states, pagination spacing
+========================================================= */
+
+/* Status badge (reuses .table-status) + backend-formatted date */
+.notice-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.notice-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    line-height: 14px;
+    color: #96A39D;
+}
+
+/* Loading / empty / error state inside the notice box */
+.notice-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 250px;
+    text-align: center;
+    font-size: 1.4rem;
+    color: #7b8177;
+}
+
+/* Previous notices stay visible but dimmed while the next page loads */
+.notice-list.is-loading {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+/* Pagination footer (reuses .table-footer) under the notices */
+.notice-box .table-footer {
+    margin-top: 12px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
