@@ -6,7 +6,8 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { permissionsColumns } from "./PermissionsTable.columns";
+import { useMemo } from "react";
+import { getPermissionsColumns } from "./PermissionsTable.columns";
 import TablePageNumbers from "../Table/TablePageNumbers";
 import type { PermissionListItem } from "../../types/permission.types";
 import type { PaginationMeta } from "../../types/api.types";
@@ -24,6 +25,7 @@ interface PermissionsTableProps {
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
+    onDeletePermission: (permission: PermissionListItem) => void;
 }
 
 const PermissionsTable = ({
@@ -37,7 +39,13 @@ const PermissionsTable = ({
     onPageChange,
     onPerPageChange,
     onRetry,
+    onDeletePermission,
 }: PermissionsTableProps) => {
+    const permissionsColumns = useMemo(
+        () => getPermissionsColumns({ onDelete: onDeletePermission }),
+        [onDeletePermission]
+    );
+
     const table = useReactTable({
         data: permissions,
         columns: permissionsColumns,

@@ -2,9 +2,37 @@ import api from "../api/api";
 import type {
     CreatePermissionRequest,
     CreatePermissionResponse,
+    DeletePermissionResponse,
+    PermissionDetailResponse,
     PermissionsListParams,
     PermissionsListResponse,
+    UpdatePermissionRequest,
+    UpdatePermissionResponse,
 } from "../types/permission.types";
+
+// GET /v1/permissions/{id}
+export const getPermission = async (
+    id: number,
+    signal?: AbortSignal
+): Promise<PermissionDetailResponse> => {
+    const response = await api.get<PermissionDetailResponse>(`/v1/permissions/${id}`, { signal });
+    return response.data;
+};
+
+// PUT /v1/permissions/{id}
+export const updatePermission = async (
+    id: number,
+    payload: UpdatePermissionRequest
+): Promise<UpdatePermissionResponse> => {
+    const response = await api.put<UpdatePermissionResponse>(`/v1/permissions/${id}`, payload);
+    return response.data;
+};
+
+// DELETE /v1/permissions/{id}
+export const deletePermission = async (id: number): Promise<DeletePermissionResponse> => {
+    const response = await api.delete<DeletePermissionResponse>(`/v1/permissions/${id}`);
+    return response.data;
+};
 
 // POST /v1/permissions
 export const createPermission = async (

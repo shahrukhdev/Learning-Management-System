@@ -10,7 +10,13 @@ const PERMISSION_DOT_COLORS = ["#4A5D23", "#C9E7A2", "#E2E2C7", "#D4D5C5"];
 const getPermissionDotColor = (permissionId: number) =>
     PERMISSION_DOT_COLORS[Math.abs(permissionId) % PERMISSION_DOT_COLORS.length];
 
-export const permissionsColumns: ColumnDef<PermissionListItem>[] = [
+interface PermissionsColumnsOptions {
+    onDelete: (permission: PermissionListItem) => void;
+}
+
+export const getPermissionsColumns = ({
+    onDelete,
+}: PermissionsColumnsOptions): ColumnDef<PermissionListItem>[] => [
     {
         accessorKey: "name",
         header: "Permission Name",
@@ -48,6 +54,7 @@ export const permissionsColumns: ColumnDef<PermissionListItem>[] = [
                 <button
                     type="button"
                     aria-label={`Delete ${row.original.name}`}
+                    onClick={() => onDelete(row.original)}
                 >
                     <Trash2 size={16} strokeWidth={2.4} />
                 </button>

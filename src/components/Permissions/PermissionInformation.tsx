@@ -42,14 +42,18 @@ const PermissionInformation = ({ formData, onChange, errors = {} }: PermissionIn
                     <label htmlFor="permission-description" className="primary-label">
                         Description
                     </label>
-                    {/* Optional; not submitted yet */}
+                    {/* Optional (submitted by Edit Permission only) */}
                     <textarea
                         id="permission-description"
                         className="primary-textarea"
                         placeholder="Briefly describe this permission..."
                         value={formData.description}
                         onChange={(event) => onChange("description", event.target.value)}
+                        aria-invalid={Boolean(errors.description)}
                     />
+                    {errors.description && (
+                        <span className="error-text d-block">{errors.description}</span>
+                    )}
                 </div>
             </div>
         </div>

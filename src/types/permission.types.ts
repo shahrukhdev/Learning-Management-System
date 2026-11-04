@@ -29,6 +29,33 @@ export interface CreatePermissionResponse {
     data: PermissionListItem;
 }
 
+// GET /v1/permissions/{id}
+export interface PermissionDetailResponse {
+    success: boolean;
+    message: string;
+    data: PermissionListItem;
+}
+
+// PUT /v1/permissions/{id}. An empty description is sent as "" so a cleared
+// description is saved (Laravel turns it into null).
+export interface UpdatePermissionRequest {
+    name: string;
+    description: string;
+}
+
+export interface UpdatePermissionResponse {
+    success: boolean;
+    message: string;
+    data: PermissionListItem;
+}
+
+// DELETE /v1/permissions/{id}
+export interface DeletePermissionResponse {
+    success: boolean;
+    message: string;
+    data: null;
+}
+
 export interface PermissionsListParams {
     page?: number;
     per_page?: number;

@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import SEO from "../../../components/Seo/SEO";
 import PermissionsTable from "../../../components/Permissions/PermissionsTable";
+import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { usePermissionsList } from "../../../hooks/usePermissionsList";
+import { deletePermission } from "../../../services/permissionService";
+import { parseApiError } from "../../../utils/apiError";
+import type { PermissionListItem } from "../../../types/permission.types";
 import "./Permissions.css";
 import "../Roles/Roles.css";
 
@@ -27,6 +32,66 @@ const Permissions = () => {
         hasLoaded,
         retry,
     } = usePermissionsList({ page, perPage });
+
+
+    /* =========================
+       Delete (confirm first), same flow as Roles/Users
+    ========================= */
+
+    // Opening the confirmation only stores the target; no request is made
+    const [deleteTarget, setDeleteTarget] = useState<PermissionListItem | null>(null);
+
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const isDeletingRef = useRef(false);
+
+    const handleDeletePermission = (permission: PermissionListItem) => {
+        setDeleteTarget(permission);
+    };
+
+    const handleCancelDelete = () => {
+        if (!isDeletingRef.current) setDeleteTarget(null);
+    };
+
+    // Only runs when the user clicks "Delete" in the confirmation popup
+    const handleConfirmDelete = async () => {
+
+        if (!deleteTarget || isDeletingRef.current) return;
+
+        isDeletingRef.current = true;
+        setIsDeleting(true);
+
+        try {
+
+            const response = await deletePermission(deleteTarget.id);
+
+            toast.success(response.message || "Permission deleted successfully.");
+
+            setDeleteTarget(null);
+
+            // If that was the last permission on this page, go to the previous
+            // page; otherwise refetch the same page (GET /v1/permissions)
+            if (permissions.length <= 1 && page > 1) {
+                setPageState({ key: filterKey, page: page - 1 });
+            }
+
+            retry();
+
+        } catch (deleteError) {
+
+            const { status, message } = parseApiError(deleteError);
+
+            // 401 is handled globally (redirect + toast)
+            if (status !== 401) toast.error(message);
+
+        } finally {
+
+            isDeletingRef.current = false;
+            setIsDeleting(false);
+
+        }
+
+    };
 
     return (
     <>
@@ -68,11 +133,29 @@ const Permissions = () => {
                             }
                             onPerPageChange={setPerPage}
                             onRetry={retry}
+                            onDeletePermission={handleDeletePermission}
                         />
                     </div>
                 </div>
             </div>
         </section>
+
+        {/* Delete Confirmation */}
+        <ConfirmPopup
+            isOpen={deleteTarget !== null}
+            title="Delete Permission"
+            message={
+                <>
+                    Are you sure you want to delete the{" "}
+                    <strong>{deleteTarget?.name}</strong> permission? This action cannot be undone.
+                </>
+            }
+            confirmLabel="Delete"
+            processingLabel="Deleting..."
+            isProcessing={isDeleting}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+        />
     </>
     );
 };
