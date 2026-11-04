@@ -595,3 +595,21 @@
   background: #535624;
   color: #fff;
 }
+
+/* Page-number buttons (TablePageNumbers) */
+.table-pagination button.active {
+  color: #FFFFFF;
+  background: #535624;
+  border-color: #535624;
+  font-weight: 600;
+}
+
+.table-pagination button.active:hover:not(:disabled) {
+  background: #44471D;
+}
+
+.table-pagination .table-page-ellipsis {
+  margin-right: 0;
+  padding: 0 2px;
+  color: #828684;
+}

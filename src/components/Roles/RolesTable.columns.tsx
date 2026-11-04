@@ -1,11 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
-import type { Role } from "./RolesTable.data";
+import type { RoleListItem } from "../../types/role.types";
 import { Link } from "react-router-dom";
+
+// The API has no role color, so the existing dot colors are reused by role ID
+// (stable per role, purely decorative)
+const ROLE_DOT_COLORS = ["#4A5D23", "#C9E7A2", "#E2E2C7", "#D4D5C5"];
+
+const getRoleDotColor = (roleId: number) =>
+    ROLE_DOT_COLORS[Math.abs(roleId) % ROLE_DOT_COLORS.length];
 
 export const rolesColumns:
 
-    ColumnDef<Role>[] = [
+    ColumnDef<RoleListItem>[] = [
 
     /* Role Name */
 
@@ -20,7 +27,7 @@ export const rolesColumns:
 
                 <div className="table-role-name">
 
-                    <span className="table-role-dot" style={{backgroundColor: row.original.color}}></span>
+                    <span className="table-role-dot" style={{backgroundColor: getRoleDotColor(row.original.id)}}></span>
 
                     <span>
                         {row.original.name}
@@ -45,7 +52,7 @@ export const rolesColumns:
 
             <span className="table-role-description">
 
-                {row.original.description}
+                {row.original.description || "—"}
 
             </span>
 
@@ -56,15 +63,16 @@ export const rolesColumns:
     /* Users */
 
     {
-        accessorKey: "users",
+        accessorKey: "users_count",
 
         header: "Users",
 
+        // Count comes straight from the API
         cell: ({ row }) => (
 
             <span className="table-role-users">
 
-                {row.original.users}
+                {row.original.users_count}
 
             </span>
 
@@ -83,7 +91,7 @@ export const rolesColumns:
 
         cell: ({ row }) => (
 
-            <div className="table-actions">                
+            <div className="table-actions">
 
                 <Link to={`/system/roles/${row.original.id}/edit`}>
                     <Pencil

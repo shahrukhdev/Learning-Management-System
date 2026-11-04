@@ -1,16 +1,44 @@
 import "../Table/Table.css";
 
-import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
-import { useState } from "react";
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { roles } from "./RolesTable.data";
 import { rolesColumns } from "./RolesTable.columns";
+import TablePageNumbers from "../Table/TablePageNumbers";
+import type { RoleListItem } from "../../types/role.types";
+import type { PaginationMeta } from "../../types/api.types";
 
 
-const RolesTable = () => {
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
 
-    const [sorting, setSorting] =
-        useState<SortingState>([]);
+
+interface RolesTableProps {
+    roles: RoleListItem[];
+    pagination: PaginationMeta | null;
+    page: number;
+    perPage: number;
+    isLoading: boolean;
+    hasLoaded: boolean;
+    error: string | null;
+    isSearching: boolean;
+    onPageChange: (page: number) => void;
+    onPerPageChange: (perPage: number) => void;
+    onRetry: () => void;
+}
+
+
+const RolesTable = ({
+    roles,
+    pagination,
+    page,
+    perPage,
+    isLoading,
+    hasLoaded,
+    error,
+    isSearching,
+    onPageChange,
+    onPerPageChange,
+    onRetry,
+}: RolesTableProps) => {
 
 
     const table = useReactTable({
@@ -19,63 +47,88 @@ const RolesTable = () => {
 
         columns: rolesColumns,
 
-        state: {
-            sorting,
-        },
-
-        onSortingChange:
-            setSorting,
-
         getCoreRowModel:
             getCoreRowModel(),
 
-        getSortedRowModel:
-            getSortedRowModel(),
-
-        getPaginationRowModel:
-            getPaginationRowModel(),
-
-        initialState: {
-
-            pagination: {
-
-                pageSize: 10,
-
-                pageIndex: 0,
-
-            },
-
-        },
+        // Pagination is done by the API
+        manualPagination: true,
 
     });
 
 
-    const pageIndex =
-        table.getState()
-            .pagination
-            .pageIndex;
-
-    const pageSize =
-        table.getState()
-            .pagination
-            .pageSize;
-
-
+    // Footer numbers come from the API's pagination metadata
     const totalResults =
-        roles.length;
+        pagination?.total ?? 0;
+
+    const resultsPerPage =
+        pagination?.per_page ?? perPage;
+
+    const currentPage =
+        pagination?.current_page ?? page;
+
+    const totalPages =
+        Math.max(pagination?.last_page ?? 1, 1);
 
 
     const firstResult =
         totalResults === 0
             ? 0
-            : pageIndex * pageSize + 1;
+            : (currentPage - 1) * resultsPerPage + 1;
 
 
     const lastResult =
         Math.min(
-            (pageIndex + 1) * pageSize,
+            currentPage * resultsPerPage,
             totalResults
         );
+
+
+    const canPreviousPage =
+        page > 1;
+
+    const canNextPage =
+        page < totalPages;
+
+
+    const rows =
+        table.getRowModel().rows;
+
+
+    // Body state when there are no rows to show: loading, error, or empty.
+    // (While loading with existing rows, those rows stay visible, dimmed.)
+    const renderStatusRow = () => {
+
+        if (isLoading) {
+            return (
+                <span className="d-inline-flex align-items-center gap-2">
+                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    Loading roles...
+                </span>
+            );
+        }
+
+        if (error) {
+            return (
+                <span className="d-inline-flex flex-column align-items-center gap-2">
+                    <span>{error}</span>
+                    <button
+                        type="button"
+                        className="table-retry-button"
+                        onClick={onRetry}
+                    >
+                        Try again
+                    </button>
+                </span>
+            );
+        }
+
+        return isSearching
+            ? "No roles match your search."
+            : "No roles found.";
+    };
+
+    const showRows =
+        !error && rows.length > 0;
 
 
     return (
@@ -84,7 +137,10 @@ const RolesTable = () => {
 
             {/* Table */}
 
-            <div className="table-wrapper">
+            <div
+                className={`table-wrapper ${isLoading && hasLoaded ? "is-loading" : ""}`}
+                aria-busy={isLoading}
+            >
 
                 <table className="data-table">
 
@@ -131,15 +187,9 @@ const RolesTable = () => {
 
                     <tbody>
 
-                        {table
-                            .getRowModel()
-                            .rows
-                            .length > 0 ? (
+                        {showRows ? (
 
-                            table
-                                .getRowModel()
-                                .rows
-                                .map((row) => (
+                            rows.map((row) => (
 
                                     <tr
                                         key={
@@ -181,7 +231,7 @@ const RolesTable = () => {
                                     className="table-empty"
                                 >
 
-                                    No roles found.
+                                    {renderStatusRow()}
 
                                 </td>
 
@@ -209,14 +259,10 @@ const RolesTable = () => {
                     </span>
 
                     <select
-                        value={
-                            table.getState()
-                                .pagination
-                                .pageSize
-                        }
+                        value={perPage}
                         onChange={(e) => {
 
-                            table.setPageSize(
+                            onPerPageChange(
                                 Number(
                                     e.target.value
                                 )
@@ -225,21 +271,16 @@ const RolesTable = () => {
                         }}
                     >
 
-                        <option value="10">
-                            10
-                        </option>
+                        {PAGE_SIZE_OPTIONS.map((size) => (
 
-                        <option value="20">
-                            20
-                        </option>
+                            <option
+                                key={size}
+                                value={size}
+                            >
+                                {size}
+                            </option>
 
-                        <option value="30">
-                            30
-                        </option>
-
-                        <option value="50">
-                            50
-                        </option>
+                        ))}
 
                     </select>
 
@@ -281,14 +322,11 @@ const RolesTable = () => {
 
                         Page{" "}
 
-                        {pageIndex + 1}
+                        {page}
 
                         {" "}of{" "}
 
-                        {Math.max(
-                            table.getPageCount(),
-                            1
-                        )}
+                        {totalPages}
 
                     </span>
 
@@ -296,10 +334,10 @@ const RolesTable = () => {
                     <button
                         type="button"
                         disabled={
-                            !table.getCanPreviousPage()
+                            !canPreviousPage
                         }
                         onClick={() =>
-                            table.previousPage()
+                            onPageChange(page - 1)
                         }
                         aria-label="Previous page"
                     >
@@ -312,13 +350,20 @@ const RolesTable = () => {
                     </button>
 
 
+                    <TablePageNumbers
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
+
+
                     <button
                         type="button"
                         disabled={
-                            !table.getCanNextPage()
+                            !canNextPage
                         }
                         onClick={() =>
-                            table.nextPage()
+                            onPageChange(page + 1)
                         }
                         aria-label="Next page"
                     >

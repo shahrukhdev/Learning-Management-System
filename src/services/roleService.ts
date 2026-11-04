@@ -1,5 +1,28 @@
 import api from "../api/api";
 import type { UserRoleSummary } from "../types/user.types";
+import type { RolesListParams, RolesListResponse } from "../types/role.types";
+
+// GET /v1/roles (Roles Management listing). Pass an AbortSignal so
+// superseded requests can be cancelled.
+export const getRoles = async (
+    params: RolesListParams,
+    signal?: AbortSignal
+): Promise<RolesListResponse> => {
+
+    // Drop empty values so they are not sent as e.g. `search=`
+    const query: RolesListParams = {};
+
+    if (params.search) query.search = params.search;
+    if (params.page !== undefined) query.page = params.page;
+    if (params.per_page !== undefined) query.per_page = params.per_page;
+
+    const response = await api.get<RolesListResponse>("/v1/roles", {
+        params: query,
+        signal,
+    });
+
+    return response.data;
+};
 
 const isRole = (value: unknown): value is UserRoleSummary => {
     if (typeof value !== "object" || value === null) return false;
