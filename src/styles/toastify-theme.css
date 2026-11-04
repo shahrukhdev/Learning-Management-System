@@ -1,0 +1,96 @@
+/* ==========================================================================
+   React Toastify - brown & white app theme
+   Loaded after "react-toastify/dist/ReactToastify.css" (see App.tsx).
+   Colors come from the app palette (#41441B / #535624 browns, #FFFDF6 cream).
+   Only styling is changed: positions, durations and behavior stay as configured
+   on <ToastContainer />.
+   ========================================================================== */
+
+:root {
+    /* Palette */
+    --app-toast-bg: #4B4E20;          /* warm olive-brown (between #41441B and #535624) */
+    --app-toast-bg-success: #454B1E;  /* slightly greener brown */
+    --app-toast-bg-warning: #574A1D;  /* slightly amber brown */
+    --app-toast-bg-error: #5A3A21;    /* slightly reddish brown */
+    --app-toast-text: #FFFFFF;
+    --app-toast-cream: #FFFDF6;
+
+    /* Soft cream accents per type (icons, side stripe, progress bar) */
+    --app-toast-accent-info: #F7F5EC;
+    --app-toast-accent-success: #DCE5BC;
+    --app-toast-accent-warning: #F3DCA0;
+    --app-toast-accent-error: #F2C2A8;
+
+    /* Toastify variables (light theme is the default theme in use) */
+    --toastify-color-light: var(--app-toast-bg);
+    --toastify-text-color-light: var(--app-toast-text);
+    --toastify-font-family: var(--font-manrope);
+    --toastify-toast-bd-radius: 12px;
+    --toastify-toast-shadow: 0 10px 28px rgba(63, 66, 26, 0.28), 0 2px 6px rgba(63, 66, 26, 0.18);
+    --toastify-toast-min-height: 60px;
+    --toastify-toast-padding: 14px 40px 14px 16px; /* room for the close button */
+
+    --toastify-icon-color-info: var(--app-toast-accent-info);
+    --toastify-icon-color-success: var(--app-toast-accent-success);
+    --toastify-icon-color-warning: var(--app-toast-accent-warning);
+    --toastify-icon-color-error: var(--app-toast-accent-error);
+
+    --toastify-color-progress-light: var(--app-toast-cream);
+    --toastify-color-progress-info: var(--app-toast-accent-info);
+    --toastify-color-progress-success: var(--app-toast-accent-success);
+    --toastify-color-progress-warning: var(--app-toast-accent-warning);
+    --toastify-color-progress-error: var(--app-toast-accent-error);
+    --toastify-color-progress-bgo: 0.18; /* subtle progress track */
+}
+
+/* Toast surface */
+.Toastify__toast {
+    border: 1px solid rgba(255, 253, 246, 0.08);
+    border-inline-start: 4px solid var(--app-toast-accent-info);
+    font-size: 1.4rem; /* html is 10px, so this is 14px */
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+/* Subtle per-type variations, same theme */
+.Toastify__toast-theme--light.Toastify__toast--success {
+    background: var(--app-toast-bg-success);
+    border-inline-start-color: var(--app-toast-accent-success);
+}
+
+.Toastify__toast-theme--light.Toastify__toast--warning {
+    background: var(--app-toast-bg-warning);
+    border-inline-start-color: var(--app-toast-accent-warning);
+}
+
+.Toastify__toast-theme--light.Toastify__toast--error {
+    background: var(--app-toast-bg-error);
+    border-inline-start-color: var(--app-toast-accent-error);
+}
+
+.Toastify__toast-body {
+    color: var(--app-toast-text);
+}
+
+/* Close button: cream instead of the default black */
+.Toastify__close-button--light {
+    color: var(--app-toast-cream);
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+}
+
+.Toastify__close-button--light:hover,
+.Toastify__close-button--light:focus-visible {
+    opacity: 1;
+}
+
+.Toastify__close-button:focus-visible {
+    outline: 2px solid var(--app-toast-cream);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Progress bar: slim cream line */
+.Toastify__progress-bar--wrp {
+    height: 3px;
+}

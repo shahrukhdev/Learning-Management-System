@@ -1,5 +1,6 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./styles/toastify-theme.css"; // app theme overrides (must load after the library CSS)
 
 import AppRoutes from "./routes/AppRoutes";
 import UnauthorizedRedirect from "./routes/UnauthorizedRedirect";
