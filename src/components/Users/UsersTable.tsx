@@ -25,6 +25,7 @@ interface UserManagementTableProps {
     error: string | null;
     showYear: boolean;
     isSearching: boolean;
+    isRoleFiltered: boolean;
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
@@ -41,6 +42,7 @@ const UserManagementTable = ({
     error,
     showYear,
     isSearching,
+    isRoleFiltered,
     onPageChange,
     onPerPageChange,
     onRetry,
@@ -145,6 +147,11 @@ const UserManagementTable = ({
                     </button>
                 </span>
             );
+        }
+
+        // Role tabs only filter the loaded page, so say so
+        if (isRoleFiltered) {
+            return "No users with this role on this page.";
         }
 
         return isSearching

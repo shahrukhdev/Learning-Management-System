@@ -37,9 +37,10 @@ const Users = () => {
 
     const roleId = activeTab === ALL_TAB ? null : Number(activeTab);
 
-    // The page resets to 1 whenever search, role or page size changes: a page
-    // number only applies to the filters it was chosen under.
-    const filterKey = `${debouncedSearch}|${activeTab}|${perPage}`;
+    // The page resets to 1 whenever search or page size changes: a page number
+    // only applies to the query it was chosen under. The role tab is NOT part
+    // of this key, because switching tabs must not refetch or change the page.
+    const filterKey = `${debouncedSearch}|${perPage}`;
 
     const [pageState, setPageState] = useState({ key: filterKey, page: 1 });
 
@@ -53,7 +54,19 @@ const Users = () => {
         hasLoaded,
         roles,
         retry,
-    } = useUsersList({ search: debouncedSearch, roleId, page, perPage });
+    } = useUsersList({ search: debouncedSearch, page, perPage });
+
+    // Role tabs filter the currently loaded page locally (no API request).
+    // Because the API is server-paginated, this only covers the loaded page.
+    const visibleUsers = useMemo(
+        () =>
+            roleId === null
+                ? users
+                : users.filter((user) =>
+                    (user.roles ?? []).some((role) => role.id === roleId)
+                ),
+        [users, roleId]
+    );
 
     // "All Users" + one tab per role, using the roles' real IDs
     const tabs = useMemo<UserTab[]>(
@@ -162,7 +175,7 @@ const Users = () => {
                                 ========================= */}
 
                                 <UserManagementTable
-                                    users={users}
+                                    users={visibleUsers}
                                     pagination={pagination}
                                     page={page}
                                     perPage={perPage}
@@ -171,6 +184,7 @@ const Users = () => {
                                     error={error}
                                     showYear={isStudentTab}
                                     isSearching={debouncedSearch !== ""}
+                                    isRoleFiltered={roleId !== null}
                                     onPageChange={(nextPage) =>
                                         setPageState({ key: filterKey, page: nextPage })
                                     }

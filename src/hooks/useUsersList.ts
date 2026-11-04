@@ -6,9 +6,9 @@ import { parseApiError } from "../utils/apiError";
 import type { PaginationMeta } from "../types/api.types";
 import type { ManagedUser, UserRoleSummary } from "../types/user.types";
 
+// Only these values trigger a request. Role tabs filter locally (see Users page).
 export interface UsersQuery {
     search: string;
-    roleId: number | null;
     page: number;
     perPage: number;
 }
@@ -38,7 +38,7 @@ const rolesFromUsers = (users: ManagedUser[]): UserRoleSummary[] =>
         (user.roles ?? []).map(({ id, name }) => ({ id, name }))
     );
 
-export const useUsersList = ({ search, roleId, page, perPage }: UsersQuery) => {
+export const useUsersList = ({ search, page, perPage }: UsersQuery) => {
 
     const [reloadToken, setReloadToken] = useState(0);
 
@@ -47,7 +47,7 @@ export const useUsersList = ({ search, roleId, page, perPage }: UsersQuery) => {
     // Every role with a real ID seen so far (from /v1/roles and users' roles)
     const [roles, setRoles] = useState<UserRoleSummary[]>([]);
 
-    const requestKey = JSON.stringify({ search, roleId, page, perPage, reloadToken });
+    const requestKey = JSON.stringify({ search, page, perPage, reloadToken });
 
     useEffect(() => {
         // Cancels this request if the query changes (or on unmount), so an
@@ -57,7 +57,6 @@ export const useUsersList = ({ search, roleId, page, perPage }: UsersQuery) => {
         getUsers(
             {
                 search: search || undefined,
-                role_id: roleId ?? undefined,
                 page,
                 per_page: perPage,
             },
@@ -91,7 +90,7 @@ export const useUsersList = ({ search, roleId, page, perPage }: UsersQuery) => {
             });
 
         return () => controller.abort();
-    }, [search, roleId, page, perPage, requestKey]);
+    }, [search, page, perPage, requestKey]);
 
     // Full role list for the tabs, if the endpoint returns the expected shape.
     // Failure is non-fatal: tabs still fill from the users' own roles.
