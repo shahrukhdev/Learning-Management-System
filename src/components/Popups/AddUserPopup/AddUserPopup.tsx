@@ -50,13 +50,13 @@ interface AddUserPopupProps {
    Constants
 ========================= */
 
-// Roles that can be selected for now: Admin, Super Admin (admin kind) and
-// Teacher.
-const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher"];
+// Roles that can be selected for now: Admin, Super Admin (admin kind),
+// Teacher and Parent.
+const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher", "parent"];
 
-// Roles whose role-specific fields are shown. None for now: Teacher works
-// like Admin (no extra fields). The Student/Teacher/Parent sections below are
-// kept for when their fields are enabled.
+// Roles whose role-specific fields are shown. None for now: Teacher and Parent
+// work like Admin (no extra fields). The Student/Teacher/Parent sections below
+// are kept for when their fields are enabled.
 const SECTION_ROLE_KINDS: UserRole[] = [];
 
 // Mirrors the backend rules
