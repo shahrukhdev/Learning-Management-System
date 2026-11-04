@@ -1,4 +1,4 @@
-import type { RoleFormData } from "./CreateRole.types";
+import type { RoleFormData, RoleFormErrors } from "./CreateRole.types";
 
 
 interface RoleInformationProps {
@@ -7,12 +7,14 @@ interface RoleInformationProps {
         field: keyof RoleFormData,
         value: string
     ) => void;
+    errors?: RoleFormErrors;
 }
 
 
 const RoleInformation = ({
     formData,
     onChange,
+    errors = {},
 }: RoleInformationProps) => {
 
     return (
@@ -59,7 +61,12 @@ const RoleInformation = ({
                                     e.target.value
                                 )
                             }
+                            aria-invalid={Boolean(errors.name)}
                         />
+
+                        {errors.name && (
+                            <span className="error-text d-block">{errors.name}</span>
+                        )}
 
                     </div>
 
@@ -86,7 +93,12 @@ const RoleInformation = ({
                                     e.target.value
                                 )
                             }
+                            aria-invalid={Boolean(errors.description)}
                         />
+
+                        {errors.description && (
+                            <span className="error-text d-block">{errors.description}</span>
+                        )}
 
                     </div>
 

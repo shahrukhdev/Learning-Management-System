@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import SEO from "../../../components/Seo/SEO";
 import "./Roles.css";
 import RolesTable from "../../../components/Roles/RolesTable";
+import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { useRolesList } from "../../../hooks/useRolesList";
+import { deleteRole } from "../../../services/roleService";
+import { parseApiError } from "../../../utils/apiError";
+import type { RoleListItem } from "../../../types/role.types";
 
 const DEFAULT_PER_PAGE = 10; // matches the backend default and the existing UI
 
@@ -28,6 +33,66 @@ const Roles = () => {
         hasLoaded,
         retry,
     } = useRolesList({ search: "", page, perPage });
+
+
+    /* =========================
+       Delete (confirm first), same flow as Users
+    ========================= */
+
+    // Opening the confirmation only stores the target; no request is made
+    const [deleteTarget, setDeleteTarget] = useState<RoleListItem | null>(null);
+
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const isDeletingRef = useRef(false);
+
+    const handleDeleteRole = (role: RoleListItem) => {
+        setDeleteTarget(role);
+    };
+
+    const handleCancelDelete = () => {
+        if (!isDeletingRef.current) setDeleteTarget(null);
+    };
+
+    // Only runs when the user clicks "Delete" in the confirmation popup
+    const handleConfirmDelete = async () => {
+
+        if (!deleteTarget || isDeletingRef.current) return;
+
+        isDeletingRef.current = true;
+        setIsDeleting(true);
+
+        try {
+
+            const response = await deleteRole(deleteTarget.id);
+
+            toast.success(response.message || "Role deleted successfully.");
+
+            setDeleteTarget(null);
+
+            // If that was the last role on this page, go to the previous page;
+            // otherwise refetch the same page (GET /v1/roles)
+            if (roles.length <= 1 && page > 1) {
+                setPageState({ key: filterKey, page: page - 1 });
+            }
+
+            retry();
+
+        } catch (deleteError) {
+
+            const { status, message } = parseApiError(deleteError);
+
+            // 401 is handled globally (redirect + toast)
+            if (status !== 401) toast.error(message);
+
+        } finally {
+
+            isDeletingRef.current = false;
+            setIsDeleting(false);
+
+        }
+
+    };
 
     return (
         <>
@@ -78,11 +143,31 @@ const Roles = () => {
                                 }
                                 onPerPageChange={setPerPage}
                                 onRetry={retry}
+                                onDeleteRole={handleDeleteRole}
                             />
                         </div>
                     </div>
                 </div>
             </section>
+
+
+            {/* Delete Confirmation */}
+
+            <ConfirmPopup
+                isOpen={deleteTarget !== null}
+                title="Delete Role"
+                message={
+                    <>
+                        Are you sure you want to delete the{" "}
+                        <strong>{deleteTarget?.name}</strong> role? This action cannot be undone.
+                    </>
+                }
+                confirmLabel="Delete"
+                processingLabel="Deleting..."
+                isProcessing={isDeleting}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+            />
         </>
     );
 };

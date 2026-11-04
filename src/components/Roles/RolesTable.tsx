@@ -1,8 +1,9 @@
 import "../Table/Table.css";
 
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { rolesColumns } from "./RolesTable.columns";
+import { getRolesColumns } from "./RolesTable.columns";
 import TablePageNumbers from "../Table/TablePageNumbers";
 import type { RoleListItem } from "../../types/role.types";
 import type { PaginationMeta } from "../../types/api.types";
@@ -22,6 +23,7 @@ interface RolesTableProps {
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
+    onDeleteRole: (role: RoleListItem) => void;
 }
 
 
@@ -36,7 +38,14 @@ const RolesTable = ({
     onPageChange,
     onPerPageChange,
     onRetry,
+    onDeleteRole,
 }: RolesTableProps) => {
+
+
+    const rolesColumns = useMemo(
+        () => getRolesColumns({ onDelete: onDeleteRole }),
+        [onDeleteRole]
+    );
 
 
     const table = useReactTable({

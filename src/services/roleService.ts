@@ -1,6 +1,39 @@
 import api from "../api/api";
 import type { UserRoleSummary } from "../types/user.types";
-import type { RolesListParams, RolesListResponse } from "../types/role.types";
+import type {
+    CreateRoleRequest,
+    CreateRoleResponse,
+    DeleteRoleResponse,
+    RoleDetailResponse,
+    RolesListParams,
+    RolesListResponse,
+    UpdateRoleRequest,
+    UpdateRoleResponse,
+} from "../types/role.types";
+
+// GET /v1/roles/{id}
+export const getRole = async (id: number, signal?: AbortSignal): Promise<RoleDetailResponse> => {
+    const response = await api.get<RoleDetailResponse>(`/v1/roles/${id}`, { signal });
+    return response.data;
+};
+
+// PUT /v1/roles/{id}
+export const updateRole = async (id: number, payload: UpdateRoleRequest): Promise<UpdateRoleResponse> => {
+    const response = await api.put<UpdateRoleResponse>(`/v1/roles/${id}`, payload);
+    return response.data;
+};
+
+// DELETE /v1/roles/{id}
+export const deleteRole = async (id: number): Promise<DeleteRoleResponse> => {
+    const response = await api.delete<DeleteRoleResponse>(`/v1/roles/${id}`);
+    return response.data;
+};
+
+// POST /v1/roles
+export const createRole = async (payload: CreateRoleRequest): Promise<CreateRoleResponse> => {
+    const response = await api.post<CreateRoleResponse>("/v1/roles", payload);
+    return response.data;
+};
 
 // GET /v1/roles (Roles Management listing). Pass an AbortSignal so
 // superseded requests can be cancelled.

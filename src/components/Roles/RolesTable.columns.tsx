@@ -10,9 +10,13 @@ const ROLE_DOT_COLORS = ["#4A5D23", "#C9E7A2", "#E2E2C7", "#D4D5C5"];
 const getRoleDotColor = (roleId: number) =>
     ROLE_DOT_COLORS[Math.abs(roleId) % ROLE_DOT_COLORS.length];
 
-export const rolesColumns:
+interface RolesColumnsOptions {
+    onDelete: (role: RoleListItem) => void;
+}
 
-    ColumnDef<RoleListItem>[] = [
+export const getRolesColumns = ({
+    onDelete,
+}: RolesColumnsOptions): ColumnDef<RoleListItem>[] => [
 
     /* Role Name */
 
@@ -93,7 +97,12 @@ export const rolesColumns:
 
             <div className="table-actions">
 
-                <Link to={`/system/roles/${row.original.id}/edit`}>
+                {/* Edit Role page (name + description). The permission
+                    matrix screen stays at /system/roles/:id/edit. */}
+                <Link
+                    to={`/system/roles/${row.original.id}/update`}
+                    aria-label={`Edit ${row.original.name}`}
+                >
                     <Pencil
                         size={16}
                         strokeWidth={2.4}
@@ -104,7 +113,8 @@ export const rolesColumns:
 
                 <button
                     type="button"
-                    aria-label="Delete role"
+                    aria-label={`Delete ${row.original.name}`}
+                    onClick={() => onDelete(row.original)}
                 >
 
                     <Trash2

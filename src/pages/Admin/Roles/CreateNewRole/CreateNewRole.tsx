@@ -1,61 +1,45 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "react-toastify";
 
 import SEO from "../../../../components/Seo/SEO";
 
 import RoleInformation from "../../../../components/Roles/CreateRole/RoleInformation";
 import RolePermissions from "../../../../components/Roles/CreateRole/RolePermissions";
 
-import type { RoleFormData, RolePermission } from "../../../../components/Roles/CreateRole/CreateRole.types";
+import type { RoleFormData, RoleFormErrors, RolePermission } from "../../../../components/Roles/CreateRole/CreateRole.types";
+import {
+    EMPTY_ROLE_FORM,
+    INITIAL_PERMISSIONS,
+    ROLES_LIST_PATH,
+    toRoleFormErrors,
+    validateRoleForm,
+} from "../../../../components/Roles/CreateRole/roleForm";
+
+import { createRole } from "../../../../services/roleService";
+import { parseApiError } from "../../../../utils/apiError";
 
 import "./CreateNewRole.css";
-
-
-const initialFormData: RoleFormData = {
-    name: "",
-    description: "",
-};
-
-
-const initialPermissions: RolePermission[] = [
-
-    {
-        id: "academics",
-        title: "Academics",
-        description: "Manage classes, syllabi, and academic calendars.",
-        enabled: false,
-    },
-    {
-        id: "students",
-        title: "Students",
-        description: "View profiles, attendance, and disciplinary records.",
-        enabled: true,
-    },
-    {
-        id: "finance",
-        title: "Finance",
-        description: "Access fee collection, payroll, and budget reports.",
-        enabled: false,
-    },
-    {
-        id: "communication",
-        title: "Communication",
-        description: "Send announcements to parents and staff.",
-        enabled: true,
-    },
-
-];
 
 
 const CreateNewRole = () => {
 
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<RoleFormData>(initialFormData);
+    const [formData, setFormData] = useState<RoleFormData>(EMPTY_ROLE_FORM);
+
+    const [errors, setErrors] = useState<RoleFormErrors>({});
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Synchronous guard against double submits
+    const isSubmittingRef = useRef(false);
 
 
-    const [permissions, setPermissions] = useState<RolePermission[]>( initialPermissions );
+    // Static for now: toggles stay local and are not submitted
+    const [permissions, setPermissions] = useState<RolePermission[]>( INITIAL_PERMISSIONS );
 
     /* Form Change */
 
@@ -65,6 +49,11 @@ const CreateNewRole = () => {
             ...previous,
             [field]: value,
         }));
+
+        // Clear this field's error once it is edited
+        setErrors((previous) =>
+            previous[field] ? { ...previous, [field]: undefined } : previous
+        );
 
     };
 
@@ -88,26 +77,70 @@ const CreateNewRole = () => {
 
     /* Create Role */
 
-    const handleCreateRole = (
-        event: React.FormEvent<HTMLFormElement>
+    const handleCreateRole = async (
+        event: FormEvent<HTMLFormElement>
     ) => {
 
         event.preventDefault();
 
-        const roleData = {
-            ...formData,
-            permissions: permissions
-                .filter(
-                    (permission) =>
-                        permission.enabled
-                )
-                .map(
-                    (permission) =>
-                        permission.id
-                ),
-        };
+        if (isSubmittingRef.current) return;
 
-        console.log("Role Data:", roleData);
+        const clientErrors = validateRoleForm(formData);
+
+        if (Object.keys(clientErrors).length > 0) {
+            setErrors(clientErrors);
+            return;
+        }
+
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        setErrors({});
+
+        try {
+
+            // Only name + description for now; permissions are not sent yet
+            const description = formData.description.trim();
+
+            const response = await createRole({
+                name: formData.name.trim(),
+                ...(description ? { description } : {}),
+            });
+
+            toast.success(response.message || "Role created successfully.");
+
+            // The Roles listing mounts fresh and fetches GET /v1/roles again,
+            // so the new role is shown without stale data
+            navigate(ROLES_LIST_PATH);
+
+        } catch (error) {
+
+            const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 401) return; // handled globally
+
+            if (status === 422 && validationErrors) {
+
+                const inlineErrors = toRoleFormErrors(validationErrors);
+
+                setErrors(inlineErrors);
+
+                // Only toast if nothing could be shown inline
+                if (Object.keys(inlineErrors).length === 0) {
+                    toast.error(message);
+                }
+
+            } else {
+
+                toast.error(message);
+
+            }
+
+        } finally {
+
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
+
+        }
 
     };
 
@@ -116,7 +149,7 @@ const CreateNewRole = () => {
 
     const handleCancel = () => {
         navigate(
-            "/system/roles"
+            ROLES_LIST_PATH
         );
 
     };
@@ -176,6 +209,7 @@ const CreateNewRole = () => {
                                 onSubmit={
                                     handleCreateRole
                                 }
+                                noValidate
                             >
 
                                 {/* Role Information */}
@@ -186,6 +220,9 @@ const CreateNewRole = () => {
                                     }
                                     onChange={
                                         handleFormChange
+                                    }
+                                    errors={
+                                        errors
                                     }
                                 />
 
@@ -214,6 +251,9 @@ const CreateNewRole = () => {
                                             onClick={
                                                 handleCancel
                                             }
+                                            disabled={
+                                                isSubmitting
+                                            }
                                         >
                                             Cancel
                                         </button>
@@ -222,8 +262,14 @@ const CreateNewRole = () => {
                                         <button
                                             type="submit"
                                             className="form-btn form-btn-primary"
+                                            disabled={
+                                                isSubmitting
+                                            }
+                                            aria-busy={
+                                                isSubmitting
+                                            }
                                         >
-                                            Create Role
+                                            {isSubmitting ? "Creating..." : "Create Role"}
                                         </button>
 
                                     </div>

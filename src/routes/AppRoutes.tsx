@@ -18,6 +18,7 @@ import Users from "../pages/Admin/Users/Users";
 import Roles from "../pages/Admin/Roles/Roles";
 import CreateNewRole from "../pages/Admin/Roles/CreateNewRole/CreateNewRole";
 import EditRole from "../pages/Admin/Roles/EditRole/EditRole";
+import EditRoleDetails from "../pages/Admin/Roles/EditRoleDetails/EditRoleDetails";
 import Permissions from "../pages/Admin/Permissions/Permissions";
 import CreateNewPermission from "../pages/Admin/Permissions/CreateNewPermission/CreateNewPermission";
 import EditPermission from "../pages/Admin/Permissions/EditPermission/EditPermission";
@@ -123,9 +124,16 @@ const AppRoutes = () => {
                     element={<CreateNewRole />}
                 />
 
+                {/* Permission matrix screen (unchanged) */}
                 <Route
                     path="/system/roles/:roleId/edit"
                     element={<EditRole />}
+                />
+
+                {/* Edit Role: name + description */}
+                <Route
+                    path="/system/roles/:roleId/update"
+                    element={<EditRoleDetails />}
                 />
 
                 <Route
