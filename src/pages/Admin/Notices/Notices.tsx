@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Megaphone, Plus } from "lucide-react";
 import { toast } from "react-toastify";
 import SEO from "../../../components/Seo/SEO";
 
@@ -169,7 +169,13 @@ const Notices = () => {
                             Loading notices...
                         </span>
                     ) : (
-                        "No notices found."
+                        <>
+                            <span className="notice-empty-icon" aria-hidden="true">
+                                <Megaphone size={20} strokeWidth={2} />
+                            </span>
+                            <p className="notice-empty-title">No notices found.</p>
+                            <p className="notice-empty-hint">New notices you post will appear here.</p>
+                        </>
                     )}
                 </div>
             );
@@ -230,7 +236,8 @@ const Notices = () => {
 
                         {/* Notice List */}
                         <div className="col-12">
-                            <div className="notice-box">
+                            {/* Compact box when there are no notices to list */}
+                            <div className={`notice-box ${notices.length === 0 || error ? "is-empty" : ""}`}>
 
                                 {renderNotices()}
 
