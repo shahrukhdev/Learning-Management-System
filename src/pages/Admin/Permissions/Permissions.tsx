@@ -13,8 +13,6 @@ const Permissions = () => {
 
     const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
-    // The page resets to 1 whenever the page size changes. It is derived in
-    // the same render, so each change sends exactly one request.
     const filterKey = `${perPage}`;
 
     const [pageState, setPageState] = useState({ key: filterKey, page: 1 });
