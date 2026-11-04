@@ -98,9 +98,9 @@ export const getRolesColumns = ({
             <div className="table-actions">
 
                 {/* Edit Role page (name + description). The permission
-                    matrix screen stays at /system/roles/:id/edit. */}
+                    matrix screen is at /system/roles/:id/permissions. */}
                 <Link
-                    to={`/system/roles/${row.original.id}/update`}
+                    to={`/system/roles/${row.original.id}/edit`}
                     aria-label={`Edit ${row.original.name}`}
                 >
                     <Pencil

@@ -124,16 +124,17 @@ const AppRoutes = () => {
                     element={<CreateNewRole />}
                 />
 
-                {/* Permission matrix screen (unchanged) */}
-                <Route
-                    path="/system/roles/:roleId/edit"
-                    element={<EditRole />}
-                />
-
                 {/* Edit Role: name + description */}
                 <Route
-                    path="/system/roles/:roleId/update"
+                    path="/system/roles/:roleId/edit"
                     element={<EditRoleDetails />}
+                />
+
+                {/* Permission matrix screen (component unchanged; moved from
+                    /edit so Edit Role can use that URL) */}
+                <Route
+                    path="/system/roles/:roleId/permissions"
+                    element={<EditRole />}
                 />
 
                 <Route

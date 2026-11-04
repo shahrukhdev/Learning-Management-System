@@ -20,18 +20,26 @@ import {
 
 import { getRole, updateRole } from "../../../../services/roleService";
 import { parseApiError } from "../../../../utils/apiError";
+import { useAuth } from "../../../../hooks/useAuth";
 
 // Same layout and styles as the Add Role page
 import "../CreateNewRole/CreateNewRole.css";
 
 
-// Edit Role (name + description). Separate from the permission matrix screen
-// at /system/roles/:roleId/edit, which is unchanged.
+// Edit Role (name + description), at /system/roles/:roleId/edit. Separate from
+// the permission matrix screen, now at /system/roles/:roleId/permissions.
 const EditRoleDetails = () => {
 
     const navigate = useNavigate();
 
+    // Signed-in user (Header/Sidebar show user.role from here)
+    const { user, setUser } = useAuth();
+
     const { roleId: roleIdParam } = useParams<{ roleId: string }>();
+
+    // The role's name as loaded, before any edits (to detect whether the
+    // signed-in user has this role)
+    const [originalName, setOriginalName] = useState("");
 
     const roleId = Number(roleIdParam);
 
@@ -82,6 +90,8 @@ const EditRoleDetails = () => {
                     name: response.data.name ?? "",
                     description: response.data.description ?? "",
                 });
+
+                setOriginalName(response.data.name ?? "");
 
                 setErrors({});
 
@@ -167,6 +177,21 @@ const EditRoleDetails = () => {
             });
 
             toast.success(response.message || "Role updated successfully.");
+
+            // If the signed-in user has this role, update their role name in
+            // AuthContext (also persisted) so the Header, Sidebar and anything
+            // else reading user.role show the new name without re-login.
+            // AuthContext keeps the role by name, so match the pre-edit name.
+            const savedName = (response.data?.name ?? formData.name).trim();
+
+            if (
+                user &&
+                originalName &&
+                user.role.trim().toLowerCase() === originalName.trim().toLowerCase() &&
+                user.role !== savedName
+            ) {
+                setUser({ ...user, role: savedName });
+            }
 
             // The Roles listing mounts fresh and fetches GET /v1/roles again
             navigate(ROLES_LIST_PATH);

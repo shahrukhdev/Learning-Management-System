@@ -1,11 +1,36 @@
+import { useState } from "react";
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import SEO from "../../../components/Seo/SEO";
 import PermissionsTable from "../../../components/Permissions/PermissionsTable";
+import { usePermissionsList } from "../../../hooks/usePermissionsList";
 import "./Permissions.css";
 import "../Roles/Roles.css";
 
-const Permissions = () => (
+const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
+
+const Permissions = () => {
+
+    const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
+
+    // The page resets to 1 whenever the page size changes. It is derived in
+    // the same render, so each change sends exactly one request.
+    const filterKey = `${perPage}`;
+
+    const [pageState, setPageState] = useState({ key: filterKey, page: 1 });
+
+    const page = pageState.key === filterKey ? pageState.page : 1;
+
+    const {
+        permissions,
+        pagination,
+        error,
+        isLoading,
+        hasLoaded,
+        retry,
+    } = usePermissionsList({ page, perPage });
+
+    return (
     <>
         <SEO
             title="Permissions Management | Noor Ul Imaan Masjid"
@@ -32,12 +57,26 @@ const Permissions = () => (
                         </div>
                     </div>
                     <div className="col-12">
-                        <PermissionsTable />
+                        <PermissionsTable
+                            permissions={permissions}
+                            pagination={pagination}
+                            page={page}
+                            perPage={perPage}
+                            isLoading={isLoading}
+                            hasLoaded={hasLoaded}
+                            error={error}
+                            onPageChange={(nextPage) =>
+                                setPageState({ key: filterKey, page: nextPage })
+                            }
+                            onPerPageChange={setPerPage}
+                            onRetry={retry}
+                        />
                     </div>
                 </div>
             </div>
         </section>
     </>
-);
+    );
+};
 
 export default Permissions;
