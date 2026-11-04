@@ -160,7 +160,7 @@ const CreateNewRole = () => {
         <>
 
             <SEO
-                title="Create New Role - Madrasah Portal"
+                title="Create Role - Madrasah Portal"
                 description="Create a new role in the Madrasah Portal"
             />
 
@@ -191,7 +191,7 @@ const CreateNewRole = () => {
                                 <div className="create-role-head">
 
                                     <h1 className="section-title">
-                                        Create New Role
+                                        Create Role
                                     </h1>
 
                                     <p className="section-desc-para m-0">

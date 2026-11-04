@@ -113,7 +113,7 @@ const Roles = () => {
                                     <p className="section-desc-para m-0">Define and control access levels across the Madrasah portal.</p>
                                 </div>
                                 <Link
-                                    to="/system/roles/create-new"
+                                    to="/system/roles/create"
                                     className="new-notice-btn"
                                 >
                                     <CirclePlus
@@ -123,7 +123,7 @@ const Roles = () => {
                                     />
 
                                     <span>
-                                        Create New Role
+                                        Create Role
                                     </span>
                                 </Link>
                             </div>

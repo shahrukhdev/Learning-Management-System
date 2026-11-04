@@ -120,7 +120,7 @@ const AppRoutes = () => {
                 />
 
                 <Route
-                    path="/system/roles/create-new"
+                    path="/system/roles/create"
                     element={<CreateNewRole />}
                 />
 
