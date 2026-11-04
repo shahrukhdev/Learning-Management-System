@@ -19,7 +19,10 @@ import { students } from "../../../components/Attendance/Attendance.data";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useUsersList } from "../../../hooks/useUsersList";
 import { deleteUser } from "../../../services/userService";
+import { getProfile } from "../../../services/profileService";
 import { parseApiError } from "../../../utils/apiError";
+import { toAuthUser } from "../../../utils/authUser";
+import { useAuth } from "../../../hooks/useAuth";
 import type { ManagedUser, SortDirection } from "../../../types/user.types";
 
 const ALL_TAB = "all";
@@ -30,6 +33,9 @@ const DEFAULT_SORT_DIRECTION: SortDirection = "desc";
 const Users = () => {
 
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+
+    // Signed-in user (synced after editing yourself; see handleUserUpdated)
+    const { user: authUser, setUser: setAuthUser } = useAuth();
 
     // "all" or a real role ID (as a string)
     const [activeTab, setActiveTab] = useState(ALL_TAB);
@@ -96,9 +102,45 @@ const Users = () => {
         retry();
     };
 
-    // After editing: refetch the same page with the same search/sort/tab
-    const handleUserUpdated = () => {
+    // After editing: refetch the same page with the same search/sort/tab, and
+    // if the edited user is the signed-in user, sync AuthContext so the
+    // Header, Sidebar and role-based routes reflect the change right away.
+    // (The token and session are untouched.)
+    const handleUserUpdated = (updatedUser: ManagedUser) => {
         retry();
+        void syncAuthUserIfSelf(updatedUser);
+    };
+
+    const syncAuthUserIfSelf = async (updatedUser: ManagedUser) => {
+
+        // Editing someone else never touches the signed-in user's state
+        if (!authUser || updatedUser.id !== authUser.id) return;
+
+        // Prefer the updated user from the PUT response. AuthContext keeps a
+        // single role name, so use the user's (first) assigned role.
+        const updatedRoleName = updatedUser.roles?.[0]?.name;
+
+        if (updatedRoleName) {
+            setAuthUser(toAuthUser({
+                id: updatedUser.id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                phone_no: updatedUser.phone_no,
+                image: updatedUser.image,
+                role: updatedRoleName,
+            }));
+            return;
+        }
+
+        // Response lacked role info: fetch the signed-in user's details
+        try {
+            const profile = await getProfile();
+            setAuthUser(toAuthUser(profile.data));
+        } catch {
+            // Non-fatal: the update itself succeeded; the next profile load
+            // or login will bring the user details up to date
+        }
+
     };
 
 
