@@ -5,8 +5,8 @@ import { Eye, EyeOff, Search, X, Check, ChevronDown, Phone } from "lucide-react"
 import { toast } from "react-toastify";
 
 import type { Student } from "../../Attendance/Attendance.types";
-import type { ManagedUser, UserRoleSummary } from "../../../types/user.types";
-import { createUser } from "../../../services/userService";
+import type { ManagedUser, UpdateUserRequest, UserRoleSummary } from "../../../types/user.types";
+import { createUser, getUser, updateUser } from "../../../services/userService";
 import { parseApiError } from "../../../utils/apiError";
 
 import "../Popup.css";
@@ -18,7 +18,7 @@ import "../Popup.css";
 type UserRole = | "admin" | "student" | "teacher" | "parent";
 
 // Fields validated on the client and by the backend (Laravel names)
-type AddUserField = "name" | "email" | "password" | "phone_no" | "roles";
+type AddUserField = "name" | "email" | "password" | "phone_no" | "is_active" | "roles";
 
 type AddUserErrors = Partial<Record<AddUserField, string>>;
 
@@ -26,9 +26,17 @@ interface AddUserPopupProps {
     isOpen: boolean;
     onClose: () => void;
 
+    // Set to a user ID to edit that user; null/undefined = add a new user
+    editUserId?: number | null;
+
     // Called after the API created the user
     onUserCreated?: (
         user: ManagedUser | undefined
+    ) => void;
+
+    // Called after the API updated the user
+    onUserUpdated?: (
+        user: ManagedUser
     ) => void;
 
     // Roles with real IDs (from the users list); filtered to the enabled ones
@@ -53,7 +61,7 @@ const MAX_PHONE_LENGTH = 20;
 const MIN_PASSWORD_LENGTH = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "roles"];
+const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "is_active", "roles"];
 
 // Maps a backend role name to the popup's role sections
 const toRoleKind = (roleName: string): UserRole | null => {
@@ -71,10 +79,14 @@ const toRoleKind = (roleName: string): UserRole | null => {
 const AddUserPopup = ({
     isOpen,
     onClose,
+    editUserId = null,
     onUserCreated,
+    onUserUpdated,
     roleOptions,
     childrenList,
 }: AddUserPopupProps) => {
+
+    const isEditMode = editUserId !== null;
 
     /* =========================
        Form State
@@ -94,17 +106,50 @@ const AddUserPopup = ({
 
     const [role, setRole] = useState<UserRole | null>(null);
 
+    // Edit mode only (Add keeps the backend default)
+    const [isActive, setIsActive] = useState(true);
+
+    // Edit mode: roles the user currently has (see `roleChoices`)
+    const [currentRoles, setCurrentRoles] = useState<UserRoleSummary[]>([]);
+
     const [errors, setErrors] = useState<AddUserErrors>({});
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isSubmittingRef = useRef(false);
 
+    // Edit mode: which user (and which attempt) the form has been loaded for
+    const [loadState, setLoadState] = useState<{ id: number; token: number; error: string | null } | null>(null);
+
+    const [loadToken, setLoadToken] = useState(0);
+
+    const isLoadingUser =
+        isOpen &&
+        isEditMode &&
+        !(loadState && loadState.id === editUserId && loadState.token === loadToken);
+
+    const loadError =
+        isEditMode && loadState?.id === editUserId ? loadState.error : null;
+
     // Role IDs come from real data; only enabled role kinds are offered
     const availableRoles = roleOptions.filter((option) => {
         const kind = toRoleKind(option.name);
         return kind !== null && ENABLED_ROLE_KINDS.includes(kind);
     });
+
+    // When editing, the user's current role stays selectable even if it is not
+    // an enabled kind (e.g. Super Admin), so saving never silently changes it
+    const roleChoices = [
+        ...availableRoles,
+        ...currentRoles.filter(
+            (current) => !availableRoles.some((option) => option.id === current.id)
+        ),
+    ];
+
+    // Role-specific sections only render for enabled role kinds. Their code is
+    // kept below for when Student/Teacher/Parent are enabled again.
+    const sectionRole =
+        role !== null && ENABLED_ROLE_KINDS.includes(role) ? role : null;
 
     const [className, setClassName] = useState("Hifz Level 1");
 
@@ -141,6 +186,9 @@ const AddUserPopup = ({
         setPhone("");
         setRoleId(null);
         setRole(null);
+        setIsActive(true);
+        setCurrentRoles([]);
+        setLoadState(null);
         setErrors({});
         setClassName("Hifz Level 1");
         setParentId("");
@@ -150,6 +198,54 @@ const AddUserPopup = ({
         setChildrenDropdownOpen(false);
         setChildrenSearch("");
     };
+
+    /* =========================
+       Edit: load the user (GET /v1/users/{id})
+    ========================= */
+
+    useEffect(() => {
+
+        if (!isOpen || editUserId === null) return;
+
+        const controller = new AbortController();
+
+        getUser(editUserId, controller.signal)
+            .then((response) => {
+
+                if (controller.signal.aborted) return;
+
+                const user = response.data;
+                const userRoles = (user.roles ?? []).map(({ id, name }) => ({ id, name }));
+                const primaryRole = userRoles[0] ?? null;
+
+                // Password is never filled in; blank keeps the current one
+                setName(user.name);
+                setEmail(user.email);
+                setPhone(user.phone_no ?? "");
+                setPassword("");
+                setIsActive(Boolean(user.is_active));
+                setCurrentRoles(userRoles);
+                setRoleId(primaryRole ? primaryRole.id : null);
+                setRole(primaryRole ? toRoleKind(primaryRole.name) : null);
+                setErrors({});
+
+                setLoadState({ id: editUserId, token: loadToken, error: null });
+
+            })
+            .catch((error: unknown) => {
+
+                if (controller.signal.aborted) return;
+
+                const { message } = parseApiError(error);
+
+                setLoadState({ id: editUserId, token: loadToken, error: message });
+
+            });
+
+        return () => controller.abort();
+
+    }, [isOpen, editUserId, loadToken]);
+
 
     /* =========================
        Outside Click
@@ -307,7 +403,7 @@ const AddUserPopup = ({
     const handleRoleSelect = (value: string) => {
 
         const selected =
-            availableRoles.find((option) => String(option.id) === value) ?? null;
+            roleChoices.find((option) => String(option.id) === value) ?? null;
 
         setRoleId(selected ? selected.id : null);
 
@@ -351,8 +447,11 @@ const AddUserPopup = ({
             result.email = `The email must not be greater than ${MAX_EMAIL_LENGTH} characters.`;
         }
 
+        // Required when adding; optional when editing (blank = keep current)
         if (!password) {
-            result.password = "The password field is required.";
+            if (!isEditMode) {
+                result.password = "The password field is required.";
+            }
         } else if (password.length < MIN_PASSWORD_LENGTH) {
             result.password = `The password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
         }
@@ -378,7 +477,7 @@ const AddUserPopup = ({
 
         event.preventDefault();
 
-        if (isSubmittingRef.current) return;
+        if (isSubmittingRef.current || isLoadingUser || loadError) return;
 
         const clientErrors = validate();
 
@@ -394,7 +493,37 @@ const AddUserPopup = ({
         try {
 
             // Role-specific fields (class, parent, subject, children) are not
-            // part of this API yet, so they are not sent
+            // part of these APIs yet, so they are not sent
+
+            if (editUserId !== null) {
+
+                const updatePayload: UpdateUserRequest = {
+                    name: name.trim(),
+                    email: email.trim(),
+                    phone_no: phone.trim() || null,
+                    is_active: isActive,
+                    roles: [roleId],
+                };
+
+                // Only send a password when a new one was entered
+                if (password) {
+                    updatePayload.password = password;
+                }
+
+                const updated = await updateUser(editUserId, updatePayload);
+
+                toast.success(updated.message || "User updated successfully.");
+
+                resetForm();
+
+                onClose();
+
+                onUserUpdated?.(updated.data);
+
+                return;
+
+            }
+
             const response = await createUser({
                 name: name.trim(),
                 email: email.trim(),
@@ -496,7 +625,7 @@ const AddUserPopup = ({
                 <div className="app-popup-header">
 
                     <h2 className="app-popup-title">
-                        Add User
+                        {isEditMode ? "Edit User" : "Add User"}
                     </h2>
 
 
@@ -519,8 +648,45 @@ const AddUserPopup = ({
 
 
                 {/* =========================
-                    Form
+                    Form (Edit: loading / load error first)
                 ========================= */}
+
+                {isLoadingUser ? (
+
+                    <div className="add-user-status" role="status">
+                        <span className="spinner-border" aria-hidden="true"></span>
+                        <span>Loading user details...</span>
+                    </div>
+
+                ) : loadError ? (
+
+                    <div className="add-user-status">
+
+                        <p className="m-0">{loadError}</p>
+
+                        <div className="app-popup-actions">
+
+                            <button
+                                type="button"
+                                className="app-popup-btn cancel"
+                                onClick={handleClose}
+                            >
+                                Close
+                            </button>
+
+                            <button
+                                type="button"
+                                className="app-popup-btn submit"
+                                onClick={() => setLoadToken((token) => token + 1)}
+                            >
+                                Try Again
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                ) : (
 
                 <form
                     className="app-popup-form"
@@ -627,7 +793,11 @@ const AddUserPopup = ({
                                                 ? "text"
                                                 : "password"
                                         }
-                                        placeholder="Set password"
+                                        placeholder={
+                                            isEditMode
+                                                ? "Leave blank to keep current"
+                                                : "Set password"
+                                        }
                                         value={password}
                                         onChange={(event) => {
                                             setPassword(
@@ -723,6 +893,60 @@ const AddUserPopup = ({
 
 
                         {/* =========================
+                            Status (Edit only)
+                        ========================= */}
+
+                        {isEditMode && (
+
+                            <div className="col-12">
+
+                                <div className="app-popup-field">
+
+                                    <label htmlFor="user-status">
+                                        Status
+                                    </label>
+
+                                    <div className="add-user-select-wrapper">
+
+                                        <select
+                                            id="user-status"
+                                            value={isActive ? "active" : "inactive"}
+                                            onChange={(event) => {
+                                                setIsActive(event.target.value === "active");
+                                                clearError("is_active");
+                                            }}
+                                            aria-invalid={Boolean(errors.is_active)}
+                                        >
+
+                                            <option value="active">
+                                                Active
+                                            </option>
+
+                                            <option value="inactive">
+                                                Inactive
+                                            </option>
+
+                                        </select>
+
+                                        <ChevronDown
+                                            className="add-user-select-icon"
+                                            size={17}
+                                        />
+
+                                    </div>
+
+                                    {errors.is_active && (
+                                        <span className="error-text">{errors.is_active}</span>
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+
+                        {/* =========================
                             Role
                         ========================= */}
 
@@ -752,12 +976,12 @@ const AddUserPopup = ({
                                     >
 
                                         <option value="">
-                                            {availableRoles.length > 0
+                                            {roleChoices.length > 0
                                                 ? "Select role"
                                                 : "No roles available"}
                                         </option>
 
-                                        {availableRoles.map((option) => (
+                                        {roleChoices.map((option) => (
 
                                             <option
                                                 key={option.id}
@@ -791,7 +1015,7 @@ const AddUserPopup = ({
                             Student
                         ========================= */}
 
-                        {role === "student" && (
+                        {sectionRole === "student" && (
 
                             <>
 
@@ -889,7 +1113,7 @@ const AddUserPopup = ({
                             Teacher
                         ========================= */}
 
-                        {role === "teacher" && (
+                        {sectionRole === "teacher" && (
 
                             <div className="col-12">
 
@@ -923,7 +1147,7 @@ const AddUserPopup = ({
                             Parent
                         ========================= */}
 
-                        {role === "parent" && (
+                        {sectionRole === "parent" && (
 
                             <div className="col-12">
 
@@ -1222,7 +1446,9 @@ const AddUserPopup = ({
                                     disabled={isSubmitting}
                                     aria-busy={isSubmitting}
                                 >
-                                    {isSubmitting ? "Adding..." : "Add User"}
+                                    {isEditMode
+                                        ? (isSubmitting ? "Saving..." : "Save Changes")
+                                        : (isSubmitting ? "Adding..." : "Add User")}
                                 </button>
 
                             </div>
@@ -1232,6 +1458,8 @@ const AddUserPopup = ({
                     </div>
 
                 </form>
+
+                )}
 
             </div>
 

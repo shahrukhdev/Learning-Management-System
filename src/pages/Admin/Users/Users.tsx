@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { UserPlus } from "lucide-react";
+import { toast } from "react-toastify";
 
 import SEO from "../../../components/Seo/SEO";
 
@@ -11,12 +12,15 @@ import type { UserTab } from "../../../components/Users/UserTabs";
 import UserManagementTable from "../../../components/Users/UsersTable";
 import FilterBar from "../../../components/FilterBar/FilterBar";
 import AddUserPopup from "../../../components/Popups/AddUserPopup/AddUserPopup";
+import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 
 import { students } from "../../../components/Attendance/Attendance.data";
 
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useUsersList } from "../../../hooks/useUsersList";
-import type { SortDirection } from "../../../types/user.types";
+import { deleteUser } from "../../../services/userService";
+import { parseApiError } from "../../../utils/apiError";
+import type { ManagedUser, SortDirection } from "../../../types/user.types";
 
 const ALL_TAB = "all";
 const SEARCH_DEBOUNCE_MS = 450;
@@ -90,6 +94,92 @@ const Users = () => {
     const handleUserCreated = () => {
         setPageState({ key: filterKey, page: 1 });
         retry();
+    };
+
+    // After editing: refetch the same page with the same search/sort/tab
+    const handleUserUpdated = () => {
+        retry();
+    };
+
+
+    /* =========================
+       Edit
+    ========================= */
+
+    // The popup fetches the user's details itself (GET /v1/users/{id})
+    const [editUserId, setEditUserId] = useState<number | null>(null);
+
+    const handleEditUser = (user: ManagedUser) => {
+        setEditUserId(user.id);
+    };
+
+    const handleCloseUserPopup = () => {
+        setIsAddUserOpen(false);
+        setEditUserId(null);
+    };
+
+
+    /* =========================
+       Delete (confirm first)
+    ========================= */
+
+    // Opening the confirmation only stores the target; no request is made
+    const [deleteTarget, setDeleteTarget] = useState<ManagedUser | null>(null);
+
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const isDeletingRef = useRef(false);
+
+    const handleDeleteUser = (user: ManagedUser) => {
+        setDeleteTarget(user);
+    };
+
+    const handleCancelDelete = () => {
+        if (!isDeletingRef.current) setDeleteTarget(null);
+    };
+
+    // Only runs when the user clicks "Delete" in the confirmation popup
+    const handleConfirmDelete = async () => {
+
+        if (!deleteTarget || isDeletingRef.current) return;
+
+        isDeletingRef.current = true;
+        setIsDeleting(true);
+
+        try {
+
+            const response = await deleteUser(deleteTarget.id);
+
+            toast.success(response.message || "User deleted successfully.");
+
+            setDeleteTarget(null);
+
+            // If that was the last record on this page, go to the previous
+            // page; otherwise refetch the same page. Search, sort and the role
+            // tab are untouched. (Uses the loaded page, not the tab-filtered
+            // rows, since the API page is what changes.)
+            const wasLastOnPage = users.length <= 1 && page > 1;
+
+            if (wasLastOnPage) {
+                setPageState({ key: filterKey, page: page - 1 });
+            }
+
+            retry();
+
+        } catch (deleteError) {
+
+            const { status, message } = parseApiError(deleteError);
+
+            // 401 is handled globally (redirect + toast)
+            if (status !== 401) toast.error(message);
+
+        } finally {
+
+            isDeletingRef.current = false;
+            setIsDeleting(false);
+
+        }
+
     };
 
     const activeRole = roles.find((role) => role.id === roleId);
@@ -207,6 +297,8 @@ const Users = () => {
                                     sortDirection={sortDirection}
                                     onSortDirectionChange={setSortDirection}
                                     onRetry={retry}
+                                    onEditUser={handleEditUser}
+                                    onDeleteUser={handleDeleteUser}
                                 />
 
                             </div>
@@ -221,17 +313,38 @@ const Users = () => {
 
 
             {/* =========================
-                Add User Popup
+                Add / Edit User Popup (same popup)
             ========================= */}
 
             <AddUserPopup
-                isOpen={isAddUserOpen}
-                onClose={() =>
-                    setIsAddUserOpen(false)
-                }
+                isOpen={isAddUserOpen || editUserId !== null}
+                editUserId={editUserId}
+                onClose={handleCloseUserPopup}
                 childrenList={students}
                 roleOptions={roles}
                 onUserCreated={handleUserCreated}
+                onUserUpdated={handleUserUpdated}
+            />
+
+
+            {/* =========================
+                Delete Confirmation
+            ========================= */}
+
+            <ConfirmPopup
+                isOpen={deleteTarget !== null}
+                title="Delete User"
+                message={
+                    <>
+                        Are you sure you want to delete{" "}
+                        <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+                    </>
+                }
+                confirmLabel="Delete"
+                processingLabel="Deleting..."
+                isProcessing={isDeleting}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
             />
 
         </>

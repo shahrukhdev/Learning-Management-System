@@ -47,6 +47,36 @@ export interface CreateUserResponse {
     data: ManagedUser;
 }
 
+// GET /v1/users/{id}
+export interface UserDetailResponse {
+    success: boolean;
+    message: string;
+    data: ManagedUser;
+}
+
+// PATCH /v1/users/{id}. `password` is only sent when changing it.
+export interface UpdateUserRequest {
+    name: string;
+    email: string;
+    password?: string;
+    phone_no: string | null;
+    is_active: boolean;
+    roles: number[];
+}
+
+export interface UpdateUserResponse {
+    success: boolean;
+    message: string;
+    data: ManagedUser;
+}
+
+// DELETE /v1/users/{id}
+export interface DeleteUserResponse {
+    success: boolean;
+    message: string;
+    data: null;
+}
+
 // Backend sorts by `name`
 export type SortDirection = "asc" | "desc";
 

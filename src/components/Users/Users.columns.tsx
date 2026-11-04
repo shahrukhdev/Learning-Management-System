@@ -8,10 +8,14 @@ import type { ManagedUser } from "../../types/user.types";
 interface UserColumnsOptions {
     // Year line under the role is only shown on the Student tab
     showYear: boolean;
+    onEdit: (user: ManagedUser) => void;
+    onDelete: (user: ManagedUser) => void;
 }
 
 export const getUserManagementColumns = ({
     showYear,
+    onEdit,
+    onDelete,
 }: UserColumnsOptions): ColumnDef<ManagedUser>[] => [
 
     /* User */
@@ -198,13 +202,14 @@ export const getUserManagementColumns = ({
 
         enableSorting: false,
 
-        cell: () => (
+        cell: ({ row }) => (
 
             <div className="table-actions">
 
                 <button
                     type="button"
-                    aria-label="Edit user"
+                    aria-label={`Edit ${row.original.name}`}
+                    onClick={() => onEdit(row.original)}
                 >
 
                     <Pencil
@@ -217,7 +222,8 @@ export const getUserManagementColumns = ({
 
                 <button
                     type="button"
-                    aria-label="Delete user"
+                    aria-label={`Delete ${row.original.name}`}
+                    onClick={() => onDelete(row.original)}
                 >
 
                     <Trash2

@@ -31,6 +31,8 @@ interface UserManagementTableProps {
     sortDirection: SortDirection;
     onSortDirectionChange: (direction: SortDirection) => void;
     onRetry: () => void;
+    onEditUser: (user: ManagedUser) => void;
+    onDeleteUser: (user: ManagedUser) => void;
 }
 
 // Only the User (name) column is sortable, and the backend does the sorting
@@ -53,6 +55,8 @@ const UserManagementTable = ({
     sortDirection,
     onSortDirectionChange,
     onRetry,
+    onEditUser,
+    onDeleteUser,
 }: UserManagementTableProps) => {
 
     // Table sort state mirrors the server-side sort direction
@@ -75,8 +79,8 @@ const UserManagementTable = ({
     };
 
     const columns = useMemo(
-        () => getUserManagementColumns({ showYear }),
-        [showYear]
+        () => getUserManagementColumns({ showYear, onEdit: onEditUser, onDelete: onDeleteUser }),
+        [showYear, onEditUser, onDeleteUser]
     );
 
 

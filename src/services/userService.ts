@@ -2,9 +2,31 @@ import api from "../api/api";
 import type {
     CreateUserRequest,
     CreateUserResponse,
+    DeleteUserResponse,
+    UpdateUserRequest,
+    UpdateUserResponse,
+    UserDetailResponse,
     UsersListParams,
     UsersListResponse,
 } from "../types/user.types";
+
+// GET /v1/users/{id}
+export const getUser = async (id: number, signal?: AbortSignal): Promise<UserDetailResponse> => {
+    const response = await api.get<UserDetailResponse>(`/v1/users/${id}`, { signal });
+    return response.data;
+};
+
+// PATCH /v1/users/{id} (JSON body, so a real PATCH works; no method spoofing needed)
+export const updateUser = async (id: number, payload: UpdateUserRequest): Promise<UpdateUserResponse> => {
+    const response = await api.patch<UpdateUserResponse>(`/v1/users/${id}`, payload);
+    return response.data;
+};
+
+// DELETE /v1/users/{id}
+export const deleteUser = async (id: number): Promise<DeleteUserResponse> => {
+    const response = await api.delete<DeleteUserResponse>(`/v1/users/${id}`);
+    return response.data;
+};
 
 // POST /v1/users
 export const createUser = async (payload: CreateUserRequest): Promise<CreateUserResponse> => {
