@@ -54,7 +54,7 @@ export interface UserDetailResponse {
     data: ManagedUser;
 }
 
-// PATCH /v1/users/{id}. `password` is only sent when changing it.
+// PUT /v1/users/{id}. `password` is only sent when changing it.
 export interface UpdateUserRequest {
     name: string;
     email: string;

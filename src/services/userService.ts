@@ -16,9 +16,9 @@ export const getUser = async (id: number, signal?: AbortSignal): Promise<UserDet
     return response.data;
 };
 
-// PATCH /v1/users/{id} (JSON body, so a real PATCH works; no method spoofing needed)
+// PUT /v1/users/{id} (the backend route only accepts PUT, not PATCH)
 export const updateUser = async (id: number, payload: UpdateUserRequest): Promise<UpdateUserResponse> => {
-    const response = await api.patch<UpdateUserResponse>(`/v1/users/${id}`, payload);
+    const response = await api.put<UpdateUserResponse>(`/v1/users/${id}`, payload);
     return response.data;
 };
 
