@@ -9,17 +9,20 @@ import PermissionInformation, {
     type PermissionFormErrors,
 } from "../../../../components/Permissions/PermissionInformation";
 import {
+    EMPTY_PERMISSION_FORM,
     PERMISSIONS_LIST_PATH,
     toPermissionFormErrors,
     validatePermissionForm,
 } from "../../../../components/Permissions/permissionForm";
 import { getPermission, updatePermission } from "../../../../services/permissionService";
 import { parseApiError } from "../../../../utils/apiError";
+import { useModules } from "../../../../hooks/useModules";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
 import "../../Roles/Roles.css";
 
-// Edit Permission (name + description), at /system/permissions/:permissionId/edit.
-// Same load / validate / submit behavior as the Edit Role page.
+// Edit Permission (name + module + description), at
+// /system/permissions/:permissionId/edit. Same load / validate / submit
+// behavior as the Edit Role page.
 const EditPermission = () => {
 
     const navigate = useNavigate();
@@ -30,10 +33,15 @@ const EditPermission = () => {
 
     const isValidPermissionId = Number.isInteger(permissionId) && permissionId > 0;
 
-    const [formData, setFormData] = useState<PermissionFormData>({
-        name: "",
-        description: "",
-    });
+    const [formData, setFormData] = useState<PermissionFormData>(EMPTY_PERMISSION_FORM);
+
+    // Module dropdown options (GET /v1/modules, shared cached request)
+    const {
+        modules,
+        isLoading: modulesLoading,
+        error: modulesError,
+        retry: retryModules,
+    } = useModules();
 
     const [errors, setErrors] = useState<PermissionFormErrors>({});
 
@@ -71,9 +79,14 @@ const EditPermission = () => {
 
                 if (controller.signal.aborted) return;
 
+                // Preselect the assigned module (module_id, or an embedded module)
+                const assignedModuleId =
+                    response.data.module_id ?? response.data.module?.id ?? null;
+
                 setFormData({
                     name: response.data.name ?? "",
                     description: response.data.description ?? "",
+                    module_id: assignedModuleId !== null ? String(assignedModuleId) : "",
                 });
 
                 setErrors({});
@@ -111,7 +124,8 @@ const EditPermission = () => {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (isSubmittingRef.current || isLoadingPermission || loadError) return;
+        // Wait for the permission and modules so the module selection is set
+        if (isSubmittingRef.current || isLoadingPermission || loadError || modulesLoading) return;
 
         const clientErrors = validatePermissionForm(formData);
 
@@ -128,6 +142,7 @@ const EditPermission = () => {
             const response = await updatePermission(permissionId, {
                 name: formData.name.trim(),
                 description: formData.description.trim(),
+                module_id: Number(formData.module_id), // numeric ID
             });
 
             toast.success(response.message || "Permission updated successfully.");
@@ -228,6 +243,10 @@ const EditPermission = () => {
                                     formData={formData}
                                     onChange={handleChange}
                                     errors={errors}
+                                    modules={modules}
+                                    modulesLoading={modulesLoading}
+                                    modulesError={modulesError}
+                                    onRetryModules={retryModules}
                                 />
                                 <div className="create-role-form-actions">
                                     <div className="form-actions">
@@ -244,7 +263,7 @@ const EditPermission = () => {
                                         <button
                                             type="submit"
                                             className="form-btn form-btn-primary"
-                                            disabled={isSubmitting}
+                                            disabled={isSubmitting || modulesLoading}
                                             aria-busy={isSubmitting}
                                         >
                                             {isSubmitting ? "Saving..." : "Save Permission"}

@@ -1,12 +1,17 @@
 import type { PaginationMeta } from "./api.types";
+import type { ModuleItem } from "./module.types";
 
-// A row in Permissions Management (GET /v1/permissions)
+// A row in Permissions Management (GET /v1/permissions).
+// The assigned module may come as `module_id` and/or an embedded `module`;
+// both are optional so either response shape works.
 export interface PermissionListItem {
     id: number;
     name: string;
     description: string | null;
     guard_name: string;
     created_at: string;
+    module_id?: number | null;
+    module?: ModuleItem | null;
 }
 
 export interface PermissionsListResponse {
@@ -16,9 +21,11 @@ export interface PermissionsListResponse {
     pagination: PaginationMeta;
 }
 
-// POST /v1/permissions. Only `name` is sent (description is not submitted).
+// POST /v1/permissions
 export interface CreatePermissionRequest {
     name: string;
+    description: string;
+    module_id: number;
 }
 
 // The created resource is under `data` whether the controller uses the app's
@@ -41,6 +48,7 @@ export interface PermissionDetailResponse {
 export interface UpdatePermissionRequest {
     name: string;
     description: string;
+    module_id: number;
 }
 
 export interface UpdatePermissionResponse {

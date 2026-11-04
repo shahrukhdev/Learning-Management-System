@@ -26,6 +26,7 @@ interface PermissionsTableProps {
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
     onDeletePermission: (permission: PermissionListItem) => void;
+    moduleNames: Map<number, string>;
 }
 
 const PermissionsTable = ({
@@ -40,10 +41,11 @@ const PermissionsTable = ({
     onPerPageChange,
     onRetry,
     onDeletePermission,
+    moduleNames,
 }: PermissionsTableProps) => {
     const permissionsColumns = useMemo(
-        () => getPermissionsColumns({ onDelete: onDeletePermission }),
-        [onDeletePermission]
+        () => getPermissionsColumns({ onDelete: onDeletePermission, moduleNames }),
+        [onDeletePermission, moduleNames]
     );
 
     const table = useReactTable({

@@ -8,36 +8,28 @@ import PermissionInformation, {
     type PermissionFormData,
     type PermissionFormErrors,
 } from "../../../../components/Permissions/PermissionInformation";
+import {
+    EMPTY_PERMISSION_FORM,
+    PERMISSIONS_LIST_PATH,
+    toPermissionFormErrors,
+    validatePermissionForm,
+} from "../../../../components/Permissions/permissionForm";
 import { createPermission } from "../../../../services/permissionService";
-import { getFirstFieldErrors, parseApiError } from "../../../../utils/apiError";
+import { parseApiError } from "../../../../utils/apiError";
+import { useModules } from "../../../../hooks/useModules";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
-
-const PERMISSIONS_LIST_PATH = "/system/permissions";
-
-const MAX_PERMISSION_NAME_LENGTH = 255;
-
-// Client-side rules (mirror the backend): name required, string, max 255.
-// Description is optional and not validated or submitted.
-const validatePermissionForm = (data: PermissionFormData): PermissionFormErrors => {
-    const errors: PermissionFormErrors = {};
-
-    const name = data.name.trim();
-
-    if (!name) {
-        errors.name = "The permission name field is required.";
-    } else if (name.length > MAX_PERMISSION_NAME_LENGTH) {
-        errors.name = `The permission name must not be greater than ${MAX_PERMISSION_NAME_LENGTH} characters.`;
-    }
-
-    return errors;
-};
 
 const CreateNewPermission = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState<PermissionFormData>({
-        name: "",
-        description: "",
-    });
+    const [formData, setFormData] = useState<PermissionFormData>(EMPTY_PERMISSION_FORM);
+
+    // Module dropdown options (GET /v1/modules, shared cached request)
+    const {
+        modules,
+        isLoading: modulesLoading,
+        error: modulesError,
+        retry: retryModules,
+    } = useModules();
 
     const [errors, setErrors] = useState<PermissionFormErrors>({});
 
@@ -72,9 +64,10 @@ const CreateNewPermission = () => {
         setErrors({});
 
         try {
-            // Only `name` is sent; description is intentionally omitted
             const response = await createPermission({
                 name: formData.name.trim(),
+                description: formData.description.trim(),
+                module_id: Number(formData.module_id), // numeric ID
             });
 
             toast.success(response.message || "Permission created successfully.");
@@ -88,13 +81,13 @@ const CreateNewPermission = () => {
             if (status === 401) return; // handled globally
 
             if (status === 422 && validationErrors) {
-                const nameError =
-                    getFirstFieldErrors<keyof PermissionFormData>(validationErrors).name;
+                // name / module_id / description, backend messages as-is
+                const inlineErrors = toPermissionFormErrors(validationErrors);
 
-                if (nameError) {
-                    setErrors({ name: nameError });
-                } else {
-                    // Nothing that belongs to a field on this form
+                setErrors(inlineErrors);
+
+                // Nothing that belongs to a field on this form
+                if (Object.keys(inlineErrors).length === 0) {
                     toast.error(message);
                 }
             } else {
@@ -136,6 +129,10 @@ const CreateNewPermission = () => {
                                     formData={formData}
                                     onChange={handleChange}
                                     errors={errors}
+                                    modules={modules}
+                                    modulesLoading={modulesLoading}
+                                    modulesError={modulesError}
+                                    onRetryModules={retryModules}
                                 />
                                 <div className="create-role-form-actions">
                                     <div className="form-actions">
@@ -152,7 +149,7 @@ const CreateNewPermission = () => {
                                         <button
                                             type="submit"
                                             className="form-btn form-btn-primary"
-                                            disabled={isSubmitting}
+                                            disabled={isSubmitting || modulesLoading}
                                             aria-busy={isSubmitting}
                                         >
                                             {isSubmitting ? "Creating..." : "Create Permission"}

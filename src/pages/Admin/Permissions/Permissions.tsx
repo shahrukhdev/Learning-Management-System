@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -6,6 +6,7 @@ import SEO from "../../../components/Seo/SEO";
 import PermissionsTable from "../../../components/Permissions/PermissionsTable";
 import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { usePermissionsList } from "../../../hooks/usePermissionsList";
+import { useModules } from "../../../hooks/useModules";
 import { deletePermission } from "../../../services/permissionService";
 import { parseApiError } from "../../../utils/apiError";
 import type { PermissionListItem } from "../../../types/permission.types";
@@ -32,6 +33,14 @@ const Permissions = () => {
         hasLoaded,
         retry,
     } = usePermissionsList({ page, perPage });
+
+    // Module names for the Module column (one shared GET /v1/modules request)
+    const { modules } = useModules();
+
+    const moduleNames = useMemo(
+        () => new Map(modules.map((module) => [module.id, module.name])),
+        [modules]
+    );
 
 
     /* =========================
@@ -134,6 +143,7 @@ const Permissions = () => {
                             onPerPageChange={setPerPage}
                             onRetry={retry}
                             onDeletePermission={handleDeletePermission}
+                            moduleNames={moduleNames}
                         />
                     </div>
                 </div>
