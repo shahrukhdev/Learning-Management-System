@@ -16,10 +16,12 @@ import { students } from "../../../components/Attendance/Attendance.data";
 
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useUsersList } from "../../../hooks/useUsersList";
+import type { SortDirection } from "../../../types/user.types";
 
 const ALL_TAB = "all";
 const SEARCH_DEBOUNCE_MS = 450;
 const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
+const DEFAULT_SORT_DIRECTION: SortDirection = "desc";
 
 const Users = () => {
 
@@ -32,15 +34,20 @@ const Users = () => {
 
     const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
+    // Server-side sort on the User (name) column
+    const [sortDirection, setSortDirection] = useState<SortDirection>(DEFAULT_SORT_DIRECTION);
+
     // Trimmed + debounced, so typing (or adding spaces) doesn't fire requests
     const debouncedSearch = useDebouncedValue(search.trim(), SEARCH_DEBOUNCE_MS);
 
     const roleId = activeTab === ALL_TAB ? null : Number(activeTab);
 
-    // The page resets to 1 whenever search or page size changes: a page number
-    // only applies to the query it was chosen under. The role tab is NOT part
+    // The page resets to 1 whenever search, sort or page size changes: a page
+    // number only applies to the query it was chosen under. It is derived in
+    // the same render, so a sort/search change sends one request (never a
+    // request for the old page followed by page 1). The role tab is NOT part
     // of this key, because switching tabs must not refetch or change the page.
-    const filterKey = `${debouncedSearch}|${perPage}`;
+    const filterKey = `${debouncedSearch}|${sortDirection}|${perPage}`;
 
     const [pageState, setPageState] = useState({ key: filterKey, page: 1 });
 
@@ -54,7 +61,7 @@ const Users = () => {
         hasLoaded,
         roles,
         retry,
-    } = useUsersList({ search: debouncedSearch, page, perPage });
+    } = useUsersList({ search: debouncedSearch, sortDirection, page, perPage });
 
     // Role tabs filter the currently loaded page locally (no API request).
     // Because the API is server-paginated, this only covers the loaded page.
@@ -189,6 +196,8 @@ const Users = () => {
                                         setPageState({ key: filterKey, page: nextPage })
                                     }
                                     onPerPageChange={setPerPage}
+                                    sortDirection={sortDirection}
+                                    onSortDirectionChange={setSortDirection}
                                     onRetry={retry}
                                 />
 

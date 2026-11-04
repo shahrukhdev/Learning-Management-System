@@ -1,14 +1,14 @@
 import "../Table/Table.css";
 
-import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, type OnChangeFn, type SortingState } from "@tanstack/react-table";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { getUserManagementColumns } from "./Users.columns";
 
-import type { ManagedUser } from "../../types/user.types";
+import type { ManagedUser, SortDirection } from "../../types/user.types";
 import type { PaginationMeta } from "../../types/api.types";
 
 
@@ -28,8 +28,13 @@ interface UserManagementTableProps {
     isRoleFiltered: boolean;
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
+    sortDirection: SortDirection;
+    onSortDirectionChange: (direction: SortDirection) => void;
     onRetry: () => void;
 }
+
+// Only the User (name) column is sortable, and the backend does the sorting
+const SORT_COLUMN_ID = "name";
 
 
 const UserManagementTable = ({
@@ -45,11 +50,29 @@ const UserManagementTable = ({
     isRoleFiltered,
     onPageChange,
     onPerPageChange,
+    sortDirection,
+    onSortDirectionChange,
     onRetry,
 }: UserManagementTableProps) => {
 
-    // Sorting is unchanged (client-side, within the current page)
-    const [sorting, setSorting] = useState<SortingState>([]);
+    // Table sort state mirrors the server-side sort direction
+    const sorting: SortingState = [
+        { id: SORT_COLUMN_ID, desc: sortDirection === "desc" },
+    ];
+
+    // The existing header button calls column.toggleSorting(); turn the
+    // resulting state into a sort direction for the API
+    const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+        const next = typeof updater === "function" ? updater(sorting) : updater;
+        const nameSort = next.find((entry) => entry.id === SORT_COLUMN_ID);
+
+        const nextDirection: SortDirection =
+            nameSort && !nameSort.desc ? "asc" : "desc";
+
+        if (nextDirection !== sortDirection) {
+            onSortDirectionChange(nextDirection);
+        }
+    };
 
     const columns = useMemo(
         () => getUserManagementColumns({ showYear }),
@@ -69,13 +92,16 @@ const UserManagementTable = ({
             },
 
             onSortingChange:
-                setSorting,
+                handleSortingChange,
 
             getCoreRowModel:
                 getCoreRowModel(),
 
-            getSortedRowModel:
-                getSortedRowModel(),
+            // Rows arrive already sorted by the API
+            manualSorting: true,
+
+            // Never fall back to an "unsorted" state; just asc <-> desc
+            enableSortingRemoval: false,
 
             // Pagination is done by the API
             manualPagination: true,
@@ -194,6 +220,11 @@ const UserManagementTable = ({
                                             <th
                                                 key={
                                                     header.id
+                                                }
+                                                aria-sort={
+                                                    header.column.id === SORT_COLUMN_ID
+                                                        ? (sortDirection === "asc" ? "ascending" : "descending")
+                                                        : undefined
                                                 }
                                             >
 

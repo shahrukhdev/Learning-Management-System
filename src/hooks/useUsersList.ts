@@ -4,11 +4,12 @@ import { getUsers } from "../services/userService";
 import { getRoleOptions } from "../services/roleService";
 import { parseApiError } from "../utils/apiError";
 import type { PaginationMeta } from "../types/api.types";
-import type { ManagedUser, UserRoleSummary } from "../types/user.types";
+import type { ManagedUser, SortDirection, UserRoleSummary } from "../types/user.types";
 
 // Only these values trigger a request. Role tabs filter locally (see Users page).
 export interface UsersQuery {
     search: string;
+    sortDirection: SortDirection;
     page: number;
     perPage: number;
 }
@@ -38,7 +39,7 @@ const rolesFromUsers = (users: ManagedUser[]): UserRoleSummary[] =>
         (user.roles ?? []).map(({ id, name }) => ({ id, name }))
     );
 
-export const useUsersList = ({ search, page, perPage }: UsersQuery) => {
+export const useUsersList = ({ search, sortDirection, page, perPage }: UsersQuery) => {
 
     const [reloadToken, setReloadToken] = useState(0);
 
@@ -47,7 +48,7 @@ export const useUsersList = ({ search, page, perPage }: UsersQuery) => {
     // Every role with a real ID seen so far (from /v1/roles and users' roles)
     const [roles, setRoles] = useState<UserRoleSummary[]>([]);
 
-    const requestKey = JSON.stringify({ search, page, perPage, reloadToken });
+    const requestKey = JSON.stringify({ search, sortDirection, page, perPage, reloadToken });
 
     useEffect(() => {
         // Cancels this request if the query changes (or on unmount), so an
@@ -57,6 +58,7 @@ export const useUsersList = ({ search, page, perPage }: UsersQuery) => {
         getUsers(
             {
                 search: search || undefined,
+                sort_direction: sortDirection,
                 page,
                 per_page: perPage,
             },
@@ -90,7 +92,7 @@ export const useUsersList = ({ search, page, perPage }: UsersQuery) => {
             });
 
         return () => controller.abort();
-    }, [search, page, perPage, requestKey]);
+    }, [search, sortDirection, page, perPage, requestKey]);
 
     // Full role list for the tabs, if the endpoint returns the expected shape.
     // Failure is non-fatal: tabs still fill from the users' own roles.

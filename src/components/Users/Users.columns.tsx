@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Trash2 } from "lucide-react";
 
 import AvatarContent from "../Avatar/AvatarContent";
 import { resolveImageUrl } from "../../utils/imageUrl";
@@ -19,28 +19,47 @@ export const getUserManagementColumns = ({
     {
         accessorKey: "name",
 
-        header: ({ column }) => (
+        header: ({ column }) => {
 
-            <button
-                type="button"
-                className="table-sort-button"
-                onClick={() =>
-                    column.toggleSorting(
-                        column.getIsSorted() === "asc"
-                    )
-                }
-            >
+            const sortState = column.getIsSorted();
 
-                User
+            // Same size/stroke as before; the icon shows the active direction
+            const SortIcon =
+                sortState === "asc"
+                    ? ArrowUp
+                    : sortState === "desc"
+                        ? ArrowDown
+                        : ArrowUpDown;
 
-                <ArrowUpDown
-                    size={14}
-                    strokeWidth={2}
-                />
+            return (
 
-            </button>
+                <button
+                    type="button"
+                    className="table-sort-button"
+                    onClick={() =>
+                        column.toggleSorting(
+                            column.getIsSorted() === "asc"
+                        )
+                    }
+                    aria-label={
+                        sortState === "asc"
+                            ? "Sort users by name, currently A to Z"
+                            : "Sort users by name, currently Z to A"
+                    }
+                >
 
-        ),
+                    User
+
+                    <SortIcon
+                        size={14}
+                        strokeWidth={2}
+                    />
+
+                </button>
+
+            );
+
+        },
 
         cell: ({ row }) => {
 

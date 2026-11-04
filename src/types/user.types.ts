@@ -28,8 +28,12 @@ export interface UsersListResponse {
     pagination: PaginationMeta;
 }
 
+// Backend sorts by `name`
+export type SortDirection = "asc" | "desc";
+
 export interface UsersListParams {
     search?: string;
+    sort_direction?: SortDirection;
     is_active?: boolean;
     role_id?: number;
     per_page?: number;

@@ -11,6 +11,7 @@ export const getUsers = async (
     const query: UsersListParams = {};
 
     if (params.search) query.search = params.search;
+    if (params.sort_direction) query.sort_direction = params.sort_direction;
     if (params.is_active !== undefined) query.is_active = params.is_active;
     if (params.role_id !== undefined) query.role_id = params.role_id;
     if (params.per_page !== undefined) query.per_page = params.per_page;
