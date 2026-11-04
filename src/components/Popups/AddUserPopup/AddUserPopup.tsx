@@ -50,10 +50,14 @@ interface AddUserPopupProps {
    Constants
 ========================= */
 
-// Only Admin and Super Admin can be selected for now. The
-// Student/Teacher/Parent sections below are kept for when those roles are
-// enabled.
-const ENABLED_ROLE_KINDS: UserRole[] = ["admin"];
+// Roles that can be selected for now: Admin, Super Admin (admin kind) and
+// Teacher.
+const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher"];
+
+// Roles whose role-specific fields are shown. None for now: Teacher works
+// like Admin (no extra fields). The Student/Teacher/Parent sections below are
+// kept for when their fields are enabled.
+const SECTION_ROLE_KINDS: UserRole[] = [];
 
 // Mirrors the backend rules
 const MAX_NAME_LENGTH = 255;
@@ -151,10 +155,10 @@ const AddUserPopup = ({
         ),
     ];
 
-    // Role-specific sections only render for enabled role kinds. Their code is
-    // kept below for when Student/Teacher/Parent are enabled again.
+    // Role-specific sections only render for kinds in SECTION_ROLE_KINDS (none
+    // yet). Their code is kept below for when they are enabled.
     const sectionRole =
-        role !== null && ENABLED_ROLE_KINDS.includes(role) ? role : null;
+        role !== null && SECTION_ROLE_KINDS.includes(role) ? role : null;
 
     const [className, setClassName] = useState("Hifz Level 1");
 
