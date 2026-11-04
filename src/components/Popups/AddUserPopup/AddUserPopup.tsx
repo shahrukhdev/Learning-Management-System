@@ -50,8 +50,9 @@ interface AddUserPopupProps {
    Constants
 ========================= */
 
-// Only Admin can be created for now. The Student/Teacher/Parent sections
-// below are kept for when those roles are enabled.
+// Only Admin and Super Admin can be selected for now. The
+// Student/Teacher/Parent sections below are kept for when those roles are
+// enabled.
 const ENABLED_ROLE_KINDS: UserRole[] = ["admin"];
 
 // Mirrors the backend rules
@@ -63,9 +64,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "is_active", "roles"];
 
-// Maps a backend role name to the popup's role sections
+// Maps a backend role name to the popup's role sections.
+// Super Admin uses the admin kind: it is selectable alongside Admin and, like
+// Admin, has no role-specific fields.
 const toRoleKind = (roleName: string): UserRole | null => {
     const kind = roleName.trim().toLowerCase();
+
+    if (kind === "super admin") return "admin";
 
     return kind === "admin" || kind === "student" || kind === "teacher" || kind === "parent"
         ? kind
