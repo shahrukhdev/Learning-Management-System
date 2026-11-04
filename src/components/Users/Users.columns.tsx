@@ -1,9 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
-import type { UserManagementData } from "./Users.data";
 
-export const userManagementColumns:
-    ColumnDef<UserManagementData>[] = [
+import AvatarContent from "../Avatar/AvatarContent";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import type { ManagedUser } from "../../types/user.types";
+
+interface UserColumnsOptions {
+    // Year line under the role is only shown on the Student tab
+    showYear: boolean;
+}
+
+export const getUserManagementColumns = ({
+    showYear,
+}: UserColumnsOptions): ColumnDef<ManagedUser>[] => [
 
     /* User */
 
@@ -44,18 +53,11 @@ export const userManagementColumns:
 
                     <div className="table-avatar">
 
-                        {user.image ? (
-
-                            <img
-                                src={user.image}
-                                alt={user.name}
-                            />
-
-                        ) : (
-
-                            user.name.charAt(0)
-
-                        )}
+                        <AvatarContent
+                            src={resolveImageUrl(user.image)}
+                            alt={user.name}
+                            fallback={user.name.charAt(0)}
+                        />
 
                     </div>
 
@@ -82,26 +84,30 @@ export const userManagementColumns:
     /* Role */
 
     {
-        accessorKey: "role",
+        id: "role",
 
         header: "Role",
 
         cell: ({ row }) => {
 
-            const user =
-                row.original;
+            const roleNames =
+                row.original.roles.map((role) => role.name);
 
             return (
 
                 <div className="table-user-role">
 
                     <span>
-                        {user.role}
+                        {roleNames.length > 0 ? roleNames.join(", ") : "—"}
                     </span>
 
-                    <small>
-                        {user.department}
-                    </small>
+                    {/* The API does not provide a year yet, so it is shown
+                        as unavailable rather than invented */}
+                    {showYear && (
+                        <small title="Year is not provided by the API yet">
+                            Year: —
+                        </small>
+                    )}
 
                 </div>
 
@@ -114,14 +120,14 @@ export const userManagementColumns:
     /* Status */
 
     {
-        accessorKey: "status",
+        id: "status",
 
         header: "Status",
 
         cell: ({ row }) => {
 
             const status =
-                row.original.status;
+                row.original.is_active ? "active" : "inactive";
 
             return (
 
@@ -147,15 +153,16 @@ export const userManagementColumns:
     /* Last Login */
 
     {
-        accessorKey: "lastLogin",
+        id: "lastLogin",
 
         header: "Last Login",
 
-        cell: ({ row }) => (
+        // Not returned by GET /v1/users
+        cell: () => (
 
-            <span className="table-last-login">
+            <span className="table-last-login" title="Last login is not provided by the API yet">
 
-                {row.original.lastLogin}
+                —
 
             </span>
 

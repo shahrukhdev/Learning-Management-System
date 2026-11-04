@@ -1,71 +1,66 @@
 import "../Table/Table.css";
 
-import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
 
 import { useMemo, useState } from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { users, type UserManagementData } from "./Users.data";
+import { getUserManagementColumns } from "./Users.columns";
 
-import { userManagementColumns } from "./Users.columns";
+import type { ManagedUser } from "../../types/user.types";
+import type { PaginationMeta } from "../../types/api.types";
+
+
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
 
 
 interface UserManagementTableProps {
-    search: string;
-    activeTab: string;
+    users: ManagedUser[];
+    pagination: PaginationMeta | null;
+    page: number;
+    perPage: number;
+    isLoading: boolean;
+    hasLoaded: boolean;
+    error: string | null;
+    showYear: boolean;
+    isSearching: boolean;
+    onPageChange: (page: number) => void;
+    onPerPageChange: (perPage: number) => void;
+    onRetry: () => void;
 }
 
 
-const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) => {
+const UserManagementTable = ({
+    users,
+    pagination,
+    page,
+    perPage,
+    isLoading,
+    hasLoaded,
+    error,
+    showYear,
+    isSearching,
+    onPageChange,
+    onPerPageChange,
+    onRetry,
+}: UserManagementTableProps) => {
 
+    // Sorting is unchanged (client-side, within the current page)
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    const filteredUsers = useMemo(() => {
-
-        return users.filter((user) => {
-
-            const matchesSearch =
-                user.name
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                user.email
-                    .toLowerCase()
-                    .includes(search.toLowerCase());
-
-
-            const matchesTab =
-                activeTab === "all" ||
-                (
-                    activeTab === "teachers" &&
-                    (
-                        user.role === "Teacher" ||
-                        user.role === "Senior Teacher"
-                    )
-                ) ||
-                (
-                    activeTab === "students" &&
-                    user.role === "Student"
-                ) ||
-                (
-                    activeTab === "admins" &&
-                    user.role === "Admin"
-                );
-
-
-            return matchesSearch && matchesTab;
-
-        });
-
-    }, [search, activeTab]);
+    const columns = useMemo(
+        () => getUserManagementColumns({ showYear }),
+        [showYear]
+    );
 
 
     const table =
-        useReactTable<UserManagementData>({
+        useReactTable<ManagedUser>({
 
-            data: filteredUsers,
+            data: users,
 
-            columns: userManagementColumns,
+            columns,
 
             state: {
                 sorting,
@@ -80,43 +75,85 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
             getSortedRowModel:
                 getSortedRowModel(),
 
-            getPaginationRowModel:
-                getPaginationRowModel(),
-
-            initialState: {
-                pagination: {
-                    pageSize: 10,
-                },
-            },
+            // Pagination is done by the API
+            manualPagination: true,
 
         });
 
 
-    const pageIndex =
-        table.getState()
-            .pagination
-            .pageIndex;
-
-    const pageSize =
-        table.getState()
-            .pagination
-            .pageSize;
-
+    // Footer numbers come from the API's pagination metadata
     const totalResults =
-        filteredUsers.length;
+        pagination?.total ?? 0;
+
+    const resultsPerPage =
+        pagination?.per_page ?? perPage;
+
+    const currentPage =
+        pagination?.current_page ?? page;
+
+    const totalPages =
+        Math.max(pagination?.last_page ?? 1, 1);
 
 
     const firstResult =
         totalResults === 0
             ? 0
-            : pageIndex * pageSize + 1;
+            : (currentPage - 1) * resultsPerPage + 1;
 
 
     const lastResult =
         Math.min(
-            (pageIndex + 1) * pageSize,
+            currentPage * resultsPerPage,
             totalResults
         );
+
+
+    const canPreviousPage =
+        page > 1;
+
+    const canNextPage =
+        page < totalPages;
+
+
+    const rows =
+        table.getRowModel().rows;
+
+
+    // Body state when there are no rows to show: loading, error, or empty.
+    // (While loading with existing rows, those rows stay visible, dimmed.)
+    const renderStatusRow = () => {
+
+        if (isLoading) {
+            return (
+                <span className="d-inline-flex align-items-center gap-2">
+                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    Loading users...
+                </span>
+            );
+        }
+
+        if (error) {
+            return (
+                <span className="d-inline-flex flex-column align-items-center gap-2">
+                    <span>{error}</span>
+                    <button
+                        type="button"
+                        className="table-retry-button"
+                        onClick={onRetry}
+                    >
+                        Try again
+                    </button>
+                </span>
+            );
+        }
+
+        return isSearching
+            ? "No users match your search."
+            : "No users found.";
+    };
+
+    const showRows =
+        !error && rows.length > 0;
 
 
     return (
@@ -125,7 +162,10 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 
             {/* Table */}
 
-            <div className="table-wrapper">
+            <div
+                className={`table-wrapper ${isLoading && hasLoaded ? "is-loading" : ""}`}
+                aria-busy={isLoading}
+            >
 
                 <table className="data-table">
 
@@ -172,42 +212,36 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 
                     <tbody>
 
-                        {table
-                            .getRowModel()
-                            .rows
-                            .length > 0 ? (
+                        {showRows ? (
 
-                            table
-                                .getRowModel()
-                                .rows
-                                .map((row) => (
+                            rows.map((row) => (
 
-                                    <tr
-                                        key={row.id}
-                                    >
+                                <tr
+                                    key={row.id}
+                                >
 
-                                        {row
-                                            .getVisibleCells()
-                                            .map((cell) => (
+                                    {row
+                                        .getVisibleCells()
+                                        .map((cell) => (
 
-                                                <td
-                                                    key={
-                                                        cell.id
-                                                    }
-                                                >
+                                            <td
+                                                key={
+                                                    cell.id
+                                                }
+                                            >
 
-                                                    {flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext()
-                                                    )}
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
 
-                                                </td>
+                                            </td>
 
-                                            ))}
+                                        ))}
 
-                                    </tr>
+                                </tr>
 
-                                ))
+                            ))
 
                         ) : (
 
@@ -215,11 +249,11 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 
                                 <td
                                     colSpan={
-                                        userManagementColumns.length
+                                        columns.length
                                     }
                                     className="table-empty"
                                 >
-                                    No users found.
+                                    {renderStatusRow()}
                                 </td>
 
                             </tr>
@@ -246,14 +280,10 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                     </span>
 
                     <select
-                        value={
-                            table.getState()
-                                .pagination
-                                .pageSize
-                        }
+                        value={perPage}
                         onChange={(e) => {
 
-                            table.setPageSize(
+                            onPerPageChange(
                                 Number(
                                     e.target.value
                                 )
@@ -262,21 +292,16 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                         }}
                     >
 
-                        <option value="10">
-                            10
-                        </option>
+                        {PAGE_SIZE_OPTIONS.map((size) => (
 
-                        <option value="20">
-                            20
-                        </option>
+                            <option
+                                key={size}
+                                value={size}
+                            >
+                                {size}
+                            </option>
 
-                        <option value="30">
-                            30
-                        </option>
-
-                        <option value="50">
-                            50
-                        </option>
+                        ))}
 
                     </select>
 
@@ -318,14 +343,11 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
 
                         Page{" "}
 
-                        {pageIndex + 1}
+                        {page}
 
                         {" "}of{" "}
 
-                        {Math.max(
-                            table.getPageCount(),
-                            1
-                        )}
+                        {totalPages}
 
                     </span>
 
@@ -333,10 +355,10 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                     <button
                         type="button"
                         disabled={
-                            !table.getCanPreviousPage()
+                            !canPreviousPage
                         }
                         onClick={() =>
-                            table.previousPage()
+                            onPageChange(page - 1)
                         }
                         aria-label="Previous page"
                     >
@@ -352,10 +374,10 @@ const UserManagementTable = ({ search, activeTab }: UserManagementTableProps) =>
                     <button
                         type="button"
                         disabled={
-                            !table.getCanNextPage()
+                            !canNextPage
                         }
                         onClick={() =>
-                            table.nextPage()
+                            onPageChange(page + 1)
                         }
                         aria-label="Next page"
                     >

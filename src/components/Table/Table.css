@@ -569,3 +569,29 @@
     gap: 15px;
   }
 }
+/* =========================================================
+   LOADING / ERROR STATES (server-driven tables)
+   ========================================================= */
+
+/* Previous rows stay visible but dimmed while the next page/search loads */
+.table-wrapper.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.table-retry-button {
+  padding: 6px 14px;
+  border: 1px solid #535624;
+  border-radius: 8px;
+  background: transparent;
+  color: #535624;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.table-retry-button:hover {
+  background: #535624;
+  color: #fff;
+}

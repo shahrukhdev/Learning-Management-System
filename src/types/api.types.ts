@@ -7,6 +7,15 @@ export interface ApiSuccessResponse<T> {
     data: T;
 }
 
+// Pagination metadata returned by paginated list endpoints
+export interface PaginationMeta {
+    current_page: number;
+    per_page: number;
+    total: number;
+    last_page: number;
+    has_more_pages: boolean;
+}
+
 // Field name -> list of messages, e.g. { email: ["The email field is required."] }
 export type ValidationErrors = Record<string, string[]>;
 

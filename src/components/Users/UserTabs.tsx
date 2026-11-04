@@ -1,28 +1,16 @@
+export interface UserTab {
+    value: string;
+    label: string;
+}
+
 interface UserManagementTabsProps {
+    tabs: UserTab[];
     activeTab: string;
     onTabChange: (tab: string) => void;
 }
 
-const tabs = [
-    {
-        value: "all",
-        label: "All Users",
-    },
-    {
-        value: "teachers",
-        label: "Teachers",
-    },
-    {
-        value: "students",
-        label: "Students",
-    },
-    {
-        value: "admins",
-        label: "Admins",
-    },
-];
-
 const UserManagementTabs = ({
+    tabs,
     activeTab,
     onTabChange,
 }: UserManagementTabsProps) => {
