@@ -19,6 +19,8 @@ export interface ManagedUser {
     is_active: boolean | number;
     roles: UserRoleSummary[];
     created_at: string;
+    // Already formatted by the backend ("Today, 03:45 PM", "-" if never)
+    last_login?: string | null;
 }
 
 export interface UsersListResponse {

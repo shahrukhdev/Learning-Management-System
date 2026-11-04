@@ -180,12 +180,12 @@ export const getUserManagementColumns = ({
 
         header: "Last Login",
 
-        // Not returned by GET /v1/users
-        cell: () => (
+        // Shown exactly as the API formats it; "-" only if the field is missing
+        cell: ({ row }) => (
 
-            <span className="table-last-login" title="Last login is not provided by the API yet">
+            <span className="table-last-login">
 
-                —
+                {row.original.last_login || "-"}
 
             </span>
 
