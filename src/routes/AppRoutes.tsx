@@ -6,7 +6,7 @@ import RoleBasedRoute from "./RoleBasedRoute";
 
 import Home from "../pages/Auth/Home";
 import Login from "../pages/Auth/Login";
-import ResetPassword from "../pages/Auth/ResetPassword";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 
@@ -56,8 +56,8 @@ const AppRoutes = () => {
             />
 
             <Route
-                path="/reset-password/:role?"
-                element={<ResetPassword />}
+                path="/forgot-password/:role?"
+                element={<ForgotPassword />}
             />
 
             </Route>

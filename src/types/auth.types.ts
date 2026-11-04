@@ -30,4 +30,16 @@ export interface LogoutResponse {
     message: string;
 }
 
+// POST /v1/auth/forgot-password
+export interface ForgotPasswordRequest {
+    email: string;
+}
+
+export interface ForgotPasswordResponse {
+    success: boolean;
+    message: string;
+}
+
+export type ForgotPasswordFormErrors = Partial<Record<keyof ForgotPasswordRequest, string>>;
+
 export type LoginFormErrors = Partial<Record<keyof LoginRequest, string>>;
