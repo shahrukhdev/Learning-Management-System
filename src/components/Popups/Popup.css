@@ -908,3 +908,37 @@
     }
 
 }
+
+/* ================================
+   Add User: field icon (matches the Profile form phone field)
+================================ */
+
+.add-user-input-icon {
+    position: relative;
+}
+
+.add-user-input-icon input {
+    padding-right: 40px;
+}
+
+.add-user-input-icon svg {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: #7d826e;
+    pointer-events: none;
+}
+
+
+/* ================================
+   Disabled buttons (while submitting)
+================================ */
+
+.app-popup-btn:disabled,
+.app-popup-close:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

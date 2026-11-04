@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
 
-import { Eye, EyeOff, Search, X, Check, ChevronDown } from "lucide-react";
+import { Eye, EyeOff, Search, X, Check, ChevronDown, Phone } from "lucide-react";
+import { toast } from "react-toastify";
 
 import type { Student } from "../../Attendance/Attendance.types";
+import type { ManagedUser, UserRoleSummary } from "../../../types/user.types";
+import { createUser } from "../../../services/userService";
+import { parseApiError } from "../../../utils/apiError";
 
 import "../Popup.css";
 
@@ -12,28 +17,52 @@ import "../Popup.css";
 
 type UserRole = | "admin" | "student" | "teacher" | "parent";
 
-interface AddUserData {
-    name: string;
-    email: string;
-    password: string;
-    role: UserRole;
-    className?: string;
-    parentId?: string;
-    subject?: string;
-    childrenIds?: string[];
-}
+// Fields validated on the client and by the backend (Laravel names)
+type AddUserField = "name" | "email" | "password" | "phone_no" | "roles";
+
+type AddUserErrors = Partial<Record<AddUserField, string>>;
 
 interface AddUserPopupProps {
     isOpen: boolean;
     onClose: () => void;
 
-    onAddUser?: (
-        data: AddUserData
+    // Called after the API created the user
+    onUserCreated?: (
+        user: ManagedUser | undefined
     ) => void;
+
+    // Roles with real IDs (from the users list); filtered to the enabled ones
+    roleOptions: UserRoleSummary[];
 
     childrenList: Student[];
 
 }
+
+/* =========================
+   Constants
+========================= */
+
+// Only Admin can be created for now. The Student/Teacher/Parent sections
+// below are kept for when those roles are enabled.
+const ENABLED_ROLE_KINDS: UserRole[] = ["admin"];
+
+// Mirrors the backend rules
+const MAX_NAME_LENGTH = 255;
+const MAX_EMAIL_LENGTH = 255;
+const MAX_PHONE_LENGTH = 20;
+const MIN_PASSWORD_LENGTH = 8;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "roles"];
+
+// Maps a backend role name to the popup's role sections
+const toRoleKind = (roleName: string): UserRole | null => {
+    const kind = roleName.trim().toLowerCase();
+
+    return kind === "admin" || kind === "student" || kind === "teacher" || kind === "parent"
+        ? kind
+        : null;
+};
 
 /* =========================
    Component
@@ -42,7 +71,8 @@ interface AddUserPopupProps {
 const AddUserPopup = ({
     isOpen,
     onClose,
-    onAddUser,
+    onUserCreated,
+    roleOptions,
     childrenList,
 }: AddUserPopupProps) => {
 
@@ -56,7 +86,25 @@ const AddUserPopup = ({
 
     const [password, setPassword] = useState("");
 
-    const [role, setRole] = useState<UserRole>("student");
+    const [phone, setPhone] = useState("");
+
+    // Selected backend role ID (sent in `roles`) and its kind (drives the
+    // role-specific sections). Nothing is selected until the user picks one.
+    const [roleId, setRoleId] = useState<number | null>(null);
+
+    const [role, setRole] = useState<UserRole | null>(null);
+
+    const [errors, setErrors] = useState<AddUserErrors>({});
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const isSubmittingRef = useRef(false);
+
+    // Role IDs come from real data; only enabled role kinds are offered
+    const availableRoles = roleOptions.filter((option) => {
+        const kind = toRoleKind(option.name);
+        return kind !== null && ENABLED_ROLE_KINDS.includes(kind);
+    });
 
     const [className, setClassName] = useState("Hifz Level 1");
 
@@ -90,7 +138,10 @@ const AddUserPopup = ({
         setName("");
         setEmail("");
         setPassword("");
-        setRole("student");
+        setPhone("");
+        setRoleId(null);
+        setRole(null);
+        setErrors({});
         setClassName("Hifz Level 1");
         setParentId("");
         setSubject("");
@@ -237,7 +288,7 @@ const AddUserPopup = ({
        Role Change
     ========================= */
 
-    const handleRoleChange = (newRole: UserRole) => {
+    const handleRoleChange = (newRole: UserRole | null) => {
 
         setRole(newRole);
         setClassName("Hifz Level 1");
@@ -250,62 +301,161 @@ const AddUserPopup = ({
     };
 
     /* =========================
+       Role Select (backend role ID)
+    ========================= */
+
+    const handleRoleSelect = (value: string) => {
+
+        const selected =
+            availableRoles.find((option) => String(option.id) === value) ?? null;
+
+        setRoleId(selected ? selected.id : null);
+
+        handleRoleChange(selected ? toRoleKind(selected.name) : null);
+
+        clearError("roles");
+
+    };
+
+
+    /* =========================
+       Validation
+    ========================= */
+
+    const clearError = (field: AddUserField) => {
+
+        setErrors((current) =>
+            current[field] ? { ...current, [field]: undefined } : current
+        );
+
+    };
+
+    const validate = (): AddUserErrors => {
+
+        const result: AddUserErrors = {};
+
+        const trimmedName = name.trim();
+        const trimmedEmail = email.trim();
+
+        if (!trimmedName) {
+            result.name = "The name field is required.";
+        } else if (trimmedName.length > MAX_NAME_LENGTH) {
+            result.name = `The name must not be greater than ${MAX_NAME_LENGTH} characters.`;
+        }
+
+        if (!trimmedEmail) {
+            result.email = "The email field is required.";
+        } else if (!EMAIL_PATTERN.test(trimmedEmail)) {
+            result.email = "The email must be a valid email address.";
+        } else if (trimmedEmail.length > MAX_EMAIL_LENGTH) {
+            result.email = `The email must not be greater than ${MAX_EMAIL_LENGTH} characters.`;
+        }
+
+        if (!password) {
+            result.password = "The password field is required.";
+        } else if (password.length < MIN_PASSWORD_LENGTH) {
+            result.password = `The password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+        }
+
+        if (phone.trim().length > MAX_PHONE_LENGTH) {
+            result.phone_no = `The phone number must not be greater than ${MAX_PHONE_LENGTH} characters.`;
+        }
+
+        if (roleId === null) {
+            result.roles = "Please select a role.";
+        }
+
+        return result;
+
+    };
+
+
+    /* =========================
        Submit
     ========================= */
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
 
-        const userData: AddUserData = {
+        if (isSubmittingRef.current) return;
 
-            name,
-            email,
-            password,
-            role,
+        const clientErrors = validate();
 
-        };
-
-
-        if (role === "student") {
-
-            userData.className =
-                className;
-
-            userData.parentId =
-                parentId;
-
+        if (Object.keys(clientErrors).length > 0 || roleId === null) {
+            setErrors(clientErrors);
+            return;
         }
 
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        setErrors({});
 
-        if (role === "teacher") {
+        try {
 
-            userData.subject =
-                subject;
+            // Role-specific fields (class, parent, subject, children) are not
+            // part of this API yet, so they are not sent
+            const response = await createUser({
+                name: name.trim(),
+                email: email.trim(),
+                password,
+                phone_no: phone.trim() || null,
+                roles: [roleId],
+            });
+
+            toast.success(response.message || "User created successfully.");
+
+            resetForm();
+
+            onClose();
+
+            onUserCreated?.(response.data);
+
+        } catch (error) {
+
+            const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 401) return; // handled globally
+
+            if (status === 422 && validationErrors) {
+
+                // Laravel keys like "roles.0" belong to the "roles" field
+                const inlineErrors: AddUserErrors = {};
+
+                Object.entries(validationErrors).forEach(([key, messages]) => {
+
+                    const field = key.split(".")[0] as AddUserField;
+
+                    if (
+                        ADD_USER_FIELDS.includes(field) &&
+                        !inlineErrors[field] &&
+                        Array.isArray(messages) &&
+                        messages.length > 0
+                    ) {
+                        inlineErrors[field] = messages[0];
+                    }
+
+                });
+
+                setErrors(inlineErrors);
+
+                // Only toast if nothing could be shown inline
+                if (Object.keys(inlineErrors).length === 0) {
+                    toast.error(message);
+                }
+
+            } else {
+
+                toast.error(message);
+
+            }
+
+        } finally {
+
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
 
         }
-
-
-        if (role === "parent") {
-
-            userData.childrenIds =
-                selectedChildren;
-
-        }
-
-
-        console.log(
-            "User Data:",
-            userData
-        );
-
-
-        onAddUser?.(userData);
-
-
-        resetForm();
-
-        onClose();
 
     };
 
@@ -315,6 +465,8 @@ const AddUserPopup = ({
     ========================= */
 
     const handleClose = () => {
+
+        if (isSubmittingRef.current) return;
 
         resetForm();
 
@@ -353,6 +505,7 @@ const AddUserPopup = ({
                         className="app-popup-close"
                         onClick={handleClose}
                         aria-label="Close"
+                        disabled={isSubmitting}
                     >
 
                         <X
@@ -372,6 +525,7 @@ const AddUserPopup = ({
                 <form
                     className="app-popup-form"
                     onSubmit={handleSubmit}
+                    noValidate
                 >
 
                     <div className="row">
@@ -394,13 +548,20 @@ const AddUserPopup = ({
                                     type="text"
                                     placeholder="Full name"
                                     value={name}
-                                    onChange={(event) =>
+                                    onChange={(event) => {
                                         setName(
                                             event.target.value
-                                        )
-                                    }
+                                        );
+                                        clearError("name");
+                                    }}
+                                    autoComplete="name"
+                                    aria-invalid={Boolean(errors.name)}
                                     required
                                 />
+
+                                {errors.name && (
+                                    <span className="error-text">{errors.name}</span>
+                                )}
 
                             </div>
 
@@ -424,13 +585,20 @@ const AddUserPopup = ({
                                     type="email"
                                     placeholder="Email address"
                                     value={email}
-                                    onChange={(event) =>
+                                    onChange={(event) => {
                                         setEmail(
                                             event.target.value
-                                        )
-                                    }
+                                        );
+                                        clearError("email");
+                                    }}
+                                    autoComplete="off"
+                                    aria-invalid={Boolean(errors.email)}
                                     required
                                 />
+
+                                {errors.email && (
+                                    <span className="error-text">{errors.email}</span>
+                                )}
 
                             </div>
 
@@ -461,11 +629,14 @@ const AddUserPopup = ({
                                         }
                                         placeholder="Set password"
                                         value={password}
-                                        onChange={(event) =>
+                                        onChange={(event) => {
                                             setPassword(
                                                 event.target.value
-                                            )
-                                        }
+                                            );
+                                            clearError("password");
+                                        }}
+                                        autoComplete="new-password"
+                                        aria-invalid={Boolean(errors.password)}
                                         required
                                     />
 
@@ -500,6 +671,52 @@ const AddUserPopup = ({
 
                                 </div>
 
+                                {errors.password && (
+                                    <span className="error-text">{errors.password}</span>
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        {/* =========================
+                            Phone Number (optional)
+                        ========================= */}
+
+                        <div className="col-12">
+
+                            <div className="app-popup-field">
+
+                                <label htmlFor="user-phone">
+                                    Phone Number
+                                </label>
+
+                                <div className="add-user-input-icon">
+
+                                    <input
+                                        id="user-phone"
+                                        type="tel"
+                                        placeholder="Enter phone number"
+                                        value={phone}
+                                        onChange={(event) => {
+                                            setPhone(
+                                                event.target.value
+                                            );
+                                            clearError("phone_no");
+                                        }}
+                                        autoComplete="tel"
+                                        aria-invalid={Boolean(errors.phone_no)}
+                                    />
+
+                                    <Phone size={15} />
+
+                                </div>
+
+                                {errors.phone_no && (
+                                    <span className="error-text">{errors.phone_no}</span>
+                                )}
+
                             </div>
 
                         </div>
@@ -520,31 +737,36 @@ const AddUserPopup = ({
 
                                 <div className="add-user-select-wrapper">
 
+                                    {/* Only enabled roles (Admin for now), with
+                                        their real IDs. Student, Teacher and
+                                        Parent return once they are enabled. */}
                                     <select
                                         id="user-role"
-                                        value={role}
+                                        value={roleId === null ? "" : String(roleId)}
                                         onChange={(event) =>
-                                            handleRoleChange(
-                                                event.target.value as UserRole
+                                            handleRoleSelect(
+                                                event.target.value
                                             )
                                         }
+                                        aria-invalid={Boolean(errors.roles)}
                                     >
 
-                                        <option value="student">
-                                            Student
+                                        <option value="">
+                                            {availableRoles.length > 0
+                                                ? "Select role"
+                                                : "No roles available"}
                                         </option>
 
-                                        <option value="teacher">
-                                            Teacher
-                                        </option>
+                                        {availableRoles.map((option) => (
 
-                                        <option value="parent">
-                                            Parent
-                                        </option>
+                                            <option
+                                                key={option.id}
+                                                value={option.id}
+                                            >
+                                                {option.name}
+                                            </option>
 
-                                        <option value="admin">
-                                            Admin
-                                        </option>
+                                        ))}
 
                                     </select>
 
@@ -555,6 +777,10 @@ const AddUserPopup = ({
                                     />
 
                                 </div>
+
+                                {errors.roles && (
+                                    <span className="error-text">{errors.roles}</span>
+                                )}
 
                             </div>
 
@@ -984,6 +1210,7 @@ const AddUserPopup = ({
                                     type="button"
                                     className="app-popup-btn cancel"
                                     onClick={handleClose}
+                                    disabled={isSubmitting}
                                 >
                                     Cancel
                                 </button>
@@ -992,8 +1219,10 @@ const AddUserPopup = ({
                                 <button
                                     type="submit"
                                     className="app-popup-btn submit"
+                                    disabled={isSubmitting}
+                                    aria-busy={isSubmitting}
                                 >
-                                    Add User
+                                    {isSubmitting ? "Adding..." : "Add User"}
                                 </button>
 
                             </div>

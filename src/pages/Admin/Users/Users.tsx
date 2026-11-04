@@ -84,6 +84,14 @@ const Users = () => {
         [roles]
     );
 
+    // After creating a user: go back to page 1 and fetch the list again, keeping
+    // the current search, sort, page size and role tab. Both updates land in
+    // one render, so this sends a single request.
+    const handleUserCreated = () => {
+        setPageState({ key: filterKey, page: 1 });
+        retry();
+    };
+
     const activeRole = roles.find((role) => role.id === roleId);
 
     const isStudentTab = activeRole?.name.trim().toLowerCase() === "student";
@@ -222,9 +230,8 @@ const Users = () => {
                     setIsAddUserOpen(false)
                 }
                 childrenList={students}
-                onAddUser={(data) => {
-                    console.log("New User:", data);
-                }}
+                roleOptions={roles}
+                onUserCreated={handleUserCreated}
             />
 
         </>

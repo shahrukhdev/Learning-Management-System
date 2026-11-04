@@ -28,6 +28,25 @@ export interface UsersListResponse {
     pagination: PaginationMeta;
 }
 
+// POST /v1/users
+export interface CreateUserRequest {
+    name: string;
+    email: string;
+    password: string;
+    phone_no: string | null;
+    is_active?: boolean;
+    roles: number[];
+}
+
+// The created UserResource is under `data` both for the app's usual
+// { success, message, data } envelope and for a plain Laravel resource
+// response ({ data }), so `success`/`message` are optional here.
+export interface CreateUserResponse {
+    success?: boolean;
+    message?: string;
+    data: ManagedUser;
+}
+
 // Backend sorts by `name`
 export type SortDirection = "asc" | "desc";
 
