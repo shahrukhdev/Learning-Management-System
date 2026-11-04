@@ -19,7 +19,6 @@ interface RolesTableProps {
     isLoading: boolean;
     hasLoaded: boolean;
     error: string | null;
-    isSearching: boolean;
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
@@ -34,7 +33,6 @@ const RolesTable = ({
     isLoading,
     hasLoaded,
     error,
-    isSearching,
     onPageChange,
     onPerPageChange,
     onRetry,
@@ -122,9 +120,7 @@ const RolesTable = ({
             );
         }
 
-        return isSearching
-            ? "No roles match your search."
-            : "No roles found.";
+        return "No roles found.";
     };
 
     const showRows =
