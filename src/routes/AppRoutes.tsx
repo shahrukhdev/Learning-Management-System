@@ -20,6 +20,12 @@ import EditPermission from "../pages/Admin/Permissions/EditPermission/EditPermis
 import Profile from "../pages/Admin/Profile/Profile";
 import StudentProgress from "../pages/Admin/StudentProgress/StudentProgress";
 import StudentProgressDetails from "../pages/Admin/StudentProgress/StudentProgressDetails/StudentProgressDetails";
+import Classes from "../pages/Admin/Classes/Classes";
+import CreateNewClass from "../pages/Admin/Classes/CreateNewClasses/CreateNewClasses";
+import EditClass from "../pages/Admin/Classes/EditClasses/EditClasses";
+import Courses from "../pages/Admin/Courses/Courses";
+import CreateNewCourse from "../pages/Admin/Courses/CreateNewCourse/CreateNewCourse";
+import EditCourse from "../pages/Admin/Courses/EditCourse/EditCourse";
 
 // Teacher 
 import TeacherDashboard from "../pages/Teacher/Dashboard/Dashboard";
@@ -29,6 +35,10 @@ import TeacherNotices from "../pages/Teacher/Notices/Notices";
 import TeacherProfile from "../pages/Teacher/Profile/Profile";
 import TeacherStudentProgress from "../pages/Teacher/StudentProgress/StudentProgress";
 import TeacherStudentProgressDetails from "../pages/Teacher/StudentProgress/StudentProgressDetails/StudentProgressDetails";
+
+// Student
+import StudentDashboard from "../pages/Student/Dashboard/Dashboard";
+import StudentAttendance from "../pages/Student/Attendance/Attendance";
 
 const AppRoutes = () => {
 
@@ -133,6 +143,13 @@ const AppRoutes = () => {
                     element={<EditPermission />}
                 />
 
+                <Route path="academic/classes" element={<Classes />} />
+                <Route path="academic/classes/create-new" element={<CreateNewClass />} />
+                <Route path="academic/classes/:classId/edit" element={<EditClass />} />
+                <Route path="academic/courses" element={<Courses />} />
+                <Route path="academic/courses/create-new" element={<CreateNewCourse />} />
+                <Route path="academic/courses/:courseId/edit" element={<EditCourse />} />
+
             </Route>
 
             {/* Teacher Routes */}
@@ -175,6 +192,27 @@ const AppRoutes = () => {
                 <Route
                     path="profile"
                     element={<TeacherProfile />}
+                />
+
+            </Route>
+
+            {/* Student Routes */}
+
+            {/* Student Routes */}
+
+            <Route
+                path="/student/dashboard"
+                element={<DashboardLayout />}
+            >
+
+                <Route
+                    index
+                    element={<StudentDashboard />}
+                />
+
+                <Route
+                    path="attendance"
+                    element={<StudentAttendance />}
                 />
 
             </Route>

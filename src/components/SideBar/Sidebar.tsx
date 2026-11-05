@@ -1,4 +1,6 @@
+
 import "./Sidebar.css";
+
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 import Logo from "../../assets/images/logo.svg";
@@ -10,10 +12,17 @@ import NavIcon5 from "../../assets/images/nav-icon-5.svg";
 import NavIcon6 from "../../assets/images/nav-icon-6.svg";
 import NavIcon7 from "../../assets/images/nav-icon-7.svg";
 import NavIcon8 from "../../assets/images/nav-icon-8.svg";
+import NavIcon9 from "../../assets/images/nav-icon-9.svg";
+import NavIcon10 from "../../assets/images/nav-icon-10.svg";
+import NavIcon11 from "../../assets/images/nav-icon-11.svg";
 
 
 import { LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+
+// --------------------------------------------------
+// Main Navigation Items
+// --------------------------------------------------
 
 const navItems = [
     {
@@ -44,6 +53,10 @@ const navItems = [
     },
 ];
 
+// --------------------------------------------------
+// System Items
+// --------------------------------------------------
+
 const systemItems = [
     {
         title: "Users",
@@ -62,29 +75,74 @@ const systemItems = [
     },
 ];
 
+// --------------------------------------------------
+// Academic Items
+// --------------------------------------------------
+
+const academicItems = [
+    {
+        title: "Classes",
+        path: "/admin/dashboard/academic/classes",
+        icon: NavIcon10,
+    },
+    {
+        title: "Courses",
+        path: "/admin/dashboard/academic/courses",
+        icon: NavIcon11,
+    },
+];
+
+// --------------------------------------------------
+// Sidebar Component
+// --------------------------------------------------
+
 const Sidebar = () => {
 
     const location = useLocation();
+
+    // ----------------------------------------------
+    // Active Routes
+    // ----------------------------------------------
+
+    const isAcademicActive = academicItems.some((item) =>
+        location.pathname.startsWith(item.path)
+    );
 
     const isSystemActive = systemItems.some((item) =>
         location.pathname.startsWith(item.path)
     );
 
+    // ----------------------------------------------
+    // Dropdown States
+    // ----------------------------------------------
+
+    const [isAcademicOpen, setIsAcademicOpen] =
+        useState(isAcademicActive);
+
     const [isSystemOpen, setIsSystemOpen] =
         useState(isSystemActive);
 
+    // ----------------------------------------------
+    // Update Dropdowns On Route Change
+    // ----------------------------------------------
+
     useEffect(() => {
 
-        if (isSystemActive) {
-            setIsSystemOpen(true);
-        } else {
-            setIsSystemOpen(false);
-        }
+        setIsAcademicOpen(isAcademicActive);
+        setIsSystemOpen(isSystemActive);
 
-    }, [isSystemActive]);
+    }, [location.pathname, isAcademicActive, isSystemActive]);
+
+    // ----------------------------------------------
+    // Navigation Link Class
+    // ----------------------------------------------
 
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
         isActive ? "nav-link active" : "nav-link";
+
+    // ----------------------------------------------
+    // Render
+    // ----------------------------------------------
 
     return (
 
@@ -113,10 +171,10 @@ const Sidebar = () => {
 
                 {/* Main Navigation */}
 
-                {navItems.map((item, index) => (
+                {navItems.map((item) => (
 
                     <NavLink
-                        key={index}
+                        key={item.path}
                         className={navLinkClass}
                         to={item.path}
                         end={item.end}
@@ -135,55 +193,54 @@ const Sidebar = () => {
                 ))}
 
 
-                {/* System Dropdown */}
+                {/* =================================
+                    Academics Dropdown
+                ================================= */}
 
                 <div className="system-dropdown">
 
-                    <NavLink
-                        to="/dashboard/system"
+                    <button
+                        type="button"
                         className={`nav-link system-toggle ${
-                            isSystemActive ? "active" : ""
+                            isAcademicActive ? "active" : ""
                         }`}
-                        onClick={(e) => {
-
-                            e.preventDefault();
-
-                            setIsSystemOpen((prev) => !prev);
-
+                        onClick={() => {
+                            setIsAcademicOpen((prev) => !prev);
                         }}
+                        aria-expanded={isAcademicOpen}
                     >
 
-                        <img 
-                            className="img-fluid nav-icon" 
-                            src={NavIcon7} 
-                            alt="System" />
+                        <img
+                            className="img-fluid nav-icon"
+                            src={NavIcon9}
+                            alt=""
+                        />
 
-                            <span>
-                                System
-                            </span>
+                        <span>
+                            Academic
+                        </span>
 
-                            <ChevronDown
-                                className={`system-chevron ${
-                                    isSystemOpen ? "open" : ""
-                                }`}
-                                size={18}
-                                strokeWidth={2}
-                            />
+                        <ChevronDown
+                            className={`system-chevron ${
+                                isAcademicOpen ? "open" : ""
+                            }`}
+                            size={18}
+                            strokeWidth={2}
+                        />
 
-                    </NavLink>
+                    </button>
 
 
-                    {/* System Submenu */}
+                    {/* Academic Submenu */}
 
                     <div
                         className={`system-submenu ${
-                            isSystemOpen ? "open" : ""
+                            isAcademicOpen ? "open" : ""
                         }`}
                     >
+                        <div className="system-submenu-inner">
 
-                        {systemItems.map((item) => {
-
-                            return (
+                            {academicItems.map((item) => (
 
                                 <NavLink
                                     key={item.path}
@@ -195,22 +252,96 @@ const Sidebar = () => {
                                     }
                                 >
 
-                                    <img 
+                                    <img
                                         className="img-fluid"
-                                        src={item.icon} 
-                                        alt={item.title}
+                                        src={item.icon}
+                                        alt=""
                                     />
 
-                                    <span>
-                                        {item.title}
-                                    </span>
+                                    <span>{item.title}</span>
 
                                 </NavLink>
 
-                            );
+                            ))}
 
-                        })}
+                        </div>
+                    </div>
 
+                </div>
+
+
+                {/* =================================
+                    System Dropdown
+                ================================= */}
+
+                <div className="system-dropdown">
+
+                    <button
+                        type="button"
+                        className={`nav-link system-toggle ${
+                            isSystemActive ? "active" : ""
+                        }`}
+                        onClick={() => {
+                            setIsSystemOpen((prev) => !prev);
+                        }}
+                        aria-expanded={isSystemOpen}
+                    >
+
+                        <img
+                            className="img-fluid nav-icon"
+                            src={NavIcon7}
+                            alt=""
+                        />
+
+                        <span>
+                            System
+                        </span>
+
+                        <ChevronDown
+                            className={`system-chevron ${
+                                isSystemOpen ? "open" : ""
+                            }`}
+                            size={18}
+                            strokeWidth={2}
+                        />
+
+                    </button>
+
+
+                    {/* System Submenu */}
+
+                    <div
+                        className={`system-submenu ${
+                            isSystemOpen ? "open" : ""
+                        }`}
+                    >
+                        <div className="system-submenu-inner">
+
+                            {systemItems.map((item) => (
+
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    className={({ isActive }) =>
+                                        `system-submenu-link ${
+                                            isActive ? "active" : ""
+                                        }`
+                                    }
+                                >
+
+                                    <img
+                                        className="img-fluid"
+                                        src={item.icon}
+                                        alt=""
+                                    />
+
+                                    <span>{item.title}</span>
+
+                                </NavLink>
+
+                            ))}
+
+                        </div>
                     </div>
 
                 </div>
