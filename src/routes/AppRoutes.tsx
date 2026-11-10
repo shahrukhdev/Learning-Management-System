@@ -25,6 +25,12 @@ import EditPermission from "../pages/Admin/Permissions/EditPermission/EditPermis
 import Profile from "../pages/Admin/Profile/Profile";
 import StudentProgress from "../pages/Admin/StudentProgress/StudentProgress";
 import StudentProgressDetails from "../pages/Admin/StudentProgress/StudentProgressDetails/StudentProgressDetails";
+import Classes from "../pages/Admin/Classes/Classes";
+import CreateNewClass from "../pages/Admin/Classes/CreateNewClasses/CreateNewClasses";
+import EditClass from "../pages/Admin/Classes/EditClasses/EditClasses";
+import Courses from "../pages/Admin/Courses/Courses";
+import CreateNewCourse from "../pages/Admin/Courses/CreateNewCourse/CreateNewCourse";
+import EditCourse from "../pages/Admin/Courses/EditCourse/EditCourse";
 
 // Teacher 
 import TeacherDashboard from "../pages/Teacher/Dashboard/Dashboard";
@@ -151,6 +157,13 @@ const AppRoutes = () => {
                     path="/system/permissions/:permissionId/edit"
                     element={<EditPermission />}
                 />
+
+                <Route path="academic/classes" element={<Classes />} />
+                <Route path="academic/classes/create-new" element={<CreateNewClass />} />
+                <Route path="academic/classes/:classId/edit" element={<EditClass />} />
+                <Route path="academic/courses" element={<Courses />} />
+                <Route path="academic/courses/create-new" element={<CreateNewCourse />} />
+                <Route path="academic/courses/:courseId/edit" element={<EditCourse />} />
 
             </Route>
 
