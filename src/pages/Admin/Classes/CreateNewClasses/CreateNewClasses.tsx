@@ -1,26 +1,97 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import SEO from "../../../../components/Seo/SEO";
-import ClassInformation, {
+import ClassInformation from "../../../../components/Classes/ClassInformation";
+import {
+    CLASSES_LIST_PATH,
+    EMPTY_CLASS_FORM,
+    toClassFormErrors,
+    toClassPayload,
+    validateClassForm,
     type ClassFormData,
-} from "../../../../components/Classes/ClassInformation";
+    type ClassFormErrors,
+} from "../../../../components/Classes/classForm";
+import { createAcademicClass } from "../../../../services/academicClassService";
+import { parseApiError } from "../../../../utils/apiError";
+import { useCourseOptions } from "../../../../hooks/useCourseOptions";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
 
 const CreateNewClass = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState<ClassFormData>({
-        name: "",
-        description: "",
-    });
+    const [formData, setFormData] = useState<ClassFormData>(EMPTY_CLASS_FORM);
 
-    const handleChange = (field: keyof ClassFormData, value: string) => {
+    const [errors, setErrors] = useState<ClassFormErrors>({});
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Synchronous guard against double submits
+    const isSubmittingRef = useRef(false);
+
+    // Course options (fetched once, shared)
+    const {
+        courses,
+        isLoading: coursesLoading,
+        error: coursesError,
+        retry: retryCourses,
+    } = useCourseOptions();
+
+    const handleChange = <K extends keyof ClassFormData>(field: K, value: ClassFormData[K]) => {
         setFormData((current) => ({ ...current, [field]: value }));
+
+        // Clear this field's error once it is edited
+        setErrors((current) =>
+            current[field] ? { ...current, [field]: undefined } : current
+        );
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // POST /v1/academic-classes
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Class Data:", formData);
+
+        if (isSubmittingRef.current) return;
+
+        const clientErrors = validateClassForm(formData);
+
+        if (Object.keys(clientErrors).length > 0) {
+            setErrors(clientErrors);
+            return;
+        }
+
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        setErrors({});
+
+        try {
+            const response = await createAcademicClass(toClassPayload(formData));
+
+            toast.success(response.message || "Class created successfully.");
+
+            // The Classes listing mounts fresh and fetches the list again
+            navigate(CLASSES_LIST_PATH);
+        } catch (error) {
+            const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 401) return; // handled globally
+
+            if (status === 422 && validationErrors) {
+                const inlineErrors = toClassFormErrors(validationErrors);
+
+                setErrors(inlineErrors);
+
+                // Only toast if nothing could be shown inline
+                if (Object.keys(inlineErrors).length === 0) {
+                    toast.error(message);
+                }
+            } else {
+                toast.error(message);
+            }
+        } finally {
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -35,7 +106,7 @@ const CreateNewClass = () => {
                         <div className="col-12">
                             <div className="create-role-page-header">
                                 <Link
-                                    to="/admin/dashboard/academic/classes"
+                                    to={CLASSES_LIST_PATH}
                                     className="role-back-btn"
                                     aria-label="Back to classes"
                                 >
@@ -48,10 +119,16 @@ const CreateNewClass = () => {
                                     </p>
                                 </div>
                             </div>
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleSubmit} noValidate>
                                 <ClassInformation
                                     formData={formData}
                                     onChange={handleChange}
+                                    errors={errors}
+                                    courses={courses}
+                                    coursesLoading={coursesLoading}
+                                    coursesError={coursesError}
+                                    onRetryCourses={retryCourses}
+                                    disabled={isSubmitting}
                                 />
                                 <div className="create-role-form-actions">
                                     <div className="form-actions">
@@ -59,13 +136,19 @@ const CreateNewClass = () => {
                                             type="button"
                                             className="form-btn form-btn-cancel"
                                             onClick={() =>
-                                                navigate("/admin/dashboard/academic/classes")
+                                                navigate(CLASSES_LIST_PATH)
                                             }
+                                            disabled={isSubmitting}
                                         >
                                             Cancel
                                         </button>
-                                        <button type="submit" className="form-btn form-btn-primary">
-                                            Create Class
+                                        <button
+                                            type="submit"
+                                            className="form-btn form-btn-primary"
+                                            disabled={isSubmitting}
+                                            aria-busy={isSubmitting}
+                                        >
+                                            {isSubmitting ? "Creating..." : "Create Class"}
                                         </button>
                                     </div>
                                 </div>

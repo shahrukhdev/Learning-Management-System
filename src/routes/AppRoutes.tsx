@@ -158,12 +158,12 @@ const AppRoutes = () => {
                     element={<EditPermission />}
                 />
 
-                <Route path="academic/classes" element={<Classes />} />
-                <Route path="academic/classes/create-new" element={<CreateNewClass />} />
-                <Route path="academic/classes/:classId/edit" element={<EditClass />} />
-                <Route path="academic/courses" element={<Courses />} />
-                <Route path="academic/courses/create-new" element={<CreateNewCourse />} />
-                <Route path="academic/courses/:courseId/edit" element={<EditCourse />} />
+                <Route path="/academic/classes" element={<Classes />} />
+                <Route path="/academic/classes/create" element={<CreateNewClass />} />
+                <Route path="/academic/classes/:classId/edit" element={<EditClass />} />
+                <Route path="/academic/courses" element={<Courses />} />
+                <Route path="/academic/courses/create" element={<CreateNewCourse />} />
+                <Route path="/academic/courses/:courseId/edit" element={<EditCourse />} />
 
             </Route>
 

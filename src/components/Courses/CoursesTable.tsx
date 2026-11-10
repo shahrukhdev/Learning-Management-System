@@ -3,37 +3,104 @@ import "../Table/Table.css";
 import {
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
-    type SortingState,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { courses } from "./CoursesTable.data";
-import { coursesColumns } from "./CoursesTable.columns";
+import { useMemo } from "react";
+import { getCoursesColumns } from "./CoursesTable.columns";
+import TablePageNumbers from "../Table/TablePageNumbers";
+import type { CourseItem } from "../../types/course.types";
+import type { PaginationMeta } from "../../types/api.types";
 
-const CoursesTable = () => {
-    const [sorting, setSorting] = useState<SortingState>([]);
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
+
+interface CoursesTableProps {
+    courses: CourseItem[];
+    pagination: PaginationMeta | null;
+    page: number;
+    perPage: number;
+    isLoading: boolean;
+    hasLoaded: boolean;
+    error: string | null;
+    isFiltered: boolean;
+    listSearch: string;
+    onPageChange: (page: number) => void;
+    onPerPageChange: (perPage: number) => void;
+    onRetry: () => void;
+    onDeleteCourse: (course: CourseItem) => void;
+}
+
+const CoursesTable = ({
+    courses,
+    pagination,
+    page,
+    perPage,
+    isLoading,
+    hasLoaded,
+    error,
+    isFiltered,
+    listSearch,
+    onPageChange,
+    onPerPageChange,
+    onRetry,
+    onDeleteCourse,
+}: CoursesTableProps) => {
+    const coursesColumns = useMemo(
+        () => getCoursesColumns({ onDelete: onDeleteCourse, listSearch }),
+        [onDeleteCourse, listSearch]
+    );
+
     const table = useReactTable({
         data: courses,
         columns: coursesColumns,
-        state: { sorting },
-        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        initialState: { pagination: { pageSize: 10, pageIndex: 0 } },
+        // Pagination is done by the API
+        manualPagination: true,
     });
 
-    const { pageIndex, pageSize } = table.getState().pagination;
-    const totalResults = courses.length;
-    const firstResult = totalResults === 0 ? 0 : pageIndex * pageSize + 1;
-    const lastResult = Math.min((pageIndex + 1) * pageSize, totalResults);
+    // Footer numbers come from the API's pagination metadata
+    const totalResults = pagination?.total ?? 0;
+    const resultsPerPage = pagination?.per_page ?? perPage;
+    const currentPage = pagination?.current_page ?? page;
+    const totalPages = Math.max(pagination?.last_page ?? 1, 1);
+    const firstResult = totalResults === 0 ? 0 : (currentPage - 1) * resultsPerPage + 1;
+    const lastResult = Math.min(currentPage * resultsPerPage, totalResults);
+
+    const rows = table.getRowModel().rows;
+    const showRows = !error && rows.length > 0;
+
+    // Body state when there are no rows to show: loading, error, or empty.
+    // (While loading with existing rows, those rows stay visible, dimmed.)
+    const renderStatusRow = () => {
+        if (isLoading) {
+            return (
+                <span className="d-inline-flex align-items-center gap-2">
+                    <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+                    Loading courses...
+                </span>
+            );
+        }
+
+        if (error) {
+            return (
+                <span className="d-inline-flex flex-column align-items-center gap-2">
+                    <span>{error}</span>
+                    <button type="button" className="table-retry-button" onClick={onRetry}>
+                        Try again
+                    </button>
+                </span>
+            );
+        }
+
+        return isFiltered ? "No courses match your filters." : "No courses found.";
+    };
 
     return (
         <div className="table-card">
-            <div className="table-wrapper">
+            <div
+                className={`table-wrapper ${isLoading && hasLoaded ? "is-loading" : ""}`}
+                aria-busy={isLoading}
+            >
                 <table className="data-table">
                     <thead>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -42,19 +109,25 @@ const CoursesTable = () => {
                                     <th key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
                                     </th>
                                 ))}
                             </tr>
                         ))}
                     </thead>
                     <tbody>
-                        {table.getRowModel().rows.length > 0 ? (
-                            table.getRowModel().rows.map((row) => (
+                        {showRows ? (
+                            rows.map((row) => (
                                 <tr key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
                                         <td key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
                                         </td>
                                     ))}
                                 </tr>
@@ -62,7 +135,7 @@ const CoursesTable = () => {
                         ) : (
                             <tr>
                                 <td colSpan={coursesColumns.length} className="table-empty">
-                                    No courses found.
+                                    {renderStatusRow()}
                                 </td>
                             </tr>
                         )}
@@ -73,13 +146,12 @@ const CoursesTable = () => {
                 <div className="table-rows-per-page">
                     <span>Rows per page:</span>
                     <select
-                        value={pageSize}
-                        onChange={(event) => table.setPageSize(Number(event.target.value))}
+                        value={perPage}
+                        onChange={(event) => onPerPageChange(Number(event.target.value))}
                     >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="50">50</option>
+                        {PAGE_SIZE_OPTIONS.map((size) => (
+                            <option key={size} value={size}>{size}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="table-results">
@@ -87,11 +159,28 @@ const CoursesTable = () => {
                     <strong>{totalResults}</strong> courses
                 </div>
                 <div className="table-pagination">
-                    <span>Page {pageIndex + 1} of {Math.max(table.getPageCount(), 1)}</span>
-                    <button type="button" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()} aria-label="Previous page">
+                    <span>
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        type="button"
+                        disabled={page <= 1}
+                        onClick={() => onPageChange(page - 1)}
+                        aria-label="Previous page"
+                    >
                         <ChevronLeft size={16} strokeWidth={2} />
                     </button>
-                    <button type="button" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()} aria-label="Next page">
+                    <TablePageNumbers
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
+                    <button
+                        type="button"
+                        disabled={page >= totalPages}
+                        onClick={() => onPageChange(page + 1)}
+                        aria-label="Next page"
+                    >
                         <ChevronRight size={16} strokeWidth={2} />
                     </button>
                 </div>

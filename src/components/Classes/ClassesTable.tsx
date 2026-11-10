@@ -3,37 +3,104 @@ import "../Table/Table.css";
 import {
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
-    type SortingState,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { classes } from "./ClassesTable.data";
-import { classesColumns } from "./ClassesTable.columns";
+import { useMemo } from "react";
+import { getClassesColumns } from "./ClassesTable.columns";
+import TablePageNumbers from "../Table/TablePageNumbers";
+import type { AcademicClassItem } from "../../types/academicClass.types";
+import type { PaginationMeta } from "../../types/api.types";
 
-const ClassesTable = () => {
-    const [sorting, setSorting] = useState<SortingState>([]);
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
+
+interface ClassesTableProps {
+    classes: AcademicClassItem[];
+    pagination: PaginationMeta | null;
+    page: number;
+    perPage: number;
+    isLoading: boolean;
+    hasLoaded: boolean;
+    error: string | null;
+    isFiltered: boolean;
+    listSearch: string;
+    onPageChange: (page: number) => void;
+    onPerPageChange: (perPage: number) => void;
+    onRetry: () => void;
+    onDeleteClass: (classItem: AcademicClassItem) => void;
+}
+
+const ClassesTable = ({
+    classes,
+    pagination,
+    page,
+    perPage,
+    isLoading,
+    hasLoaded,
+    error,
+    isFiltered,
+    listSearch,
+    onPageChange,
+    onPerPageChange,
+    onRetry,
+    onDeleteClass,
+}: ClassesTableProps) => {
+    const classesColumns = useMemo(
+        () => getClassesColumns({ onDelete: onDeleteClass, listSearch }),
+        [onDeleteClass, listSearch]
+    );
+
     const table = useReactTable({
         data: classes,
         columns: classesColumns,
-        state: { sorting },
-        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        initialState: { pagination: { pageSize: 10, pageIndex: 0 } },
+        // Pagination is done by the API
+        manualPagination: true,
     });
 
-    const { pageIndex, pageSize } = table.getState().pagination;
-    const totalResults = classes.length;
-    const firstResult = totalResults === 0 ? 0 : pageIndex * pageSize + 1;
-    const lastResult = Math.min((pageIndex + 1) * pageSize, totalResults);
+    // Footer numbers come from the API's pagination metadata
+    const totalResults = pagination?.total ?? 0;
+    const resultsPerPage = pagination?.per_page ?? perPage;
+    const currentPage = pagination?.current_page ?? page;
+    const totalPages = Math.max(pagination?.last_page ?? 1, 1);
+    const firstResult = totalResults === 0 ? 0 : (currentPage - 1) * resultsPerPage + 1;
+    const lastResult = Math.min(currentPage * resultsPerPage, totalResults);
+
+    const rows = table.getRowModel().rows;
+    const showRows = !error && rows.length > 0;
+
+    // Body state when there are no rows to show: loading, error, or empty.
+    // (While loading with existing rows, those rows stay visible, dimmed.)
+    const renderStatusRow = () => {
+        if (isLoading) {
+            return (
+                <span className="d-inline-flex align-items-center gap-2">
+                    <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+                    Loading classes...
+                </span>
+            );
+        }
+
+        if (error) {
+            return (
+                <span className="d-inline-flex flex-column align-items-center gap-2">
+                    <span>{error}</span>
+                    <button type="button" className="table-retry-button" onClick={onRetry}>
+                        Try again
+                    </button>
+                </span>
+            );
+        }
+
+        return isFiltered ? "No classes match your filters." : "No classes found.";
+    };
 
     return (
         <div className="table-card">
-            <div className="table-wrapper">
+            <div
+                className={`table-wrapper ${isLoading && hasLoaded ? "is-loading" : ""}`}
+                aria-busy={isLoading}
+            >
                 <table className="data-table">
                     <thead>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -52,8 +119,8 @@ const ClassesTable = () => {
                         ))}
                     </thead>
                     <tbody>
-                        {table.getRowModel().rows.length > 0 ? (
-                            table.getRowModel().rows.map((row) => (
+                        {showRows ? (
+                            rows.map((row) => (
                                 <tr key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
                                         <td key={cell.id}>
@@ -68,7 +135,7 @@ const ClassesTable = () => {
                         ) : (
                             <tr>
                                 <td colSpan={classesColumns.length} className="table-empty">
-                                    No classes found.
+                                    {renderStatusRow()}
                                 </td>
                             </tr>
                         )}
@@ -79,13 +146,12 @@ const ClassesTable = () => {
                 <div className="table-rows-per-page">
                     <span>Rows per page:</span>
                     <select
-                        value={pageSize}
-                        onChange={(event) => table.setPageSize(Number(event.target.value))}
+                        value={perPage}
+                        onChange={(event) => onPerPageChange(Number(event.target.value))}
                     >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="50">50</option>
+                        {PAGE_SIZE_OPTIONS.map((size) => (
+                            <option key={size} value={size}>{size}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="table-results">
@@ -94,20 +160,25 @@ const ClassesTable = () => {
                 </div>
                 <div className="table-pagination">
                     <span>
-                        Page {pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
+                        Page {page} of {totalPages}
                     </span>
                     <button
                         type="button"
-                        disabled={!table.getCanPreviousPage()}
-                        onClick={() => table.previousPage()}
+                        disabled={page <= 1}
+                        onClick={() => onPageChange(page - 1)}
                         aria-label="Previous page"
                     >
                         <ChevronLeft size={16} strokeWidth={2} />
                     </button>
+                    <TablePageNumbers
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
                     <button
                         type="button"
-                        disabled={!table.getCanNextPage()}
-                        onClick={() => table.nextPage()}
+                        disabled={page >= totalPages}
+                        onClick={() => onPageChange(page + 1)}
                         aria-label="Next page"
                     >
                         <ChevronRight size={16} strokeWidth={2} />
