@@ -114,6 +114,12 @@
   opacity: 1;
 }
 
+/* Lets the single grid row shrink to 0 when closed (no leftover gap) */
+.system-submenu-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* System submenu links */
 
 .system-submenu-link {

@@ -222,6 +222,9 @@ const Sidebar = () => {
                         }`}
                     >
 
+                        {/* Single wrapper so the whole list collapses as one grid row */}
+                        <div className="system-submenu-inner">
+
                         {academicItems.map((item) => {
 
                             return (
@@ -251,6 +254,8 @@ const Sidebar = () => {
                             );
 
                         })}
+
+                        </div>
 
                     </div>
 
@@ -303,6 +308,9 @@ const Sidebar = () => {
                         }`}
                     >
 
+                        {/* Single wrapper so the whole list collapses as one grid row */}
+                        <div className="system-submenu-inner">
+
                         {systemItems.map((item) => {
 
                             return (
@@ -332,6 +340,8 @@ const Sidebar = () => {
                             );
 
                         })}
+
+                        </div>
 
                     </div>
 
