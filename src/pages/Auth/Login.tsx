@@ -14,7 +14,7 @@ import { getFirstFieldErrors, parseApiError } from "../../utils/apiError";
 import type { LoginFormErrors, LoginRequest } from "../../types/auth.types";
 import { useAuth } from "../../hooks/useAuth";
 import { toAuthUser } from "../../utils/authUser";
-import { DEFAULT_DASHBOARD_PATH } from "../../routes/paths";
+import { getHomePath } from "../../routes/paths";
 
 import {
     Mail,
@@ -47,9 +47,6 @@ const Login = () => {
 
     // Synchronous guard against double submits (state updates are async)
     const isSubmittingRef = useRef(false);
-
-    // Same URL for every role; the dashboard shown is based on the user's role
-    const dashboardPath = DEFAULT_DASHBOARD_PATH;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const field = e.target.name as keyof LoginRequest;
@@ -104,11 +101,15 @@ const Login = () => {
             setToken(response.data.token);
 
             // Store only the fields the app needs, before navigating
-            setUser(toAuthUser(response.data.user));
+            const signedInUser = toAuthUser(response.data.user);
+
+            setUser(signedInUser);
 
             toast.success(response.message || "Login successful.");
 
-            navigate(dashboardPath);
+            // Same dashboard URL for every role (the page shown depends on the
+            // role); users without "View Dashboard" land on their Profile
+            navigate(getHomePath(signedInUser.permissions ?? []));
 
         } catch (error) {
 

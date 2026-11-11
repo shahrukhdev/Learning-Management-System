@@ -92,7 +92,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/dashboard"
-                    element={<RoleBasedRoute admin={<Dashboard />} teacher={<TeacherDashboard />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_DASHBOARD]}>
+                            <RoleBasedRoute admin={<Dashboard />} teacher={<TeacherDashboard />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route

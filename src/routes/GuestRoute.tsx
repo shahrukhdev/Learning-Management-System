@@ -2,18 +2,21 @@ import type { ReactNode } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 import { getToken } from "../utils/tokenStorage";
-import { DEFAULT_DASHBOARD_PATH } from "./paths";
+import { getHomePath } from "./paths";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface GuestRouteProps {
     children?: ReactNode;
 }
 
 // Only lets unauthenticated users through (e.g. Login). Signed-in users are
-// sent to the dashboard instead.
+// sent to their home page instead (dashboard with "View Dashboard").
 const GuestRoute = ({ children }: GuestRouteProps) => {
 
+    const { permissions } = usePermissions();
+
     if (getToken()) {
-        return <Navigate to={DEFAULT_DASHBOARD_PATH} replace />;
+        return <Navigate to={getHomePath(permissions)} replace />;
     }
 
     return children ?? <Outlet />;

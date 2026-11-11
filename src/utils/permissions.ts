@@ -1,7 +1,9 @@
 // Permission names exactly as the API returns them (login / profile
-// `permissions`). Only the Notices ones are enforced for now; the rest are
-// listed so other modules can use them later.
+// `permissions`). Dashboard and Notices are enforced; the rest are listed so
+// other modules can use them later.
 export const PERMISSIONS = {
+    VIEW_DASHBOARD: "View Dashboard",
+
     VIEW_NOTICES: "View Notices",
     CREATE_NOTICE: "Create Notice",
     EDIT_NOTICE: "Edit Notice",

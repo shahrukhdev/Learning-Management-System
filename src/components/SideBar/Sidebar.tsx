@@ -21,6 +21,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
 import { usePermissions } from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../utils/permissions";
+import { getHomePath } from "../../routes/paths";
 import { resolveImageUrl } from "../../utils/imageUrl";
 import AvatarContent from "../Avatar/AvatarContent";
 
@@ -39,6 +40,7 @@ const navItems: NavItem[] = [
         path: "/dashboard",
         icon: NavIcon1,
         end: true,
+        permission: PERMISSIONS.VIEW_DASHBOARD,
     },
     {
         title: "Attendance",
@@ -102,7 +104,7 @@ const Sidebar = () => {
 
     const { user } = useAuth();
 
-    const { hasPermission } = usePermissions();
+    const { permissions, hasPermission } = usePermissions();
 
     const visibleNavItems = navItems.filter(
         (item) => !item.permission || hasPermission(item.permission)
@@ -153,7 +155,8 @@ const Sidebar = () => {
 
             <div className="sidebar-logo text-center">
 
-                <Link to="/dashboard">
+                {/* Home page: the dashboard, or Profile without "View Dashboard" */}
+                <Link to={getHomePath(permissions)}>
 
                     <img
                         className="img-fluid"
