@@ -15,6 +15,10 @@ interface FilterBarProps {
     searchPlaceholder?: string;
     searchValue?: string;
     onSearchChange?: (value: string) => void;
+    // Optional search feedback: a spinner while the (debounced) search is
+    // pending, and a highlighted icon while a search is applied
+    isSearching?: boolean;
+    isSearchApplied?: boolean;
 
     classValue?: string;
     onClassChange?: (value: string) => void;
@@ -31,6 +35,8 @@ const FilterBar = ({
     searchPlaceholder = "Search...",
     searchValue = "",
     onSearchChange,
+    isSearching = false,
+    isSearchApplied = false,
 
     classValue = "all",
     onClassChange,
@@ -73,11 +79,19 @@ const FilterBar = ({
             {/* Search */}
             <div className="filter-search filter-wrapper">
 
-                <Search
-                    className="filter-search-icon"
-                    size={15}
-                    strokeWidth={2}
-                />
+                {isSearching ? (
+                    <span
+                        className="spinner-border spinner-border-sm filter-search-icon filter-search-spinner"
+                        role="status"
+                        aria-label="Searching"
+                    />
+                ) : (
+                    <Search
+                        className={`filter-search-icon ${isSearchApplied ? "applied" : ""}`}
+                        size={15}
+                        strokeWidth={2}
+                    />
+                )}
 
                 <input
                     type="text"
@@ -87,6 +101,7 @@ const FilterBar = ({
                     onChange={(e) =>
                         onSearchChange?.(e.target.value)
                     }
+                    aria-busy={isSearching}
                 />
 
             </div>

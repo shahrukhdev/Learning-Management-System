@@ -29,6 +29,21 @@
     color: #93AEA3;
 }
 
+/* Search pending (debounce / filtering) */
+.filter-search-spinner {
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border-width: 2px;
+    color: #535624;
+    transform: none;
+}
+
+/* A search is applied */
+.filter-search-icon.applied {
+    color: #535624;
+}
+
 .filter-search-input {
     width: 100%;
     height: 40px;

@@ -162,7 +162,7 @@ const AttendanceStudentList = ({
                     >
                         {classOptions.length === 0 && (
                             <option value="">
-                                {classesLoading ? "Loading classes..." : "No classes"}
+                                {classesLoading ? "Loading" : "No classes"}
                             </option>
                         )}
                         {classOptions.map((option) => (

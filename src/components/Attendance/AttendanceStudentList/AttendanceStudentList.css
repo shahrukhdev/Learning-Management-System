@@ -235,3 +235,12 @@
         height: 38px;
     }
 }
+
+/* Class dropdown while classes load / when empty: keep its own colours
+   (Bootstrap's disabled .form-select background is light grey/white) */
+.attendance-class-select:disabled {
+    background-color: #DFDDBF;
+    color: #000000;
+    opacity: 0.75;
+    cursor: not-allowed;
+}

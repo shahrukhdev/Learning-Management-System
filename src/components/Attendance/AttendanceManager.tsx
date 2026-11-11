@@ -358,6 +358,9 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                                 searchPlaceholder="Search students..."
                                 searchValue={search}
                                 onSearchChange={setSearch}
+                                // Spinner until the typed text is applied (450ms)
+                                isSearching={search.trim() !== debouncedSearch}
+                                isSearchApplied={debouncedSearch !== ""}
 
                                 // Class select hidden for now (the class dropdown
                                 // above the student list is used). Uncomment to
