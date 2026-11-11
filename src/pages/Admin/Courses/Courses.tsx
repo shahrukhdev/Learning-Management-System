@@ -1,11 +1,13 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CirclePlus } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import SEO from "../../../components/Seo/SEO";
+import FilterBar from "../../../components/FilterBar/FilterBar";
 import CoursesTable from "../../../components/Courses/CoursesTable";
 import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { useCoursesList } from "../../../hooks/useCoursesList";
+import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { deleteCourse } from "../../../services/courseService";
 import { parseApiError } from "../../../utils/apiError";
 import type { CourseItem } from "../../../types/course.types";
@@ -13,6 +15,9 @@ import "../AdminList.css";
 import "../Roles/Roles.css";
 
 const DEFAULT_PER_PAGE = 10;
+
+// Same as Users Management
+const SEARCH_DEBOUNCE_MS = 450;
 
 // Reads a positive integer from the query string, or the fallback
 const readPositiveInt = (value: string | null, fallback: number) => {
@@ -33,8 +38,8 @@ const Courses = () => {
 
     const perPage = readPositiveInt(searchParams.get("per_page"), DEFAULT_PER_PAGE);
 
-    // No search/status controls exist in this UI yet; these are read from the
-    // URL so they are supported (and kept across pages) when present
+    // Applied search (sent as `search`); the status filter has no control yet
+    // but is read from the URL and kept together with the search
     const search = (searchParams.get("search") ?? "").trim();
 
     const isActiveParam = searchParams.get("is_active");
@@ -59,6 +64,47 @@ const Courses = () => {
             return next;
         });
     };
+
+    /* =========================
+       Search (same behavior as Users Management): the input is debounced
+       450ms and trimmed, then stored in the URL as `search` with the page
+       reset to 1. Clearing it removes `search` (full list again).
+    ========================= */
+
+    const [searchInput, setSearchInput] = useState(search);
+
+    const debouncedSearch = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
+
+    // Keep the input in sync when the URL changes on its own (e.g. Back)
+    const [syncedSearch, setSyncedSearch] = useState(search);
+
+    if (syncedSearch !== search) {
+        setSyncedSearch(search);
+        if (searchInput.trim() !== search) setSearchInput(search);
+    }
+
+    // Last debounced value handled, so only new input updates the URL
+    const lastDebouncedSearch = useRef(debouncedSearch);
+
+    useEffect(() => {
+        if (debouncedSearch === lastDebouncedSearch.current) return;
+
+        lastDebouncedSearch.current = debouncedSearch;
+
+        if (debouncedSearch === search) return;
+
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
+
+            if (debouncedSearch) next.set("search", debouncedSearch);
+            else next.delete("search");
+
+            // A new search starts at page 1 (status filter / page size kept)
+            next.delete("page");
+
+            return next;
+        });
+    }, [debouncedSearch, search, setSearchParams]);
 
     const goToPage = (nextPage: number) =>
         updateQuery({ page: nextPage > 1 ? String(nextPage) : null });
@@ -169,6 +215,13 @@ const Courses = () => {
                             </div>
                         </div>
                         <div className="col-12">
+                            <div className="admin-list-controls">
+                                <FilterBar
+                                    searchPlaceholder="Search courses..."
+                                    searchValue={searchInput}
+                                    onSearchChange={setSearchInput}
+                                />
+                            </div>
                             <CoursesTable
                                 courses={courses}
                                 pagination={pagination}

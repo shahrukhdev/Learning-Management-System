@@ -1,3 +1,25 @@
 .admin-list-section {
     padding: 0 0 40px;
 }
+
+/* Search bar above the listing (same FilterBar look as Users Management) */
+.admin-list-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.admin-list-controls .filter-bar {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    display: block;
+    max-width: 300px;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .admin-list-controls .filter-bar {
+        max-width: none;
+    }
+}
