@@ -13,9 +13,13 @@ import SEO from "../Seo/SEO";
 import { useAcademicClassOptions } from "../../hooks/useAcademicClassOptions";
 import { useClassAttendance } from "../../hooks/useClassAttendance";
 import { useAttendanceOverview } from "../../hooks/useAttendanceOverview";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { saveAttendance } from "../../services/attendanceService";
 import { parseApiError } from "../../utils/apiError";
 import type { AttendanceStatus, MarkedAttendanceStatus } from "../../types/attendance.types";
+
+// Same as Users Management
+const SEARCH_DEBOUNCE_MS = 450;
 
 // Stable empty value (keeps the memoized status map from recomputing)
 const NO_EDITS: Record<number, MarkedAttendanceStatus> = {};
@@ -37,9 +41,16 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
 
     const [search, setSearch] = useState("");
 
+    // Filters: the class dropdown and date picker change a draft; the Filter
+    // button applies it (only applied values are requested)
+
+    // Applied date (the attendance shown / saved)
     const [date, setDate] = useState(todayYmd);
 
-    // Overview week (Monday); follows the selected date, or prev/next
+    // Date picked but not applied yet
+    const [draftDate, setDraftDate] = useState(todayYmd);
+
+    // Overview week (Monday); follows the applied date, or prev/next
     const [weekStart, setWeekStart] = useState(() => getWeekStart(todayYmd()));
 
     /* --------------------------------
@@ -53,13 +64,19 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         retry: retryClasses,
     } = useAcademicClassOptions();
 
+    // Applied class (null = the first class once they load)
     const [chosenClassId, setChosenClassId] = useState<number | null>(null);
 
-    // The chosen class, or the first class once they load
-    const selectedClassId =
-        chosenClassId !== null && classes.some((item) => item.id === chosenClassId)
-            ? chosenClassId
-            : classes[0]?.id ?? null;
+    // Class picked but not applied yet (null = same as applied)
+    const [draftClassId, setDraftClassId] = useState<number | null>(null);
+
+    const isKnownClass = (id: number | null) => id !== null && classes.some((item) => item.id === id);
+
+    // The applied class, or the first class once they load
+    const selectedClassId = isKnownClass(chosenClassId) ? chosenClassId : classes[0]?.id ?? null;
+
+    // Shown in the class dropdown
+    const pendingClassId = isKnownClass(draftClassId) ? draftClassId : selectedClassId;
 
     /* --------------------------------
        Daily attendance (selected class + date)
@@ -114,7 +131,10 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
        Search (client-side, loaded students only)
     -------------------------------- */
 
-    const term = search.trim().toLowerCase();
+    // Debounced like Users Management (loaded students only)
+    const debouncedSearch = useDebouncedValue(search.trim(), SEARCH_DEBOUNCE_MS);
+
+    const term = debouncedSearch.toLowerCase();
 
     const visibleStudents = term
         ? records.filter((record) =>
@@ -200,19 +220,33 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         setSelection({ key: null, ids: [] });
     };
 
+    // Picking a class or date only updates the draft (no request)
     const handleClassChange = (classId: number) => {
-        if (classId === selectedClassId) return;
-
-        setChosenClassId(classId);
-        resetLocalChanges();
+        setDraftClassId(classId);
     };
 
     const handleDateChange = (value: string) => {
-        if (value === date) return;
+        setDraftDate(value);
+    };
 
-        setDate(value);
-        // Keep the overview on the week of the selected date
-        setWeekStart(getWeekStart(value));
+    // Filter button: apply the picked class + date and load their data. With
+    // nothing changed, the same data is requested again.
+    const handleApplyFilters = () => {
+        const nextClassId = pendingClassId;
+
+        const isUnchanged = nextClassId === selectedClassId && draftDate === date;
+
+        if (isUnchanged) {
+            reloadAttendance();
+            overview.invalidate();
+            return;
+        }
+
+        setChosenClassId(nextClassId);
+        setDraftClassId(null);
+        setDate(draftDate);
+        // Keep the overview on the week of the applied date
+        setWeekStart(getWeekStart(draftDate));
         resetLocalChanges();
     };
 
@@ -285,10 +319,12 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         }
     };
 
-    const classFilterOptions =
-        classes.length > 0
-            ? classes.map((item) => ({ value: String(item.id), label: item.name }))
-            : [{ value: "", label: classesLoading ? "Loading classes..." : "No classes" }];
+    // Options for the Filter Bar class select (commented out below; the class
+    // dropdown above the student list is used instead)
+    // const classFilterOptions =
+    //     classes.length > 0
+    //         ? classes.map((item) => ({ value: String(item.id), label: item.name }))
+    //         : [{ value: "", label: classesLoading ? "Loading classes..." : "No classes" }];
 
     const overviewEmptyMessage = classesError
         ? classesError
@@ -314,7 +350,8 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                             </h1>
                         </div>
 
-                        {/* Filter Bar (class + date drive both tabs) */}
+                        {/* Filter Bar: search (debounced), date, and Filter (applies
+                            the class + date; class is picked below) */}
                         <div className="col-12">
 
                             <FilterBar
@@ -322,14 +359,20 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                                 searchValue={search}
                                 onSearchChange={setSearch}
 
-                                classValue={selectedClassId !== null ? String(selectedClassId) : ""}
-                                onClassChange={(value) => {
-                                    if (value) handleClassChange(Number(value));
-                                }}
-                                classOptions={classFilterOptions}
+                                // Class select hidden for now (the class dropdown
+                                // above the student list is used). Uncomment to
+                                // bring it back, together with classFilterOptions.
+                                // classValue={pendingClassId !== null ? String(pendingClassId) : ""}
+                                // onClassChange={(value) => {
+                                //     if (value) handleClassChange(Number(value));
+                                // }}
+                                // classOptions={classFilterOptions}
 
-                                dateValue={date}
+                                dateValue={draftDate}
                                 onDateChange={handleDateChange}
+
+                                filterButtonLabel="Filter"
+                                onFilterClick={handleApplyFilters}
                             />
 
                         </div>
@@ -360,7 +403,7 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                                         selectedStudents={selectedStudents}
                                         onStudentSelect={handleStudentSelect}
                                         classOptions={classes}
-                                        selectedClassId={selectedClassId}
+                                        selectedClassId={pendingClassId}
                                         onClassChange={handleClassChange}
                                         classesLoading={classesLoading}
                                         classesError={classesError}

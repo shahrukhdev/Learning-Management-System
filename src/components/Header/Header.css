@@ -19,6 +19,8 @@
     align-items: center;
     justify-content: flex-end;
     gap: 12px;
+    /* Stays on the right even without the header search */
+    margin-left: auto;
 }
 
 

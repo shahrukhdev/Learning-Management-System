@@ -4,7 +4,7 @@ import "./Header.css";
 import { useEffect, useRef, useState } from "react";
 import {
     Bell,
-    Search,
+    // Search, // header search is commented out below
     User,
     LogOut,
     Check
@@ -73,7 +73,8 @@ const Header = () => {
 
                         <div className="header-flex">
 
-                            {/* Search */}
+                            {/* Search (hidden for now; uncomment to bring it back,
+                                together with the `Search` icon import)
                             <div className="header-search">
 
                                 <Search
@@ -90,6 +91,7 @@ const Header = () => {
                                 />
 
                             </div>
+                            */}
 
                             {/* Header Actions */}
                             <div className="header-actions">
