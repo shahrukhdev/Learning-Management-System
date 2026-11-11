@@ -13,6 +13,8 @@ interface NoticeItemPros {
     // Optional meta line (API notices only): status badge + backend date
     isActive?: boolean;
     date?: string;
+    // Each action is shown only when its handler is passed (callers pass
+    // them only when the user has the matching permission)
     onEdit?: (id: number) => void;
     onDelete?: (id: number) => void;
 }
@@ -71,27 +73,33 @@ const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) 
             </div>
 
             {/* Notice Actions */}
-            <div className="notice-actions">
+            {(onEdit || onDelete) && (
+                <div className="notice-actions">
 
-                <button
-                    type="button"
-                    className="notice-action-btn"
-                    onClick={() => onEdit?.(notice.id)}
-                    aria-label={`Edit ${notice.title}`}
-                >
-                    <PenLine size={16} strokeWidth={2.2} color="#231F20" />
-                </button>
+                    {onEdit && (
+                        <button
+                            type="button"
+                            className="notice-action-btn"
+                            onClick={() => onEdit(notice.id)}
+                            aria-label={`Edit ${notice.title}`}
+                        >
+                            <PenLine size={16} strokeWidth={2.2} color="#231F20" />
+                        </button>
+                    )}
 
-                <button
-                    type="button"
-                    className="notice-action-btn"
-                    onClick={() => onDelete?.(notice.id)}
-                    aria-label={`Delete ${notice.title}`}
-                >
-                    <X size={16} strokeWidth={2.2} color="#231F20" />
-                </button>
+                    {onDelete && (
+                        <button
+                            type="button"
+                            className="notice-action-btn"
+                            onClick={() => onDelete(notice.id)}
+                            aria-label={`Delete ${notice.title}`}
+                        >
+                            <X size={16} strokeWidth={2.2} color="#231F20" />
+                        </button>
+                    )}
 
-            </div>
+                </div>
+            )}
 
         </div>
     );

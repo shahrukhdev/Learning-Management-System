@@ -19,10 +19,21 @@ import { useEffect, useState } from "react";
 
 import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 import { resolveImageUrl } from "../../utils/imageUrl";
 import AvatarContent from "../Avatar/AvatarContent";
 
-const navItems = [
+interface NavItem {
+    title: string;
+    path: string;
+    icon: string;
+    end?: boolean;
+    // Shown only with this permission (items without one are always shown)
+    permission?: string;
+}
+
+const navItems: NavItem[] = [
     {
         title: "Dashboard",
         path: "/dashboard",
@@ -43,6 +54,7 @@ const navItems = [
         title: "Notices",
         path: "/notices",
         icon: NavIcon4,
+        permission: PERMISSIONS.VIEW_NOTICES,
     },
     {
         title: "Students Progress",
@@ -89,6 +101,12 @@ const Sidebar = () => {
     const { signOut, isLoggingOut } = useLogout();
 
     const { user } = useAuth();
+
+    const { hasPermission } = usePermissions();
+
+    const visibleNavItems = navItems.filter(
+        (item) => !item.permission || hasPermission(item.permission)
+    );
 
     const isAcademicActive = academicItems.some((item) =>
         location.pathname.startsWith(item.path)
@@ -154,10 +172,10 @@ const Sidebar = () => {
 
                 {/* Main Navigation */}
 
-                {navItems.map((item, index) => (
+                {visibleNavItems.map((item) => (
 
                     <NavLink
-                        key={index}
+                        key={item.path}
                         className={navLinkClass}
                         to={item.path}
                         end={item.end}

@@ -13,10 +13,19 @@ export interface AuthenticatedUser {
     is_active: number;
     image: string | null;
     role: string;
+    // Permission names (data.user.permissions); may be missing on older APIs
+    permissions?: unknown;
 }
 
-// The subset of user info kept in AuthContext (and persisted for refresh)
-export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "phone_no" | "role" | "image">;
+// The subset of user info kept in AuthContext (and persisted for refresh).
+// `permissions` = the user's permission names exactly as the API returns them.
+export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "phone_no" | "role" | "image"> & {
+    permissions: string[];
+};
+
+// What callers pass to setUser: `permissions` left out = keep the current
+// user's permissions (e.g. a response that does not include them)
+export type AuthUserInput = Omit<AuthUser, "permissions"> & { permissions?: string[] };
 
 export interface LoginResponseData {
     user: AuthenticatedUser;

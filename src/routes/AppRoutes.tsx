@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleBasedRoute from "./RoleBasedRoute";
+import PermissionRoute from "./PermissionRoute";
+import { PERMISSIONS } from "../utils/permissions";
 
 import Home from "../pages/Auth/Home";
 import Login from "../pages/Auth/Login";
@@ -100,7 +102,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/notices"
-                    element={<RoleBasedRoute admin={<Notices />} teacher={<TeacherNotices />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_NOTICES]}>
+                            <RoleBasedRoute admin={<Notices />} teacher={<TeacherNotices />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route

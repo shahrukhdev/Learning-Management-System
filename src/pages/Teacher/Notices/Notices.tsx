@@ -6,10 +6,21 @@ import NoticeList from "../../../components/Notices/NoticesList";
 import { notices } from "../../../components/Notices/Notices.data";
 import "../../../components/Notices/Notices.css";
 import AnnoucementsPopup from "../../../components/Popups/AnnouncementsPopup/AnnoucementsPopup";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const Notices = () => {
 
     const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
+
+    // Same permission rules as the Admin Notices page (View: route)
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_NOTICE);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_NOTICE);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_NOTICE);
 
     const handlePost = (data: {
         title: string;
@@ -48,14 +59,16 @@ const Notices = () => {
                                     </h1>
                                     <p className="notices-desc m-0">Communicate with teachers, students and parents</p>
                                 </div> 
-                                <button 
-                                    type="button"
-                                    className="new-notice-btn"
-                                    onClick={() => setIsAnnouncementOpen(true)}
-                                >
-                                    <Plus color="#fff" size={20} strokeWidth={2.5} />
-                                    <span>New Notice</span>
-                                </button>
+                                {canCreate && (
+                                    <button 
+                                        type="button"
+                                        className="new-notice-btn"
+                                        onClick={() => setIsAnnouncementOpen(true)}
+                                    >
+                                        <Plus color="#fff" size={20} strokeWidth={2.5} />
+                                        <span>New Notice</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -66,8 +79,8 @@ const Notices = () => {
                                     <NoticeList 
                                         key={notice.id}
                                         notice={notice}
-                                        onEdit={handleEdit}
-                                        onDelete={handleDelete}                                        
+                                        onEdit={canEdit ? handleEdit : undefined}
+                                        onDelete={canDelete ? handleDelete : undefined}
                                     />
                                 ))}
                             </div>
@@ -78,7 +91,7 @@ const Notices = () => {
 
             {/* Annoucements Popup */}
             <AnnoucementsPopup
-                isOpen={isAnnouncementOpen}
+                isOpen={isAnnouncementOpen && canCreate}
                 onClose={handleCloseAnnouncement}
                 onPost={handlePost}
             />

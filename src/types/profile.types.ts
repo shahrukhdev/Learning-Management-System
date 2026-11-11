@@ -8,6 +8,8 @@ export interface ProfileUser {
     is_active: boolean | number;
     image: string | null; // storage path, e.g. "users/profile.jpg"
     role: string;
+    // Permission names (GET /v1/profile `data.permissions`)
+    permissions?: unknown;
 }
 
 // Note: profile endpoints use `success` (login uses `status`)

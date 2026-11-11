@@ -17,6 +17,7 @@ import {
 import { getPermission, updatePermission } from "../../../../services/permissionService";
 import { parseApiError } from "../../../../utils/apiError";
 import { useModules } from "../../../../hooks/useModules";
+import { useAuth } from "../../../../hooks/useAuth";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
 import "../../Roles/Roles.css";
 
@@ -24,6 +25,12 @@ import "../../Roles/Roles.css";
 // /system/permissions/:permissionId/edit. Same load / validate / submit
 // behavior as the Edit Role page.
 const EditPermission = () => {
+
+    // Signed-in user (refreshed if a permission they have is changed)
+    const { user, refreshUser } = useAuth();
+
+    // The permission's name as loaded, before any edits
+    const [originalName, setOriginalName] = useState("");
 
     const navigate = useNavigate();
 
@@ -89,6 +96,8 @@ const EditPermission = () => {
                     module_id: assignedModuleId !== null ? String(assignedModuleId) : "",
                 });
 
+                setOriginalName(response.data.name ?? "");
+
                 setErrors({});
 
                 setLoadState({ key: loadKey, error: null });
@@ -146,6 +155,10 @@ const EditPermission = () => {
             });
 
             toast.success(response.message || "Permission updated successfully.");
+
+            // The signed-in user has this permission (e.g. it was renamed):
+            // reload their permissions so checks use the new name
+            if (originalName && user?.permissions.includes(originalName)) void refreshUser();
 
             // The Permissions listing mounts fresh and fetches
             // GET /v1/permissions again

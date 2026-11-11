@@ -9,6 +9,7 @@ import { usePermissionsList } from "../../../hooks/usePermissionsList";
 import { useModules } from "../../../hooks/useModules";
 import { deletePermission } from "../../../services/permissionService";
 import { parseApiError } from "../../../utils/apiError";
+import { useAuth } from "../../../hooks/useAuth";
 import type { PermissionListItem } from "../../../types/permission.types";
 import "./Permissions.css";
 import "../Roles/Roles.css";
@@ -16,6 +17,9 @@ import "../Roles/Roles.css";
 const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
 
 const Permissions = () => {
+
+    // Signed-in user (refreshed if one of their permissions is deleted)
+    const { user, refreshUser } = useAuth();
 
     const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
@@ -75,6 +79,9 @@ const Permissions = () => {
             const response = await deletePermission(deleteTarget.id);
 
             toast.success(response.message || "Permission deleted successfully.");
+
+            // The signed-in user had this permission: reload their permissions
+            if (user?.permissions.includes(deleteTarget.name)) void refreshUser();
 
             setDeleteTarget(null);
 

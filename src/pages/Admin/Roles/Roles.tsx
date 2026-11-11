@@ -9,11 +9,15 @@ import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { useRolesList } from "../../../hooks/useRolesList";
 import { deleteRole } from "../../../services/roleService";
 import { parseApiError } from "../../../utils/apiError";
+import { useAuth } from "../../../hooks/useAuth";
 import type { RoleListItem } from "../../../types/role.types";
 
 const DEFAULT_PER_PAGE = 10; // matches the backend default and the existing UI
 
 const Roles = () => {
+
+    // Signed-in user (refreshed if their own role is deleted)
+    const { user, refreshUser } = useAuth();
 
     const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
@@ -67,6 +71,11 @@ const Roles = () => {
             const response = await deleteRole(deleteTarget.id);
 
             toast.success(response.message || "Role deleted successfully.");
+
+            // The signed-in user's role was deleted: reload their permissions
+            if (user && user.role.trim().toLowerCase() === deleteTarget.name.trim().toLowerCase()) {
+                void refreshUser();
+            }
 
             setDeleteTarget(null);
 

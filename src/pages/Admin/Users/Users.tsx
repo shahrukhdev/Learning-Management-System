@@ -19,7 +19,6 @@ import { students } from "../../../components/Attendance/Attendance.data";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useUsersList } from "../../../hooks/useUsersList";
 import { deleteUser } from "../../../services/userService";
-import { getProfile } from "../../../services/profileService";
 import { parseApiError } from "../../../utils/apiError";
 import { toAuthUser } from "../../../utils/authUser";
 import { useAuth } from "../../../hooks/useAuth";
@@ -35,7 +34,7 @@ const Users = () => {
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
     // Signed-in user (synced after editing yourself; see handleUserUpdated)
-    const { user: authUser, setUser: setAuthUser } = useAuth();
+    const { user: authUser, setUser: setAuthUser, refreshUser } = useAuth();
 
     // "all" or a real role ID (as a string)
     const [activeTab, setActiveTab] = useState(ALL_TAB);
@@ -116,8 +115,8 @@ const Users = () => {
         // Editing someone else never touches the signed-in user's state
         if (!authUser || updatedUser.id !== authUser.id) return;
 
-        // Prefer the updated user from the PUT response. AuthContext keeps a
-        // single role name, so use the user's (first) assigned role.
+        // Show the PUT response straight away (permissions are kept). The
+        // AuthContext keeps a single role name: the (first) assigned role.
         const updatedRoleName = updatedUser.roles?.[0]?.name;
 
         if (updatedRoleName) {
@@ -129,17 +128,11 @@ const Users = () => {
                 image: updatedUser.image,
                 role: updatedRoleName,
             }));
-            return;
         }
 
-        // Response lacked role info: fetch the signed-in user's details
-        try {
-            const profile = await getProfile();
-            setAuthUser(toAuthUser(profile.data));
-        } catch {
-            // Non-fatal: the update itself succeeded; the next profile load
-            // or login will bring the user details up to date
-        }
+        // A role change can change permissions: reload the profile
+        // (GET /v1/profile). Non-fatal if it fails.
+        await refreshUser();
 
     };
 

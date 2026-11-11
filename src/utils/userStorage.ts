@@ -32,6 +32,10 @@ const toAuthUser = (value: unknown): AuthUser | null => {
         phone_no: (user.phone_no as string | null | undefined) ?? null,
         role: user.role as string,
         image: (user.image as string | null | undefined) ?? null,
+        // Records saved before permissions were added have none
+        permissions: Array.isArray(user.permissions)
+            ? user.permissions.filter((item): item is string => typeof item === "string")
+            : [],
     };
 };
 

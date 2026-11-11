@@ -35,7 +35,7 @@ const EditRoleDetails = () => {
     const navigate = useNavigate();
 
     // Signed-in user (Header/Sidebar show user.role from here)
-    const { user, setUser } = useAuth();
+    const { user, setUser, refreshUser } = useAuth();
 
     const { roleId: roleIdParam } = useParams<{ roleId: string }>();
 
@@ -202,14 +202,18 @@ const EditRoleDetails = () => {
             // AuthContext keeps the role by name, so match the pre-edit name.
             const savedName = (response.data?.name ?? formData.name).trim();
 
-            if (
-                user &&
-                originalName &&
-                user.role.trim().toLowerCase() === originalName.trim().toLowerCase() &&
-                user.role !== savedName
-            ) {
+            const isOwnRole =
+                user !== null &&
+                originalName !== "" &&
+                user.role.trim().toLowerCase() === originalName.trim().toLowerCase();
+
+            if (isOwnRole && user.role !== savedName) {
                 setUser({ ...user, role: savedName });
             }
+
+            // The signed-in user's role changed (e.g. its permissions): reload
+            // their profile so permissions, Sidebar and guards update now
+            if (isOwnRole) void refreshUser();
 
             // The Roles listing mounts fresh and fetches GET /v1/roles again
             navigate(ROLES_LIST_PATH);

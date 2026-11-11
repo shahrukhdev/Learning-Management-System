@@ -14,6 +14,8 @@ import TablePageNumbers from "../../../components/Table/TablePageNumbers";
 import { useNoticesList } from "../../../hooks/useNoticesList";
 import { deleteNotice } from "../../../services/noticeService";
 import { parseApiError } from "../../../utils/apiError";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 import type { NoticeItem } from "../../../types/notice.types";
 
 const DEFAULT_PER_PAGE = 10;
@@ -55,6 +57,19 @@ const Notices = () => {
 
 
     /* =========================
+       Permissions (View is checked by the route; actions here)
+    ========================= */
+
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_NOTICE);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_NOTICE);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_NOTICE);
+
+
+    /* =========================
        New / Edit popup (same popup)
     ========================= */
 
@@ -69,6 +84,7 @@ const Notices = () => {
     }
 
     const handleEdit = (id: number) => {
+        if (!canEdit) return;
         setEditNoticeId(id);
     }
 
@@ -94,6 +110,7 @@ const Notices = () => {
     const isDeletingRef = useRef(false);
 
     const handleDelete = (id: number) => {
+        if (!canDelete) return;
         const notice = notices.find((item) => item.id === id);
         if (notice) setDeleteTarget(notice);
     }
@@ -105,7 +122,7 @@ const Notices = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -196,8 +213,8 @@ const Notices = () => {
                         }}
                         isActive={Boolean(notice.is_active)}
                         date={notice.created_at}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
+                        onEdit={canEdit ? handleEdit : undefined}
+                        onDelete={canDelete ? handleDelete : undefined}
                     />
                 ))}
             </div>
@@ -223,14 +240,16 @@ const Notices = () => {
                                     </h1>
                                     <p className="notices-desc m-0">Communicate with teachers, students and parents</p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="new-notice-btn"
-                                    onClick={() => setIsAnnouncementOpen(true)}
-                                >
-                                    <Plus color="#fff" size={20} strokeWidth={2.5} />
-                                    <span>New Notice</span>
-                                </button>
+                                {canCreate && (
+                                    <button
+                                        type="button"
+                                        className="new-notice-btn"
+                                        onClick={() => setIsAnnouncementOpen(true)}
+                                    >
+                                        <Plus color="#fff" size={20} strokeWidth={2.5} />
+                                        <span>New Notice</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -296,7 +315,8 @@ const Notices = () => {
 
             {/* Annoucements Popup (New + Edit) */}
             <AnnoucementsPopup
-                isOpen={isAnnouncementOpen || editNoticeId !== null}
+                // Opens only with the matching permission (New / Edit)
+                isOpen={(isAnnouncementOpen && canCreate) || (editNoticeId !== null && canEdit)}
                 editNoticeId={editNoticeId}
                 onClose={handleCloseAnnouncement}
                 onSaved={handleSaved}
@@ -304,7 +324,7 @@ const Notices = () => {
 
             {/* Delete Confirmation */}
             <ConfirmPopup
-                isOpen={deleteTarget !== null}
+                isOpen={deleteTarget !== null && canDelete}
                 title="Delete Notice"
                 message={
                     <>
