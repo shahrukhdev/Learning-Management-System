@@ -4,8 +4,10 @@ import { getAcademicClassOptions } from "../services/academicClassService";
 import { parseApiError } from "../utils/apiError";
 import type { CourseClassSummary } from "../types/course.types";
 
-// Academic class options for the course form (one request per form mount)
-export const useAcademicClassOptions = () => {
+// Academic class options (Course form, Student class in Add/Edit User).
+// One request per mount; with `enabled` false nothing is requested until it
+// becomes true.
+export const useAcademicClassOptions = (enabled = true) => {
 
     const [reloadToken, setReloadToken] = useState(0);
 
@@ -16,6 +18,8 @@ export const useAcademicClassOptions = () => {
     } | null>(null);
 
     useEffect(() => {
+        if (!enabled) return;
+
         const controller = new AbortController();
 
         getAcademicClassOptions(controller.signal)
@@ -31,7 +35,7 @@ export const useAcademicClassOptions = () => {
             });
 
         return () => controller.abort();
-    }, [reloadToken]);
+    }, [reloadToken, enabled]);
 
     const retry = useCallback(() => setReloadToken((token) => token + 1), []);
 
@@ -39,7 +43,7 @@ export const useAcademicClassOptions = () => {
 
     return {
         classes: state?.classes ?? [],
-        isLoading: !isCurrent,
+        isLoading: enabled && !isCurrent,
         error: isCurrent ? state.error : null,
         retry,
     };

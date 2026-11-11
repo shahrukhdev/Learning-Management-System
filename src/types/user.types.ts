@@ -21,6 +21,9 @@ export interface ManagedUser {
     created_at: string;
     // Already formatted by the backend ("Today, 03:45 PM", "-" if never)
     last_login?: string | null;
+    // Student users: assigned academic class (null for other roles)
+    class_id?: number | null;
+    class?: { id: number; name: string } | null;
 }
 
 export interface UsersListResponse {
@@ -38,6 +41,8 @@ export interface CreateUserRequest {
     phone_no: string | null;
     is_active?: boolean;
     roles: number[];
+    // Student role only: one academic class ID (omitted for other roles)
+    class_id?: number;
 }
 
 // The created UserResource is under `data` both for the app's usual
@@ -64,6 +69,8 @@ export interface UpdateUserRequest {
     phone_no: string | null;
     is_active: boolean;
     roles: number[];
+    // Student role only: one academic class ID (omitted for other roles)
+    class_id?: number;
 }
 
 export interface UpdateUserResponse {

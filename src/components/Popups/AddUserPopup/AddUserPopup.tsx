@@ -8,6 +8,7 @@ import type { Student } from "../../Attendance/Attendance.types";
 import type { ManagedUser, UpdateUserRequest, UserRoleSummary } from "../../../types/user.types";
 import { createUser, getUser, updateUser } from "../../../services/userService";
 import { parseApiError } from "../../../utils/apiError";
+import { useAcademicClassOptions } from "../../../hooks/useAcademicClassOptions";
 
 import "../Popup.css";
 
@@ -18,7 +19,7 @@ import "../Popup.css";
 type UserRole = | "admin" | "student" | "teacher" | "parent";
 
 // Fields validated on the client and by the backend (Laravel names)
-type AddUserField = "name" | "email" | "password" | "phone_no" | "is_active" | "roles";
+type AddUserField = "name" | "email" | "password" | "phone_no" | "is_active" | "roles" | "class_id";
 
 type AddUserErrors = Partial<Record<AddUserField, string>>;
 
@@ -50,9 +51,9 @@ interface AddUserPopupProps {
    Constants
 ========================= */
 
-// Roles that can be selected for now: Admin, Super Admin (admin kind),
-// Teacher and Parent.
-const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher", "parent"];
+// Roles that can be selected: Admin, Super Admin (admin kind), Teacher,
+// Parent and Student (Student also needs a class, see "Student Class").
+const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher", "parent", "student"];
 
 // Roles whose role-specific fields are shown. None for now: Teacher and Parent
 // work like Admin (no extra fields). The Student/Teacher/Parent sections below
@@ -66,7 +67,7 @@ const MAX_PHONE_LENGTH = 20;
 const MIN_PASSWORD_LENGTH = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "is_active", "roles"];
+const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "is_active", "roles", "class_id"];
 
 // Maps a backend role name to the popup's role sections.
 // Super Admin uses the admin kind: it is selectable alongside Admin and, like
@@ -162,6 +163,27 @@ const AddUserPopup = ({
 
     const [className, setClassName] = useState("Hifz Level 1");
 
+    /* Student Class (GET /v1/academic-classes): required for Student */
+
+    const isStudent = role === "student";
+
+    // Selected academic class ID (sent as `class_id`, Student only)
+    const [classId, setClassId] = useState<number | null>(null);
+
+    // Edit mode: the user's current class, kept as an option even if it is
+    // not in the loaded list
+    const [currentClass, setCurrentClass] = useState<{ id: number; name: string } | null>(null);
+
+    // Requested only while a Student is being added/edited
+    const studentClasses = useAcademicClassOptions(isOpen && isStudent);
+
+    const classChoices = [
+        ...studentClasses.classes,
+        ...(currentClass && !studentClasses.classes.some((option) => option.id === currentClass.id)
+            ? [currentClass]
+            : []),
+    ];
+
     const [parentId, setParentId] = useState("");
 
     const [subject, setSubject] = useState("");
@@ -200,6 +222,8 @@ const AddUserPopup = ({
         setLoadState(null);
         setErrors({});
         setClassName("Hifz Level 1");
+        setClassId(null);
+        setCurrentClass(null);
         setParentId("");
         setSubject("");
         setSelectedChildren([]);
@@ -236,6 +260,17 @@ const AddUserPopup = ({
                 setCurrentRoles(userRoles);
                 setRoleId(primaryRole ? primaryRole.id : null);
                 setRole(primaryRole ? toRoleKind(primaryRole.name) : null);
+
+                // Student: preselect the assigned class (by ID; works even if
+                // the class list arrives later)
+                const assignedClassId = user.class_id ?? user.class?.id ?? null;
+                setClassId(assignedClassId);
+                setCurrentClass(
+                    user.class && typeof user.class.id === "number"
+                        ? { id: user.class.id, name: user.class.name }
+                        : null
+                );
+
                 setErrors({});
 
                 setLoadState({ id: editUserId, token: loadToken, error: null });
@@ -395,6 +430,12 @@ const AddUserPopup = ({
 
     const handleRoleChange = (newRole: UserRole | null) => {
 
+        // Only Students have a class: clear it for any other role
+        if (newRole !== "student") {
+            setClassId(null);
+            clearError("class_id");
+        }
+
         setRole(newRole);
         setClassName("Hifz Level 1");
         setParentId("");
@@ -473,6 +514,10 @@ const AddUserPopup = ({
             result.roles = "Please select a role.";
         }
 
+        if (isStudent && classId === null) {
+            result.class_id = "Please select a class.";
+        }
+
         return result;
 
     };
@@ -487,6 +532,9 @@ const AddUserPopup = ({
         event.preventDefault();
 
         if (isSubmittingRef.current || isLoadingUser || loadError) return;
+
+        // Student: wait for the class list (or show its error)
+        if (isStudent && (studentClasses.isLoading || studentClasses.error)) return;
 
         const clientErrors = validate();
 
@@ -512,6 +560,8 @@ const AddUserPopup = ({
                     phone_no: phone.trim() || null,
                     is_active: isActive,
                     roles: [roleId],
+                    // Single class ID, Student only (omitted otherwise)
+                    ...(isStudent && classId !== null ? { class_id: classId } : {}),
                 };
 
                 // Only send a password when a new one was entered
@@ -539,6 +589,8 @@ const AddUserPopup = ({
                 password,
                 phone_no: phone.trim() || null,
                 roles: [roleId],
+                // Single class ID, Student only (omitted otherwise)
+                ...(isStudent && classId !== null ? { class_id: classId } : {}),
             });
 
             toast.success(response.message || "User created successfully.");
@@ -1021,6 +1073,82 @@ const AddUserPopup = ({
 
 
                         {/* =========================
+                            Student Class (required for Student)
+                        ========================= */}
+
+                        {isStudent && (
+
+                            <div className="col-12">
+
+                                <div className="app-popup-field">
+
+                                    <label htmlFor="user-student-class">
+                                        Class
+                                    </label>
+
+                                    <div className="add-user-select-wrapper">
+
+                                        <select
+                                            id="user-student-class"
+                                            value={classId === null ? "" : String(classId)}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                setClassId(value ? Number(value) : null);
+                                                clearError("class_id");
+                                            }}
+                                            disabled={studentClasses.isLoading || isSubmitting}
+                                            aria-invalid={Boolean(errors.class_id)}
+                                            required
+                                        >
+
+                                            <option value="">
+                                                {studentClasses.isLoading
+                                                    ? "Loading classes..."
+                                                    : classChoices.length > 0
+                                                        ? "Select class"
+                                                        : "No classes available"}
+                                            </option>
+
+                                            {classChoices.map((option) => (
+                                                <option key={option.id} value={option.id}>
+                                                    {option.name}
+                                                </option>
+                                            ))}
+
+                                        </select>
+
+                                        <ChevronDown
+                                            className="add-user-select-icon"
+                                            size={17}
+                                        />
+
+                                    </div>
+
+                                    {errors.class_id && (
+                                        <span className="error-text">{errors.class_id}</span>
+                                    )}
+
+                                    {studentClasses.error && (
+                                        <span className="error-text">
+                                            {studentClasses.error}{" "}
+                                            <button
+                                                type="button"
+                                                className="btn btn-link p-0 align-baseline"
+                                                onClick={studentClasses.retry}
+                                            >
+                                                Try again
+                                            </button>
+                                        </span>
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+
+                        {/* =========================
                             Student
                         ========================= */}
 
@@ -1452,7 +1580,7 @@ const AddUserPopup = ({
                                 <button
                                     type="submit"
                                     className="app-popup-btn submit"
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || (isStudent && studentClasses.isLoading)}
                                     aria-busy={isSubmitting}
                                 >
                                     {isEditMode
