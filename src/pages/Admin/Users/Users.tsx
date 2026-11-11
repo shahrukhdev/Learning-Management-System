@@ -23,6 +23,8 @@ import { parseApiError } from "../../../utils/apiError";
 import { toAuthUser } from "../../../utils/authUser";
 import { useAuth } from "../../../hooks/useAuth";
 import type { ManagedUser, SortDirection } from "../../../types/user.types";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const ALL_TAB = "all";
 const SEARCH_DEBOUNCE_MS = 450;
@@ -30,6 +32,15 @@ const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
 const DEFAULT_SORT_DIRECTION: SortDirection = "desc";
 
 const Users = () => {
+
+    // View is checked by the route; each action has its own permission
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_USER);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_USER);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_USER);
 
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
@@ -145,6 +156,7 @@ const Users = () => {
     const [editUserId, setEditUserId] = useState<number | null>(null);
 
     const handleEditUser = (user: ManagedUser) => {
+        if (!canEdit) return;
         setEditUserId(user.id);
     };
 
@@ -166,6 +178,7 @@ const Users = () => {
     const isDeletingRef = useRef(false);
 
     const handleDeleteUser = (user: ManagedUser) => {
+        if (!canDelete) return;
         setDeleteTarget(user);
     };
 
@@ -176,7 +189,7 @@ const Users = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -255,25 +268,27 @@ const Users = () => {
                                 </div>
 
 
-                                <button
-                                    type="button"
-                                    className="new-notice-btn"
-                                    onClick={() =>
-                                        setIsAddUserOpen(true)
-                                    }
-                                >
+                                {canCreate && (
+                                    <button
+                                        type="button"
+                                        className="new-notice-btn"
+                                        onClick={() =>
+                                            setIsAddUserOpen(true)
+                                        }
+                                    >
 
-                                    <UserPlus
-                                        color="#fff"
-                                        size={20}
-                                        strokeWidth={2.5}
-                                    />
+                                        <UserPlus
+                                            color="#fff"
+                                            size={20}
+                                            strokeWidth={2.5}
+                                        />
 
-                                    <span>
-                                        Add New User
-                                    </span>
+                                        <span>
+                                            Add New User
+                                        </span>
 
-                                </button>
+                                    </button>
+                                )}
 
                             </div>
 
@@ -332,8 +347,8 @@ const Users = () => {
                                     sortDirection={sortDirection}
                                     onSortDirectionChange={setSortDirection}
                                     onRetry={retry}
-                                    onEditUser={handleEditUser}
-                                    onDeleteUser={handleDeleteUser}
+                                    onEditUser={canEdit ? handleEditUser : undefined}
+                                    onDeleteUser={canDelete ? handleDeleteUser : undefined}
                                 />
 
                             </div>
@@ -352,8 +367,9 @@ const Users = () => {
             ========================= */}
 
             <AddUserPopup
-                isOpen={isAddUserOpen || editUserId !== null}
-                editUserId={editUserId}
+                // Opens only with the matching permission (Add / Edit)
+                isOpen={(isAddUserOpen && canCreate) || (editUserId !== null && canEdit)}
+                editUserId={canEdit ? editUserId : null}
                 onClose={handleCloseUserPopup}
                 childrenList={students}
                 roleOptions={roles}
@@ -367,7 +383,7 @@ const Users = () => {
             ========================= */}
 
             <ConfirmPopup
-                isOpen={deleteTarget !== null}
+                isOpen={deleteTarget !== null && canDelete}
                 title="Delete User"
                 message={
                     <>

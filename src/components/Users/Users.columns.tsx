@@ -8,15 +8,17 @@ import type { ManagedUser } from "../../types/user.types";
 interface UserColumnsOptions {
     // Year line under the role is only shown on the Student tab
     showYear: boolean;
-    onEdit: (user: ManagedUser) => void;
-    onDelete: (user: ManagedUser) => void;
+    // Each action is shown only when its handler is passed
+    // ("Edit User" / "Delete User")
+    onEdit?: (user: ManagedUser) => void;
+    onDelete?: (user: ManagedUser) => void;
 }
 
 export const getUserManagementColumns = ({
     showYear,
     onEdit,
     onDelete,
-}: UserColumnsOptions): ColumnDef<ManagedUser>[] => [
+}: UserColumnsOptions): ColumnDef<ManagedUser>[] => ([
 
     /* User */
 
@@ -206,36 +208,42 @@ export const getUserManagementColumns = ({
 
             <div className="table-actions">
 
-                <button
-                    type="button"
-                    aria-label={`Edit ${row.original.name}`}
-                    onClick={() => onEdit(row.original)}
-                >
+                {onEdit && (
+                    <button
+                        type="button"
+                        aria-label={`Edit ${row.original.name}`}
+                        onClick={() => onEdit(row.original)}
+                    >
 
-                    <Pencil
-                        size={16}
-                        strokeWidth={2.4}
-                    />
+                        <Pencil
+                            size={16}
+                            strokeWidth={2.4}
+                        />
 
-                </button>
+                    </button>
+                )}
 
 
-                <button
-                    type="button"
-                    aria-label={`Delete ${row.original.name}`}
-                    onClick={() => onDelete(row.original)}
-                >
+                {onDelete && (
+                    <button
+                        type="button"
+                        aria-label={`Delete ${row.original.name}`}
+                        onClick={() => onDelete(row.original)}
+                    >
 
-                    <Trash2
-                        size={16}
-                        strokeWidth={2.4}
-                    />
+                        <Trash2
+                            size={16}
+                            strokeWidth={2.4}
+                        />
 
-                </button>
+                    </button>
+                )}
 
             </div>
 
         ),
     },
 
-];
+] as ColumnDef<ManagedUser>[])
+    // No Actions column when no action is allowed
+    .filter((column) => column.id !== "actions" || onEdit !== undefined || onDelete !== undefined);

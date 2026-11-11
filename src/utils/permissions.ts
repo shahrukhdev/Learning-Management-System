@@ -1,6 +1,5 @@
 // Permission names exactly as the API returns them (login / profile
-// `permissions`). Dashboard and Notices are enforced; the rest are listed so
-// other modules can use them later.
+// `permissions`). Used by the Sidebar, route guards and page actions.
 export const PERMISSIONS = {
     VIEW_DASHBOARD: "View Dashboard",
 
@@ -8,6 +7,11 @@ export const PERMISSIONS = {
     CREATE_NOTICE: "Create Notice",
     EDIT_NOTICE: "Edit Notice",
     DELETE_NOTICE: "Delete Notice",
+
+    VIEW_USERS: "View Users",
+    CREATE_USER: "Create User",
+    EDIT_USER: "Edit User",
+    DELETE_USER: "Delete User",
 
     VIEW_ROLES: "View Roles",
     CREATE_ROLE: "Create Role",

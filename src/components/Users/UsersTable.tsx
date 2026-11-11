@@ -31,8 +31,9 @@ interface UserManagementTableProps {
     sortDirection: SortDirection;
     onSortDirectionChange: (direction: SortDirection) => void;
     onRetry: () => void;
-    onEditUser: (user: ManagedUser) => void;
-    onDeleteUser: (user: ManagedUser) => void;
+    // Omitted = action hidden ("Edit User" / "Delete User")
+    onEditUser?: (user: ManagedUser) => void;
+    onDeleteUser?: (user: ManagedUser) => void;
 }
 
 // Only the User (name) column is sortable, and the backend does the sorting

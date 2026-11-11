@@ -137,7 +137,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/system/users"
-                    element={<Users />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_USERS]}>
+                            <Users />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route

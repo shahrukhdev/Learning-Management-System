@@ -70,6 +70,7 @@ const systemItems: NavItem[] = [
         title: "Users",
         path: "/system/users",
         icon: NavIcon5,
+        permission: PERMISSIONS.VIEW_USERS,
     },
     {
         title: "Roles",
@@ -106,13 +107,20 @@ const Sidebar = () => {
 
     const { user } = useAuth();
 
-    const { permissions, hasPermission } = usePermissions();
+    const { permissions, hasPermission, hasAnyPermission } = usePermissions();
 
     const isAllowed = (item: NavItem) => !item.permission || hasPermission(item.permission);
 
     const visibleNavItems = navItems.filter(isAllowed);
 
     const visibleSystemItems = systemItems.filter(isAllowed);
+
+    // System section: shown with at least one of its View permissions
+    const showSystem = hasAnyPermission([
+        PERMISSIONS.VIEW_USERS,
+        PERMISSIONS.VIEW_ROLES,
+        PERMISSIONS.VIEW_PERMISSIONS,
+    ]);
 
     const isAcademicActive = academicItems.some((item) =>
         location.pathname.startsWith(item.path)
@@ -289,7 +297,7 @@ const Sidebar = () => {
 
                 {/* System Dropdown */}
 
-                {visibleSystemItems.length > 0 && (
+                {showSystem && (
                     <div className="system-dropdown">
 
                         <NavLink
