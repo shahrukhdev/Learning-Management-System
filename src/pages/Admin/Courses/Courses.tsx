@@ -13,6 +13,8 @@ import { parseApiError } from "../../../utils/apiError";
 import type { CourseItem } from "../../../types/course.types";
 import "../AdminList.css";
 import "../Roles/Roles.css";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const DEFAULT_PER_PAGE = 10;
 
@@ -26,6 +28,15 @@ const readPositiveInt = (value: string | null, fallback: number) => {
 };
 
 const Courses = () => {
+
+    // View is checked by the route; each action has its own permission
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_COURSE);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_COURSE);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_COURSE);
 
     /* =========================
        Listing state lives in the URL (?page=&per_page=&search=&is_active=)
@@ -141,6 +152,7 @@ const Courses = () => {
     const isDeletingRef = useRef(false);
 
     const handleDeleteCourse = (course: CourseItem) => {
+        if (!canDelete) return;
         setDeleteTarget(course);
     };
 
@@ -151,7 +163,7 @@ const Courses = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -205,13 +217,15 @@ const Courses = () => {
                                         Create and manage courses across the Madrasah portal.
                                     </p>
                                 </div>
-                                <Link
-                                    to="/academic/courses/create"
-                                    className="new-notice-btn"
-                                >
-                                    <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
-                                    <span>Create New Course</span>
-                                </Link>
+                                {canCreate && (
+                                    <Link
+                                        to="/academic/courses/create"
+                                        className="new-notice-btn"
+                                    >
+                                        <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
+                                        <span>Create New Course</span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                         <div className="col-12">
@@ -235,7 +249,8 @@ const Courses = () => {
                                 onPageChange={goToPage}
                                 onPerPageChange={changePerPage}
                                 onRetry={retry}
-                                onDeleteCourse={handleDeleteCourse}
+                                onDeleteCourse={canDelete ? handleDeleteCourse : undefined}
+                                canEditCourses={canEdit}
                             />
                         </div>
                     </div>
@@ -244,7 +259,7 @@ const Courses = () => {
 
             {/* Delete Confirmation */}
             <ConfirmPopup
-                isOpen={deleteTarget !== null}
+                isOpen={deleteTarget !== null && canDelete}
                 title="Delete Course"
                 message={
                     <>

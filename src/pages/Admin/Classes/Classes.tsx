@@ -13,6 +13,8 @@ import { parseApiError } from "../../../utils/apiError";
 import type { AcademicClassItem } from "../../../types/academicClass.types";
 import "../AdminList.css";
 import "../Roles/Roles.css";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const DEFAULT_PER_PAGE = 10;
 
@@ -26,6 +28,15 @@ const readPositiveInt = (value: string | null, fallback: number) => {
 };
 
 const Classes = () => {
+
+    // View is checked by the route; each action has its own permission
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_CLASS);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_CLASS);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_CLASS);
 
     /* =========================
        Listing state lives in the URL (?page=&per_page=&search=&is_active=)
@@ -141,6 +152,7 @@ const Classes = () => {
     const isDeletingRef = useRef(false);
 
     const handleDeleteClass = (classItem: AcademicClassItem) => {
+        if (!canDelete) return;
         setDeleteTarget(classItem);
     };
 
@@ -151,7 +163,7 @@ const Classes = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -205,13 +217,15 @@ const Classes = () => {
                                         Create and manage classes across the Madrasah portal.
                                     </p>
                                 </div>
-                                <Link
-                                    to="/academic/classes/create"
-                                    className="new-notice-btn"
-                                >
-                                    <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
-                                    <span>Create New Class</span>
-                                </Link>
+                                {canCreate && (
+                                    <Link
+                                        to="/academic/classes/create"
+                                        className="new-notice-btn"
+                                    >
+                                        <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
+                                        <span>Create New Class</span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                         <div className="col-12">
@@ -235,7 +249,8 @@ const Classes = () => {
                                 onPageChange={goToPage}
                                 onPerPageChange={changePerPage}
                                 onRetry={retry}
-                                onDeleteClass={handleDeleteClass}
+                                onDeleteClass={canDelete ? handleDeleteClass : undefined}
+                                canEditClasses={canEdit}
                             />
                         </div>
                     </div>
@@ -244,7 +259,7 @@ const Classes = () => {
 
             {/* Delete Confirmation */}
             <ConfirmPopup
-                isOpen={deleteTarget !== null}
+                isOpen={deleteTarget !== null && canDelete}
                 title="Delete Class"
                 message={
                     <>

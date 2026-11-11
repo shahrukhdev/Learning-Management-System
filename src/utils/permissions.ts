@@ -8,6 +8,16 @@ export const PERMISSIONS = {
     EDIT_NOTICE: "Edit Notice",
     DELETE_NOTICE: "Delete Notice",
 
+    VIEW_CLASSES: "View Classes",
+    CREATE_CLASS: "Create Class",
+    EDIT_CLASS: "Edit Class",
+    DELETE_CLASS: "Delete Class",
+
+    VIEW_COURSES: "View Courses",
+    CREATE_COURSE: "Create Course",
+    EDIT_COURSE: "Edit Course",
+    DELETE_COURSE: "Delete Course",
+
     VIEW_USERS: "View Users",
     CREATE_USER: "Create User",
     EDIT_USER: "Edit User",

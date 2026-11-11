@@ -27,7 +27,10 @@ interface ClassesTableProps {
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
-    onDeleteClass: (classItem: AcademicClassItem) => void;
+    // Omitted = no Delete action
+    onDeleteClass?: (classItem: AcademicClassItem) => void;
+    // Shows the Edit action
+    canEditClasses: boolean;
 }
 
 const ClassesTable = ({
@@ -44,10 +47,11 @@ const ClassesTable = ({
     onPerPageChange,
     onRetry,
     onDeleteClass,
+    canEditClasses,
 }: ClassesTableProps) => {
     const classesColumns = useMemo(
-        () => getClassesColumns({ onDelete: onDeleteClass, listSearch }),
-        [onDeleteClass, listSearch]
+        () => getClassesColumns({ onDelete: onDeleteClass, canEdit: canEditClasses, listSearch }),
+        [onDeleteClass, canEditClasses, listSearch]
     );
 
     const table = useReactTable({

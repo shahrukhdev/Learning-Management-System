@@ -11,15 +11,18 @@ const getCourseDotColor = (courseId: number) =>
     COURSE_DOT_COLORS[Math.abs(courseId) % COURSE_DOT_COLORS.length];
 
 interface CoursesColumnsOptions {
-    onDelete: (course: CourseItem) => void;
+    // Delete is shown only when passed; Edit only when canEdit
+    onDelete?: (course: CourseItem) => void;
+    canEdit: boolean;
     // Listing query string (page, per_page, search) so Edit can return to it
     listSearch: string;
 }
 
 export const getCoursesColumns = ({
     onDelete,
+    canEdit,
     listSearch,
-}: CoursesColumnsOptions): ColumnDef<CourseItem>[] => [
+}: CoursesColumnsOptions): ColumnDef<CourseItem>[] => ([
     {
         accessorKey: "name",
         header: "Course Name",
@@ -93,21 +96,27 @@ export const getCoursesColumns = ({
         enableSorting: false,
         cell: ({ row }) => (
             <div className="table-actions">
-                <Link
-                    to={`/academic/courses/${row.original.id}/edit`}
-                    state={{ listSearch }}
-                    aria-label={`Edit ${row.original.name}`}
-                >
-                    <Pencil size={16} strokeWidth={2.4} />
-                </Link>
-                <button
-                    type="button"
-                    aria-label={`Delete ${row.original.name}`}
-                    onClick={() => onDelete(row.original)}
-                >
-                    <Trash2 size={16} strokeWidth={2.4} />
-                </button>
+                {canEdit && (
+                    <Link
+                        to={`/academic/courses/${row.original.id}/edit`}
+                        state={{ listSearch }}
+                        aria-label={`Edit ${row.original.name}`}
+                    >
+                        <Pencil size={16} strokeWidth={2.4} />
+                    </Link>
+                )}
+                {onDelete && (
+                    <button
+                        type="button"
+                        aria-label={`Delete ${row.original.name}`}
+                        onClick={() => onDelete(row.original)}
+                    >
+                        <Trash2 size={16} strokeWidth={2.4} />
+                    </button>
+                )}
             </div>
         ),
     },
-];
+] as ColumnDef<CourseItem>[])
+    // No Actions column when no action is allowed
+    .filter((column) => column.id !== "actions" || canEdit || onDelete !== undefined);

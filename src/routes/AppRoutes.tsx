@@ -210,12 +210,12 @@ const AppRoutes = () => {
                     }
                 />
 
-                <Route path="/academic/classes" element={<Classes />} />
-                <Route path="/academic/classes/create" element={<CreateNewClass />} />
-                <Route path="/academic/classes/:classId/edit" element={<EditClass />} />
-                <Route path="/academic/courses" element={<Courses />} />
-                <Route path="/academic/courses/create" element={<CreateNewCourse />} />
-                <Route path="/academic/courses/:courseId/edit" element={<EditCourse />} />
+                <Route path="/academic/classes" element={<PermissionRoute permissions={[PERMISSIONS.VIEW_CLASSES]}><Classes /></PermissionRoute>} />
+                <Route path="/academic/classes/create" element={<PermissionRoute permissions={[PERMISSIONS.CREATE_CLASS]}><CreateNewClass /></PermissionRoute>} />
+                <Route path="/academic/classes/:classId/edit" element={<PermissionRoute permissions={[PERMISSIONS.EDIT_CLASS]}><EditClass /></PermissionRoute>} />
+                <Route path="/academic/courses" element={<PermissionRoute permissions={[PERMISSIONS.VIEW_COURSES]}><Courses /></PermissionRoute>} />
+                <Route path="/academic/courses/create" element={<PermissionRoute permissions={[PERMISSIONS.CREATE_COURSE]}><CreateNewCourse /></PermissionRoute>} />
+                <Route path="/academic/courses/:courseId/edit" element={<PermissionRoute permissions={[PERMISSIONS.EDIT_COURSE]}><EditCourse /></PermissionRoute>} />
 
             </Route>
 

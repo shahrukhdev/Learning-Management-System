@@ -27,7 +27,10 @@ interface CoursesTableProps {
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
-    onDeleteCourse: (course: CourseItem) => void;
+    // Omitted = no Delete action
+    onDeleteCourse?: (course: CourseItem) => void;
+    // Shows the Edit action
+    canEditCourses: boolean;
 }
 
 const CoursesTable = ({
@@ -44,10 +47,11 @@ const CoursesTable = ({
     onPerPageChange,
     onRetry,
     onDeleteCourse,
+    canEditCourses,
 }: CoursesTableProps) => {
     const coursesColumns = useMemo(
-        () => getCoursesColumns({ onDelete: onDeleteCourse, listSearch }),
-        [onDeleteCourse, listSearch]
+        () => getCoursesColumns({ onDelete: onDeleteCourse, canEdit: canEditCourses, listSearch }),
+        [onDeleteCourse, canEditCourses, listSearch]
     );
 
     const table = useReactTable({

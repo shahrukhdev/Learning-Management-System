@@ -20,6 +20,8 @@ import { parseApiError } from "../../../../utils/apiError";
 import { useAcademicClassOptions } from "../../../../hooks/useAcademicClassOptions";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
 import "../../Roles/Roles.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 // Edit Course at /academic/courses/:courseId/edit. The listing passes its query
 // string (page, per_page, search) in location state so we return to it.
@@ -34,7 +36,8 @@ const EditCourse = () => {
             ? (location.state as { listSearch: string }).listSearch
             : "";
 
-    const backToListPath = `${COURSES_LIST_PATH}${listSearch}`;
+    // Back to the same listing page/filters, or the home page without "View Courses"
+    const backToListPath = usePermittedPath(`${COURSES_LIST_PATH}${listSearch}`, PERMISSIONS.VIEW_COURSES);
 
     const { courseId: courseIdParam } = useParams<{ courseId: string }>();
 

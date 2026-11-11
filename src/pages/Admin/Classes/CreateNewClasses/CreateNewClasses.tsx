@@ -18,8 +18,13 @@ import { createAcademicClass } from "../../../../services/academicClassService";
 import { parseApiError } from "../../../../utils/apiError";
 import { useCourseOptions } from "../../../../hooks/useCourseOptions";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 const CreateNewClass = () => {
+
+    // Back to the list, or the home page without "View Classes"
+    const listPath = usePermittedPath(CLASSES_LIST_PATH, PERMISSIONS.VIEW_CLASSES);
     const navigate = useNavigate();
     const [formData, setFormData] = useState<ClassFormData>(EMPTY_CLASS_FORM);
 
@@ -70,7 +75,7 @@ const CreateNewClass = () => {
             toast.success(response.message || "Class created successfully.");
 
             // The Classes listing mounts fresh and fetches the list again
-            navigate(CLASSES_LIST_PATH);
+            navigate(listPath);
         } catch (error) {
             const { status, message, validationErrors } = parseApiError(error);
 
@@ -106,7 +111,7 @@ const CreateNewClass = () => {
                         <div className="col-12">
                             <div className="create-role-page-header">
                                 <Link
-                                    to={CLASSES_LIST_PATH}
+                                    to={listPath}
                                     className="role-back-btn"
                                     aria-label="Back to classes"
                                 >
@@ -136,7 +141,7 @@ const CreateNewClass = () => {
                                             type="button"
                                             className="form-btn form-btn-cancel"
                                             onClick={() =>
-                                                navigate(CLASSES_LIST_PATH)
+                                                navigate(listPath)
                                             }
                                             disabled={isSubmitting}
                                         >

@@ -86,16 +86,18 @@ const systemItems: NavItem[] = [
     },
 ];
 
-const academicItems = [
+const academicItems: NavItem[] = [
     {
         title: "Classes",
         path: "/academic/classes",
         icon: NavIcon10,
+        permission: PERMISSIONS.VIEW_CLASSES,
     },
     {
         title: "Courses",
         path: "/academic/courses",
         icon: NavIcon11,
+        permission: PERMISSIONS.VIEW_COURSES,
     },
 ];
 
@@ -114,6 +116,14 @@ const Sidebar = () => {
     const visibleNavItems = navItems.filter(isAllowed);
 
     const visibleSystemItems = systemItems.filter(isAllowed);
+
+    const visibleAcademicItems = academicItems.filter(isAllowed);
+
+    // Academic section: shown with at least one of its View permissions
+    const showAcademic = hasAnyPermission([
+        PERMISSIONS.VIEW_CLASSES,
+        PERMISSIONS.VIEW_COURSES,
+    ]);
 
     // System section: shown with at least one of its View permissions
     const showSystem = hasAnyPermission([
@@ -211,88 +221,90 @@ const Sidebar = () => {
 
                 {/* Academic Dropdown */}
 
-                <div className="system-dropdown">
+                {showAcademic && (
+                    <div className="system-dropdown">
 
-                    <NavLink
-                        to="/academic"
-                        className={`nav-link system-toggle ${
-                            isAcademicActive ? "active" : ""
-                        }`}
-                        onClick={(e) => {
+                        <NavLink
+                            to="/academic"
+                            className={`nav-link system-toggle ${
+                                isAcademicActive ? "active" : ""
+                            }`}
+                            onClick={(e) => {
 
-                            e.preventDefault();
+                                e.preventDefault();
 
-                            setIsAcademicOpen((prev) => !prev);
+                                setIsAcademicOpen((prev) => !prev);
 
-                        }}
-                    >
+                            }}
+                        >
 
-                        <img 
-                            className="img-fluid nav-icon" 
-                            src={NavIcon9} 
-                            alt="Academic" />
+                            <img 
+                                className="img-fluid nav-icon" 
+                                src={NavIcon9} 
+                                alt="Academic" />
 
-                            <span>
-                                Academic
-                            </span>
+                                <span>
+                                    Academic
+                                </span>
 
-                            <ChevronDown
-                                className={`system-chevron ${
-                                    isAcademicOpen ? "open" : ""
-                                }`}
-                                size={18}
-                                strokeWidth={2}
-                            />
+                                <ChevronDown
+                                    className={`system-chevron ${
+                                        isAcademicOpen ? "open" : ""
+                                    }`}
+                                    size={18}
+                                    strokeWidth={2}
+                                />
 
-                    </NavLink>
+                        </NavLink>
 
 
-                    {/* Academic Submenu */}
+                        {/* Academic Submenu */}
 
-                    <div
-                        className={`system-submenu ${
-                            isAcademicOpen ? "open" : ""
-                        }`}
-                    >
+                        <div
+                            className={`system-submenu ${
+                                isAcademicOpen ? "open" : ""
+                            }`}
+                        >
 
-                        {/* Single wrapper so the whole list collapses as one grid row */}
-                        <div className="system-submenu-inner">
+                            {/* Single wrapper so the whole list collapses as one grid row */}
+                            <div className="system-submenu-inner">
 
-                        {academicItems.map((item) => {
+                            {visibleAcademicItems.map((item) => {
 
-                            return (
+                                return (
 
-                                <NavLink
-                                    key={item.path}
-                                    to={item.path}
-                                    className={({ isActive }) =>
-                                        `system-submenu-link ${
-                                            isActive ? "active" : ""
-                                        }`
-                                    }
-                                >
+                                    <NavLink
+                                        key={item.path}
+                                        to={item.path}
+                                        className={({ isActive }) =>
+                                            `system-submenu-link ${
+                                                isActive ? "active" : ""
+                                            }`
+                                        }
+                                    >
 
-                                    <img 
-                                        className="img-fluid"
-                                        src={item.icon} 
-                                        alt={item.title}
-                                    />
+                                        <img 
+                                            className="img-fluid"
+                                            src={item.icon} 
+                                            alt={item.title}
+                                        />
 
-                                    <span>
-                                        {item.title}
-                                    </span>
+                                        <span>
+                                            {item.title}
+                                        </span>
 
-                                </NavLink>
+                                    </NavLink>
 
-                            );
+                                );
 
-                        })}
+                            })}
+
+                            </div>
 
                         </div>
 
                     </div>
-
-                </div>
+                )}
 
 
                 {/* System Dropdown */}
