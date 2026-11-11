@@ -7,13 +7,14 @@ import { toast } from "react-toastify";
 import SEO from "../../../../components/Seo/SEO";
 
 import RoleInformation from "../../../../components/Roles/CreateRole/RoleInformation";
-import RolePermissions from "../../../../components/Roles/CreateRole/RolePermissions";
+import RolePermissionMatrix from "../../../../components/Roles/EditRole/PermissionMatrix/RolePermissionMatrix";
+import { toRolePermissionIds } from "../../../../components/Roles/EditRole/PermissionMatrix/rolePermissions";
 
-import type { RoleFormData, RoleFormErrors, RolePermission } from "../../../../components/Roles/CreateRole/CreateRole.types";
+import type { RoleFormData, RoleFormErrors } from "../../../../components/Roles/CreateRole/CreateRole.types";
 import {
     EMPTY_ROLE_FORM,
-    INITIAL_PERMISSIONS,
     ROLES_LIST_PATH,
+    toPermissionsError,
     toRoleFormErrors,
     validateRoleForm,
 } from "../../../../components/Roles/CreateRole/roleForm";
@@ -21,6 +22,7 @@ import {
 import { getRole, updateRole } from "../../../../services/roleService";
 import { parseApiError } from "../../../../utils/apiError";
 import { useAuth } from "../../../../hooks/useAuth";
+import { useAllPermissions } from "../../../../hooks/useAllPermissions";
 
 // Same layout and styles as the Add Role page
 import "../CreateNewRole/CreateNewRole.css";
@@ -54,8 +56,30 @@ const EditRoleDetails = () => {
     // Synchronous guard against double submits
     const isSubmittingRef = useRef(false);
 
-    // Static for now: toggles stay local and are not submitted
-    const [permissions, setPermissions] = useState<RolePermission[]>( INITIAL_PERMISSIONS );
+    /* Permissions (GET /v1/permissions, all pages, shared). Loaded
+       separately from the role. */
+
+    const allPermissions = useAllPermissions();
+
+    // The role's assigned permissions as returned by GET /v1/roles/{id}
+    const [rolePermissions, setRolePermissions] = useState<unknown[]>([]);
+
+    // The user's selection; null = untouched (use the role's assignments).
+    // Deriving the initial selection means a late response can never
+    // overwrite changes the user has made.
+    const [editedPermissionIds, setEditedPermissionIds] = useState<number[] | null>(null);
+
+    const selectedPermissionIds =
+        editedPermissionIds ?? toRolePermissionIds(rolePermissions, allPermissions.permissions);
+
+    const [permissionsError, setPermissionsError] = useState<string | null>(null);
+
+    const permissionsReady = !allPermissions.isLoading && !allPermissions.error;
+
+    const handlePermissionsChange = (ids: number[]) => {
+        setEditedPermissionIds(ids);
+        setPermissionsError(null);
+    };
 
 
     /* Load the role (GET /v1/roles/{id}) */
@@ -93,6 +117,11 @@ const EditRoleDetails = () => {
 
                 setOriginalName(response.data.name ?? "");
 
+                // Preselect the role's permissions (matched by ID)
+                setRolePermissions(Array.isArray(response.data.permissions) ? response.data.permissions : []);
+
+                setEditedPermissionIds(null);
+
                 setErrors({});
 
                 setLoadState({ key: loadKey, error: null });
@@ -129,24 +158,6 @@ const EditRoleDetails = () => {
 
     };
 
-    /* Permission Toggle (static, same as Add Role) */
-
-    const handlePermissionToggle = (id: string) => {
-
-        setPermissions((previous) =>
-            previous.map((permission) =>
-                permission.id === id
-                    ? {
-                        ...permission,
-                        enabled: !permission.enabled,
-                    }
-                    : permission
-            )
-        );
-
-    };
-
-
     /* Update Role (PUT /v1/roles/{id}) */
 
     const handleUpdateRole = async (
@@ -156,6 +167,11 @@ const EditRoleDetails = () => {
         event.preventDefault();
 
         if (isSubmittingRef.current || isLoadingRole || loadError) return;
+
+        if (!permissionsReady) {
+            toast.error("Permissions have not loaded yet. Please wait or try again.");
+            return;
+        }
 
         const clientErrors = validateRoleForm(formData);
 
@@ -167,13 +183,15 @@ const EditRoleDetails = () => {
         isSubmittingRef.current = true;
         setIsSubmitting(true);
         setErrors({});
+        setPermissionsError(null);
 
         try {
 
-            // Only name + description; permissions are not sent yet
             const response = await updateRole(roleId, {
                 name: formData.name.trim(),
                 description: formData.description.trim(),
+                // The complete selection, so removed permissions are synced too
+                permissions: [...new Set(selectedPermissionIds)],
             });
 
             toast.success(response.message || "Role updated successfully.");
@@ -206,10 +224,13 @@ const EditRoleDetails = () => {
 
                 const inlineErrors = toRoleFormErrors(validationErrors);
 
+                const matrixError = toPermissionsError(validationErrors);
+
                 setErrors(inlineErrors);
+                setPermissionsError(matrixError);
 
                 // Only toast if nothing could be shown inline
-                if (Object.keys(inlineErrors).length === 0) {
+                if (Object.keys(inlineErrors).length === 0 && !matrixError) {
                     toast.error(message);
                 }
 
@@ -358,16 +379,27 @@ const EditRoleDetails = () => {
                                 />
 
 
-                                {/* Permissions (static, unchanged) */}
+                                {/* Permissions (Permission Matrix, all permissions by module) */}
 
-                                <RolePermissions
-                                    permissions={
-                                        permissions
-                                    }
-                                    onToggle={
-                                        handlePermissionToggle
-                                    }
-                                />
+                                <div className="col-12">
+
+                                    {permissionsError && (
+                                        <span className="error-text d-block mb-2" role="alert">
+                                            {permissionsError}
+                                        </span>
+                                    )}
+
+                                    <RolePermissionMatrix
+                                        permissions={allPermissions.permissions}
+                                        isLoading={allPermissions.isLoading}
+                                        error={allPermissions.error}
+                                        onRetry={allPermissions.retry}
+                                        selectedIds={selectedPermissionIds}
+                                        onChange={handlePermissionsChange}
+                                        disabled={isSubmitting}
+                                    />
+
+                                </div>
 
 
                                 {/* Actions */}
@@ -394,7 +426,7 @@ const EditRoleDetails = () => {
                                             type="submit"
                                             className="form-btn form-btn-primary"
                                             disabled={
-                                                isSubmitting
+                                                isSubmitting || !permissionsReady
                                             }
                                             aria-busy={
                                                 isSubmitting

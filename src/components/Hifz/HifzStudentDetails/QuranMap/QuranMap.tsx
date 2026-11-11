@@ -1,22 +1,38 @@
-import { useMemo, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
-import { JUZ_DATA, SURAH_DATA, type Surah, type SurahStatus } from "./QuranMap.data";
+import { useState } from "react";
+import type { Juz, JuzSurahRange, Surah, SurahStatus, SurahStatuses } from "./QuranMap.data";
+import type { SurahJuzRange } from "../../../../hooks/useQuranData";
 import QuranMapPopup from "./QuranMapPopup";
 import "./QuranMap.css";
 
-interface SelectedSurah {
-    surah: Surah;
-    juzNumber: number;
+// The Surah range that was tapped, with the Juz row it was tapped in
+export interface SelectedSurah {
+    range: JuzSurahRange;
+    juz: Juz;
 }
 
+// Outcome of saving a status from the popup
+export type SurahStatusSaveResult =
+    | { outcome: "done" } // saved (or nothing to change): close the popup
+    | { outcome: "confirm" } // a delete confirmation was opened: close the popup
+    | { outcome: "error"; message: string | null }; // stay open (inline message, if any)
+
 interface QuranMapProps {
-    statuses: Record<number, SurahStatus>;
-    setStatuses: Dispatch<SetStateAction<Record<number, SurahStatus>>>;
+    juz: Juz[];
+    // Surah ID -> every Juz range it appears in (for Surahs spanning Juz)
+    surahJuzRanges: Map<number, SurahJuzRange[]>;
+    // Surah ID -> the selected student's status (from the progress API)
+    statuses: SurahStatuses;
+    // False until the student's progress has loaded (avoids duplicate adds)
+    canEdit: boolean;
+    onSaveStatus: (surah: Surah, status: SurahStatus) => Promise<SurahStatusSaveResult>;
 }
 
 export default function QuranMap({
+    juz,
+    surahJuzRanges,
     statuses,
-    setStatuses,
+    canEdit,
+    onSaveStatus,
 }: QuranMapProps) {
     const [selectedSurah, setSelectedSurah] =
         useState<SelectedSurah | null>(null);
@@ -24,42 +40,57 @@ export default function QuranMap({
     const [selectedStatus, setSelectedStatus] =
         useState<SurahStatus>("not-started");
 
-    const surahMap = useMemo(() => {
-        return new Map(
-            SURAH_DATA.map((surah) => [
-                surah.number,
-                surah,
-            ])
-        );
-    }, []);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const getStatus = (surahNumber: number): SurahStatus => {
-        return statuses[surahNumber] ?? "not-started";
+    const [saveError, setSaveError] = useState<string | null>(null);
+
+    const getStatus = (surahId: number): SurahStatus => {
+        return statuses[surahId] ?? "not-started";
     };
 
-    const handleSurahClick = (surah: Surah, juzNumber: number) => {
+    const handleSurahClick = (range: JuzSurahRange, juzItem: Juz) => {
+        if (!canEdit) return;
+
         setSelectedSurah({
-            surah,
-            juzNumber,
+            range,
+            juz: juzItem,
         });
 
         setSelectedStatus(
-            statuses[surah.number] ?? "not-started"
+            statuses[range.surah.id] ?? "not-started"
         );
+
+        setSaveError(null);
     };
 
-    const handleUpdate = () => {
-        if (!selectedSurah) return;
+    const handleStatusChange = (status: SurahStatus) => {
+        setSelectedStatus(status);
 
-        setStatuses((current) => ({
-            ...current,
-            [selectedSurah.surah.number]: selectedStatus,
-        }));
+        // Clear the inline error once the choice is changed
+        setSaveError(null);
+    };
+
+    const handleUpdate = async () => {
+        if (!selectedSurah || isSaving) return;
+
+        setIsSaving(true);
+        setSaveError(null);
+
+        const result = await onSaveStatus(selectedSurah.range.surah, selectedStatus);
+
+        setIsSaving(false);
+
+        if (result.outcome === "error") {
+            setSaveError(result.message);
+            return;
+        }
 
         setSelectedSurah(null);
     };
 
     const handleClosePopup = () => {
+        if (isSaving) return;
+
         setSelectedSurah(null);
     };
 
@@ -84,66 +115,63 @@ export default function QuranMap({
                         </span>
                     </div>
 
-                    <span className="tap-to-edit">
-                        Tap to edit
-                    </span>
+                    {canEdit && (
+                        <span className="tap-to-edit">
+                            Tap to edit
+                        </span>
+                    )}
                 </div>
 
                 <div className="juz-map">
-                    {JUZ_DATA.map((juz) => {
-                        const surahs = juz.surahNumbers
-                            .map((number) =>
-                                surahMap.get(number)
-                            )
-                            .filter(
-                                (surah): surah is Surah =>
-                                    surah !== undefined
-                            );
+                    {juz.map((juzItem) => (
+                        <div className="juz-map-row" key={juzItem.id} >
 
-                        return (
-                            <div className="juz-map-row" key={juz.number} >
-                                
-                                <div className="juz-label">
-                                    JUZ {juz.number}
-                                </div>
-
-                                <div className="juz-surahs">
-                                    {surahs.map((surah) => {
-                                        const status = getStatus(
-                                            surah.number
-                                        );
-
-                                        return (
-                                            <button
-                                                key={surah.number}
-                                                type="button"
-                                                title={`${surah.number}. ${surah.name}`}
-                                                className={`quran-surah-number ${status}`}
-                                                onClick={() =>
-                                                    handleSurahClick(
-                                                        surah,
-                                                        juz.number
-                                                    )
-                                                }
-                                            >
-                                                {surah.number}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                            <div className="juz-label" title={juzItem.name}>
+                                JUZ {juzItem.number}
                             </div>
-                        );
-                    })}
+
+                            {/* Every Surah range in this Juz (a Surah that
+                                spans several Juz appears in each of them) */}
+                            <div className="juz-surahs">
+                                {juzItem.surah_ranges.map((range) => {
+                                    const { surah } = range;
+
+                                    const status = getStatus(surah.id);
+
+                                    return (
+                                        <button
+                                            key={`${range.id}-${surah.id}-${range.start_ayah}`}
+                                            type="button"
+                                            title={`${surah.number}. ${surah.name} (Ayah ${range.start_ayah}–${range.end_ayah})`}
+                                            className={`quran-surah-number ${status}`}
+                                            onClick={() =>
+                                                handleSurahClick(
+                                                    range,
+                                                    juzItem
+                                                )
+                                            }
+                                            disabled={!canEdit}
+                                        >
+                                            {surah.number}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
             {selectedSurah && (
                 <QuranMapPopup
                     selectedSurah={selectedSurah}
+                    surahJuzRanges={surahJuzRanges.get(selectedSurah.range.surah.id) ?? []}
                     selectedStatus={selectedStatus}
-                    onStatusChange={setSelectedStatus}
+                    onStatusChange={handleStatusChange}
                     onClose={handleClosePopup}
                     onUpdate={handleUpdate}
+                    isSaving={isSaving}
+                    error={saveError}
                 />
             )}
         </>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import SEO from "../../../components/Seo/SEO";
 import DashboardStats from "../../../components/DashboardStatistics/DashbaordStatistics";
 import HifzOverview from "../../../components/HifzOverView/HifzOverview";
@@ -6,8 +7,20 @@ import StudentAttendanceOverview from "../../../components/StudentsAttendanceOve
 import Announcements from "../../../components/Announcements/Announcements";
 import TeachersOnline from "../../../components/TeachersOnline/TeachersOnline";
 import QuranProgressOverview from "../../../components/QuranProgressOverview/QuranProgressOverview";
+import { useDashboardSummary } from "../../../hooks/useDashboardSummary";
+import type { AttendancePeriod } from "../../../types/dashboard.types";
 
 const Dashboard = () => {
+
+    // Attendance chart period (`attendance_period`; API default 7days)
+    const [attendancePeriod, setAttendancePeriod] = useState<AttendancePeriod>("7days");
+
+    // One request on load + one per period change (GET /v1/dashboard/summary)
+    const { summary, isLoading, error, retry } = useDashboardSummary(attendancePeriod);
+
+    // Errors are shown per section only when it has nothing to show
+    const sectionProps = { isLoading, error, onRetry: retry };
+
     return (
         <>
             <SEO
@@ -24,7 +37,7 @@ const Dashboard = () => {
 
                         {/* Statistics */}
                         <div className="col-12">
-                            <DashboardStats />
+                            <DashboardStats statistics={summary?.statistics ?? null} isLoading={isLoading} />
                         </div>
 
                         <div className="col-12">
@@ -33,23 +46,28 @@ const Dashboard = () => {
                                     <div className="col-12 col-lg-8">
 
                                         {/* Hifz Overview */}
-                                        <HifzOverview />
+                                        <HifzOverview students={summary?.hifz_overview ?? []} {...sectionProps} />
 
                                         {/* Attendance */}
-                                        <StudentAttendanceOverview />
+                                        <StudentAttendanceOverview
+                                            data={summary?.attendance_overview.data ?? []}
+                                            period={attendancePeriod}
+                                            onPeriodChange={setAttendancePeriod}
+                                            {...sectionProps}
+                                        />
 
                                     </div>
 
                                     <div className="col-12 col-lg-4">
 
                                         {/* Announcements */}
-                                        <Announcements />
+                                        <Announcements announcements={summary?.announcements ?? []} {...sectionProps} />
 
                                         {/* Teachers Online */}
                                         <TeachersOnline />
 
                                         {/* Quran Progress */}
-                                        <QuranProgressOverview />
+                                        <QuranProgressOverview items={summary?.quran_progress_overview ?? []} {...sectionProps} />
 
                                     </div>
 

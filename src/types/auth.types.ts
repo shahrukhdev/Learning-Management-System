@@ -43,3 +43,18 @@ export interface ForgotPasswordResponse {
 export type ForgotPasswordFormErrors = Partial<Record<keyof ForgotPasswordRequest, string>>;
 
 export type LoginFormErrors = Partial<Record<keyof LoginRequest, string>>;
+
+// POST /v1/auth/reset-password (email + token come from the reset link)
+export interface ResetPasswordRequest {
+    email: string;
+    token: string;
+    password: string;
+    password_confirmation: string;
+}
+
+export interface ResetPasswordResponse {
+    success: boolean;
+    message: string;
+}
+
+export type ResetPasswordFormErrors = Partial<Record<"password" | "password_confirmation", string>>;

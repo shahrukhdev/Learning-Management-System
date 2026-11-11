@@ -1,6 +1,6 @@
 import { getFirstFieldErrors } from "../../../utils/apiError";
 import type { ValidationErrors } from "../../../types/api.types";
-import type { RoleFormData, RoleFormErrors, RolePermission } from "./CreateRole.types";
+import type { RoleFormData, RoleFormErrors } from "./CreateRole.types";
 
 // Shared by the Add Role and Edit Role pages so both forms stay consistent
 
@@ -14,36 +14,6 @@ export const EMPTY_ROLE_FORM: RoleFormData = {
     name: "",
     description: "",
 };
-
-// The static "Assign Initial Permissions" list (not submitted yet)
-export const INITIAL_PERMISSIONS: RolePermission[] = [
-
-    {
-        id: "academics",
-        title: "Academics",
-        description: "Manage classes, syllabi, and academic calendars.",
-        enabled: false,
-    },
-    {
-        id: "students",
-        title: "Students",
-        description: "View profiles, attendance, and disciplinary records.",
-        enabled: true,
-    },
-    {
-        id: "finance",
-        title: "Finance",
-        description: "Access fee collection, payroll, and budget reports.",
-        enabled: false,
-    },
-    {
-        id: "communication",
-        title: "Communication",
-        description: "Send announcements to parents and staff.",
-        enabled: true,
-    },
-
-];
 
 // Client-side rules (mirror the backend): name required, max 255;
 // description optional
@@ -75,5 +45,20 @@ export const toRoleFormErrors = (validationErrors: ValidationErrors): RoleFormEr
     });
 
     return inlineErrors;
+
+};
+
+// Laravel 422 errors for `permissions` / `permissions.*` (shown above the
+// permission matrix)
+export const toPermissionsError = (validationErrors: ValidationErrors): string | null => {
+
+    const entry = Object.entries(validationErrors).find(
+        ([key, messages]) =>
+            (key === "permissions" || key.startsWith("permissions.")) &&
+            Array.isArray(messages) &&
+            messages.length > 0
+    );
+
+    return entry ? entry[1][0] : null;
 
 };

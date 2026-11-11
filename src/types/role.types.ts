@@ -18,10 +18,11 @@ export interface RolesListResponse {
     pagination: PaginationMeta;
 }
 
-// POST /v1/roles (permissions are not sent yet)
+// POST /v1/roles. `permissions` = selected permission IDs (may be empty)
 export interface CreateRoleRequest {
     name: string;
     description?: string; // omitted when empty
+    permissions: number[];
 }
 
 // The created RoleResource is under `data` whether the controller uses the
@@ -39,11 +40,13 @@ export interface RoleDetailResponse {
     data: RoleListItem;
 }
 
-// PUT /v1/roles/{id} (permissions are not sent yet). An empty description is
-// sent as "" so a cleared description is saved (Laravel turns it into null).
+// PUT /v1/roles/{id}. An empty description is sent as "" so a cleared
+// description is saved (Laravel turns it into null). `permissions` is always
+// the complete selection (an empty array removes every permission).
 export interface UpdateRoleRequest {
     name: string;
     description: string;
+    permissions: number[];
 }
 
 export interface UpdateRoleResponse {

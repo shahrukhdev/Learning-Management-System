@@ -7,6 +7,7 @@ import RoleBasedRoute from "./RoleBasedRoute";
 import Home from "../pages/Auth/Home";
 import Login from "../pages/Auth/Login";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
 
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 
@@ -67,6 +68,15 @@ const AppRoutes = () => {
             />
 
             </Route>
+
+
+            {/* Reset Password (from the emailed link: /reset-password/{token}?email=...).
+                Outside GuestRoute so the link always opens, even if signed in. */}
+
+            <Route
+                path="/reset-password/:token?"
+                element={<ResetPassword />}
+            />
 
 
             {/* Protected Routes (require a token) */}

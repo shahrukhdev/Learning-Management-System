@@ -1,39 +1,23 @@
 import "./HifzOverview.css"
 import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
+import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
+import type { DashboardHifzStudent } from "../../types/dashboard.types";
 
-const hifzStudents = [
-    {
-        name: "Ahmad Al-Hassan",
-        initials: "AA",
-        progress: 22,
-        pages: "25/114",
-        color: "green",
-    },
-    {
-        name: "Maryam Yusuf",
-        initials: "MY",
-        progress: 0,
-        pages: "0/114",
-        color: "blue",
-    },
-    {
-        name: "Bilal Karimi",
-        initials: "BK",
-        progress: 4,
-        pages: "5/114",
-        color: "orange",
-    },
-    {
-        name: "Zainab Osman",
-        initials: "ZO",
-        progress: 0,
-        pages: "0/114",
-        color: "purple",
-    },
-];
+// Existing avatar/progress colours, picked by student ID (stable per student)
+const COLORS = ["green", "blue", "orange", "purple"];
 
-const HifzOverview = () => {
+const getColor = (studentId: number) => COLORS[Math.abs(studentId) % COLORS.length];
+
+interface HifzOverviewProps {
+    // From GET /v1/dashboard/summary `hifz_overview` (max 4, from the backend)
+    students: DashboardHifzStudent[];
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
+}
+
+const HifzOverview = ({ students, isLoading, error, onRetry }: HifzOverviewProps) => {
 
     const progressStyle = (progress: number) =>
     ({
@@ -53,47 +37,70 @@ const HifzOverview = () => {
                 </Link>
             </div>
 
-            <div className="hifz-list">
+            <DashboardBoxStatus
+                isLoading={isLoading && students.length === 0 && !error}
+                error={students.length === 0 ? error : null}
+                onRetry={onRetry}
+                isEmpty={students.length === 0}
+                emptyText="No Hifz progress yet."
+                loadingText="Loading Hifz overview..."
+            />
 
-                {hifzStudents.map((student, index) => (
-                    <div className="hifz-item" key={index}>
+            {students.length > 0 && (
+                <div className={`hifz-list ${isLoading ? "dashboard-box-refreshing" : ""}`}>
 
-                        <div className="student-info">
+                    {students.map((student) => {
 
-                            <div className={`user-avatar student-avatar ${student.color}`}>
-                                {student.initials}
+                        const color = getColor(student.student_id);
+
+                        // API values as returned (null = not available)
+                        const progress = student.progress;
+
+                        return (
+                            <div className="hifz-item" key={student.student_id}>
+
+                                <div className="student-info">
+
+                                    <div className={`user-avatar student-avatar ${color}`}>
+                                        {student.initials}
+                                    </div>
+
+                                    <div className="student-details">
+                                        <h4 className="sm-title">{student.name}</h4>
+                                        <span className="sm-para">
+                                            {student.last_session_date
+                                                ? `Last session: ${student.last_session_date}`
+                                                : "No sessions yet"}
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <div className="student-progress">
+
+                                    <div
+                                        className={`progress-circle ${color}`}
+                                        style={progressStyle(progress ?? 0)}
+                                    >
+                                        <span>
+                                            {progress !== null ? `${progress}%` : "—"}
+                                        </span>
+                                    </div>
+
+                                    <div className="progress-pages text-end">
+                                        <span className="sm-para fw-bold">
+                                            {student.memorised_surahs ?? "—"}/{student.total_surahs ?? "—"}
+                                        </span>
+                                    </div>
+
+                                </div>
+
                             </div>
+                        );
+                    })}
 
-                            <div className="student-details">
-                                <h4 className="sm-title">{student.name}</h4>
-                                <span className="sm-para">Hifz progress</span>
-                            </div>
-
-                        </div>
-
-                        <div className="student-progress">
-
-                            <div
-                                className={`progress-circle ${student.color}`}
-                                style={progressStyle(student.progress)}
-                            >
-                                <span>
-                                    {student.progress}%
-                                </span>
-                            </div>
-
-                            <div className="progress-pages text-end">
-                                <span className="sm-para fw-bold">
-                                    {student.pages}
-                                </span>
-                            </div>
-
-                        </div>
-
-                    </div>
-                ))}
-
-            </div>
+                </div>
+            )}
 
         </div>
 

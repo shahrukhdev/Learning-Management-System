@@ -5,6 +5,8 @@ import type {
     LoginRequest,
     LoginResponse,
     LogoutResponse,
+    ResetPasswordRequest,
+    ResetPasswordResponse,
 } from "../types/auth.types";
 
 export const login = async (payload: LoginRequest): Promise<LoginResponse> => {
@@ -23,5 +25,13 @@ export const forgotPassword = async (
     payload: ForgotPasswordRequest
 ): Promise<ForgotPasswordResponse> => {
     const response = await api.post<ForgotPasswordResponse>("/v1/auth/forgot-password", payload);
+    return response.data;
+};
+
+// POST /v1/auth/reset-password (sets a new password using the emailed token)
+export const resetPassword = async (
+    payload: ResetPasswordRequest
+): Promise<ResetPasswordResponse> => {
+    const response = await api.post<ResetPasswordResponse>("/v1/auth/reset-password", payload);
     return response.data;
 };

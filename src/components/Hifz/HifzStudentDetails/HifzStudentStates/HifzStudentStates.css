@@ -104,3 +104,19 @@
     border-radius: 10px;
     transition: width 0.3s ease;
 }
+/* Statistics loading / error (values show "-" until loaded, never 0) */
+.hifz-student-states-wrapper.is-loading .hifz-student-state-value,
+.hifz-student-states-wrapper.is-loading .hifz-student-progress-value {
+    opacity: 0.5;
+}
+
+.hifz-student-states-error {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 1.3rem;
+    color: #CF0015;
+}

@@ -108,7 +108,7 @@ const Hifz = () => {
                                 {selectedStudentId === null ? (
                                     <HifzEmptyState />
                                 ) : (
-                                    <HifzStudentDetails />
+                                    <HifzStudentDetails studentId={selectedStudentId} />
                                 )}
                             </div>
                         </div>

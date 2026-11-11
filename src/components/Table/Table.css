@@ -432,6 +432,57 @@
   margin: 0;
 }
 
+/* Previous / next week */
+.attendance-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attendance-week-nav button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d7d4c3;
+  border-radius: 8px;
+  background: #fffdf6;
+  color: #535624;
+  cursor: pointer;
+}
+
+.attendance-week-nav button:hover:not(:disabled) {
+  background: #535624;
+  color: #fff;
+}
+
+.attendance-week-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status legend */
+.attendance-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 6px;
+  font-size: 1.2rem;
+  color: #444841;
+}
+
+.attendance-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attendance-legend .attendance-dot {
+  width: 10px;
+  height: 10px;
+}
+
 .attendance-history-button {
   display: flex;
   justify-content: end;
@@ -518,6 +569,12 @@
 
 .attendance-dot.absent {
   background: #ba1a1a;
+}
+
+/* Not marked: hollow grey dot */
+.attendance-dot.not-marked {
+  background: transparent;
+  border: 2px solid #96a39d;
 }
 
 /* Attendance Rate */

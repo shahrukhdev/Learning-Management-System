@@ -1,5 +1,4 @@
 import "./StudentsAttendanceOverviewChart.css";
-import { useState } from "react";
 import {
     BarChart,
     Bar,
@@ -11,40 +10,8 @@ import {
     Tooltip,
 } from "recharts";
 
-type AttendancePeriod = "7days" | "30days" | "3months";
-
-interface AttendanceData {
-    day: string;
-    attendance: number;
-}
-
-const attendanceData: Record<AttendancePeriod, AttendanceData[]> = {
-    "7days": [
-        { day: "MON", attendance: 68 },
-        { day: "TUE", attendance: 82 },
-        { day: "WED", attendance: 72 },
-        { day: "THU", attendance: 90 },
-        { day: "FRI", attendance: 78 },
-        { day: "SAT", attendance: 60 },
-        { day: "SUN", attendance: 65 },
-    ],
-
-    "30days": [
-        { day: "01", attendance: 72 },
-        { day: "05", attendance: 80 },
-        { day: "10", attendance: 68 },
-        { day: "15", attendance: 85 },
-        { day: "20", attendance: 74 },
-        { day: "25", attendance: 88 },
-        { day: "30", attendance: 79 },
-    ],
-
-    "3months": [
-        { day: "JUN", attendance: 76 },
-        { day: "JUL", attendance: 82 },
-        { day: "AUG", attendance: 79 },
-    ],
-};
+import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
+import type { AttendancePeriod, DashboardAttendancePoint } from "../../types/dashboard.types";
 
 const getBarColor = (attendance: number): string => {
     if (attendance >= 85) {
@@ -76,10 +43,27 @@ const attendancePeriods: {
     },
 ];
 
-const StudentAttendanceOverview = () => {
+interface StudentAttendanceOverviewProps {
+    // From GET /v1/dashboard/summary `attendance_overview.data`
+    data: DashboardAttendancePoint[];
+    // Selected period (sent as `attendance_period`)
+    period: AttendancePeriod;
+    onPeriodChange: (period: AttendancePeriod) => void;
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
+}
 
-    const [period, setPeriod] = useState<AttendancePeriod>("7days");
-    const currentData = attendanceData[period];
+const StudentAttendanceOverview = ({
+    data,
+    period,
+    onPeriodChange,
+    isLoading,
+    error,
+    onRetry,
+}: StudentAttendanceOverviewProps) => {
+
+    const currentData = data;
 
     return (
         <div className="student-attendance-overview dashboard-box">
@@ -92,8 +76,11 @@ const StudentAttendanceOverview = () => {
                 </h2>
 
                 <select className="form-select attendance-period" aria-label="Default select example" value={period} 
-                    onChange={(e) =>
-                    setPeriod(e.target.value as AttendancePeriod)}
+                    onChange={(e) => {
+                        const next = e.target.value as AttendancePeriod;
+                        // Only a different period triggers a new request
+                        if (next !== period) onPeriodChange(next);
+                    }}
                 >
 
                     {attendancePeriods.map((item) => (
@@ -110,7 +97,17 @@ const StudentAttendanceOverview = () => {
             </div>
 
             {/* Attendance Chart */}
-            <div className="attendance-chart">
+            <DashboardBoxStatus
+                isLoading={isLoading && currentData.length === 0 && !error}
+                error={currentData.length === 0 ? error : null}
+                onRetry={onRetry}
+                isEmpty={currentData.length === 0}
+                emptyText="No attendance data for this period."
+                loadingText="Loading attendance..."
+            />
+
+            {currentData.length > 0 && (
+            <div className={`attendance-chart ${isLoading ? "dashboard-box-refreshing" : ""}`} aria-busy={isLoading}>
 
                 <ResponsiveContainer width="100%" height={350} >
                     <BarChart data={currentData}
@@ -172,9 +169,9 @@ const StudentAttendanceOverview = () => {
                             ]}
                         >
                             {currentData.map(
-                                (item) => (
+                                (item, index) => (
                                     <Cell
-                                        key={item.day}
+                                        key={`${item.day}-${index}`}
                                         fill={getBarColor(item.attendance)}
                                     />
                                 )
@@ -185,6 +182,7 @@ const StudentAttendanceOverview = () => {
                 </ResponsiveContainer>
 
             </div>
+            )}
 
         </div>
     );

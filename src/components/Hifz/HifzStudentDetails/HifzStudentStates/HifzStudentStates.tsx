@@ -1,41 +1,71 @@
 import "./HifzStudentStates.css";
+import type { HifzStatistics } from "../../../../types/hifzStatistics.types";
 
-const states = [
-    {
-        value: "25",
-        label: "MEMORISED",
-    },
-    {
-        value: "12",
-        label: "IN PROGRESS",
-    },
-    {
-        value: "77",
-        label: "REMAINING",
-    },
-    {
-        value: "25/604",
-        label: "PAGES",
-    },
-];
+interface HifzStudentStatesProps {
+    // GET /v1/students/{id}/hifz-statistics, shown exactly as returned.
+    // null while loading or after an error (never shown as zeros).
+    statistics: HifzStatistics | null;
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
+}
 
-const progress = [
-    {
-        label: "Surahs",
-        current: 25,
-        total: 114,
-    },
-    {
-        label: "Pages",
-        current: 25,
-        total: 604,
-    },
-];
+const PLACEHOLDER = "—";
 
-const HifzStudentStates = () => {
+const HifzStudentStates = ({
+    statistics,
+    isLoading,
+    error,
+    onRetry,
+}: HifzStudentStatesProps) => {
+
+    const show = (value: number | undefined) =>
+        value === undefined ? PLACEHOLDER : String(value);
+
+    // Page figures are unchanged (no API provides page data)
+    const states = [
+        {
+            value: show(statistics?.memorised),
+            label: "MEMORISED",
+        },
+        {
+            value: show(statistics?.in_progress),
+            label: "IN PROGRESS",
+        },
+        {
+            value: show(statistics?.remaining),
+            label: "REMAINING",
+        },
+        {
+            value: "25/604",
+            label: "PAGES",
+        },
+    ];
+
+    const surahs = statistics?.surahs ?? null;
+
+    const progress = [
+        {
+            label: "Surahs",
+            // API values: completed / total (percentage)
+            text: surahs
+                ? `${surahs.completed}/${surahs.total} (${surahs.percentage}%)`
+                : PLACEHOLDER,
+            percentage: surahs ? surahs.percentage : 0,
+        },
+        {
+            label: "Pages",
+            text: `25/604 (${Math.round((25 / 604) * 100)}%)`,
+            percentage: Math.round((25 / 604) * 100),
+        },
+    ];
+
     return (
 
-        <div className="hifz-student-states-wrapper">
+        <div
+            className={`hifz-student-states-wrapper ${isLoading && !statistics ? "is-loading" : ""}`}
+            aria-busy={isLoading}
+        >
 
             <div className="hifz-student-states">
 
@@ -56,47 +86,49 @@ const HifzStudentStates = () => {
 
             </div>
 
+            {error && (
+                <div className="hifz-student-states-error" role="alert">
+                    <span>{error}</span>
+                    <button type="button" className="table-retry-button" onClick={onRetry}>
+                        Try again
+                    </button>
+                </div>
+            )}
+
             {/* Student Progress */}
             <div className="hifz-student-progress">
 
-                {progress.map((item) => {
+                {progress.map((item) => (
+                    <div
+                        className="hifz-student-progress-item"
+                        key={item.label}
+                    >
 
-                    const percentage = Math.round(
-                        (item.current / item.total) * 100
-                    );
+                        <div className="hifz-student-progress-header">
 
-                    return (
-                        <div
-                            className="hifz-student-progress-item"
-                            key={item.label}
-                        >
+                            <span className="hifz-student-progress-label">
+                                {item.label}
+                            </span>
 
-                            <div className="hifz-student-progress-header">
-
-                                <span className="hifz-student-progress-label">
-                                    {item.label}
-                                </span>
-
-                                <span className="hifz-student-progress-value">
-                                    {item.current}/{item.total} ({percentage}%)
-                                </span>
-
-                            </div>
-
-                            <div className="hifz-student-progress-track">
-
-                                <div
-                                    className="hifz-student-progress-bar"
-                                    style={{
-                                        width: `${percentage}%`,
-                                    }}
-                                />
-
-                            </div>
+                            <span className="hifz-student-progress-value">
+                                {item.text}
+                            </span>
 
                         </div>
-                    );
-                })}
+
+                        <div className="hifz-student-progress-track">
+
+                            <div
+                                className="hifz-student-progress-bar"
+                                style={{
+                                    width: `${Math.min(Math.max(item.percentage, 0), 100)}%`,
+                                }}
+                            />
+
+                        </div>
+
+                    </div>
+                ))}
 
             </div>
 

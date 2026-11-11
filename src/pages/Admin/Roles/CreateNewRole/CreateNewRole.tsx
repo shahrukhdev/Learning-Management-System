@@ -7,19 +7,20 @@ import { toast } from "react-toastify";
 import SEO from "../../../../components/Seo/SEO";
 
 import RoleInformation from "../../../../components/Roles/CreateRole/RoleInformation";
-import RolePermissions from "../../../../components/Roles/CreateRole/RolePermissions";
+import RolePermissionMatrix from "../../../../components/Roles/EditRole/PermissionMatrix/RolePermissionMatrix";
 
-import type { RoleFormData, RoleFormErrors, RolePermission } from "../../../../components/Roles/CreateRole/CreateRole.types";
+import type { RoleFormData, RoleFormErrors } from "../../../../components/Roles/CreateRole/CreateRole.types";
 import {
     EMPTY_ROLE_FORM,
-    INITIAL_PERMISSIONS,
     ROLES_LIST_PATH,
+    toPermissionsError,
     toRoleFormErrors,
     validateRoleForm,
 } from "../../../../components/Roles/CreateRole/roleForm";
 
 import { createRole } from "../../../../services/roleService";
 import { parseApiError } from "../../../../utils/apiError";
+import { useAllPermissions } from "../../../../hooks/useAllPermissions";
 
 import "./CreateNewRole.css";
 
@@ -38,8 +39,23 @@ const CreateNewRole = () => {
     const isSubmittingRef = useRef(false);
 
 
-    // Static for now: toggles stay local and are not submitted
-    const [permissions, setPermissions] = useState<RolePermission[]>( INITIAL_PERMISSIONS );
+    /* Permissions (GET /v1/permissions, all pages, shared) */
+
+    const allPermissions = useAllPermissions();
+
+    // Selected permission IDs (sent as `permissions`)
+    const [selectedPermissionIds, setSelectedPermissionIds] = useState<number[]>([]);
+
+    const [permissionsError, setPermissionsError] = useState<string | null>(null);
+
+    // Not submittable until every permission has loaded
+    const permissionsReady = !allPermissions.isLoading && !allPermissions.error;
+
+    const handlePermissionsChange = (ids: number[]) => {
+        setSelectedPermissionIds(ids);
+        setPermissionsError(null);
+    };
+
 
     /* Form Change */
 
@@ -57,23 +73,6 @@ const CreateNewRole = () => {
 
     };
 
-    /* Permission Toggle */
-
-    const handlePermissionToggle = (id: string) => {
-
-        setPermissions((previous) =>
-            previous.map((permission) =>
-                permission.id === id
-                    ? {
-                        ...permission,
-                        enabled: !permission.enabled,
-                    }
-                    : permission
-            )
-        );
-
-    };
-
 
     /* Create Role */
 
@@ -85,6 +84,11 @@ const CreateNewRole = () => {
 
         if (isSubmittingRef.current) return;
 
+        if (!permissionsReady) {
+            toast.error("Permissions have not loaded yet. Please wait or try again.");
+            return;
+        }
+
         const clientErrors = validateRoleForm(formData);
 
         if (Object.keys(clientErrors).length > 0) {
@@ -95,15 +99,17 @@ const CreateNewRole = () => {
         isSubmittingRef.current = true;
         setIsSubmitting(true);
         setErrors({});
+        setPermissionsError(null);
 
         try {
 
-            // Only name + description for now; permissions are not sent yet
             const description = formData.description.trim();
 
             const response = await createRole({
                 name: formData.name.trim(),
                 ...(description ? { description } : {}),
+                // Permission IDs (an empty selection is sent as [])
+                permissions: [...new Set(selectedPermissionIds)],
             });
 
             toast.success(response.message || "Role created successfully.");
@@ -122,10 +128,13 @@ const CreateNewRole = () => {
 
                 const inlineErrors = toRoleFormErrors(validationErrors);
 
+                const matrixError = toPermissionsError(validationErrors);
+
                 setErrors(inlineErrors);
+                setPermissionsError(matrixError);
 
                 // Only toast if nothing could be shown inline
-                if (Object.keys(inlineErrors).length === 0) {
+                if (Object.keys(inlineErrors).length === 0 && !matrixError) {
                     toast.error(message);
                 }
 
@@ -227,16 +236,27 @@ const CreateNewRole = () => {
                                 />
 
 
-                                {/* Permissions */}
+                                {/* Permissions (Permission Matrix, all permissions by module) */}
 
-                                <RolePermissions
-                                    permissions={
-                                        permissions
-                                    }
-                                    onToggle={
-                                        handlePermissionToggle
-                                    }
-                                />
+                                <div className="col-12">
+
+                                    {permissionsError && (
+                                        <span className="error-text d-block mb-2" role="alert">
+                                            {permissionsError}
+                                        </span>
+                                    )}
+
+                                    <RolePermissionMatrix
+                                        permissions={allPermissions.permissions}
+                                        isLoading={allPermissions.isLoading}
+                                        error={allPermissions.error}
+                                        onRetry={allPermissions.retry}
+                                        selectedIds={selectedPermissionIds}
+                                        onChange={handlePermissionsChange}
+                                        disabled={isSubmitting}
+                                    />
+
+                                </div>
 
 
                                 {/* Actions */}
@@ -263,7 +283,7 @@ const CreateNewRole = () => {
                                             type="submit"
                                             className="form-btn form-btn-primary"
                                             disabled={
-                                                isSubmitting
+                                                isSubmitting || !permissionsReady
                                             }
                                             aria-busy={
                                                 isSubmitting

@@ -1,36 +1,21 @@
 import "./Announcements.css";
 import { Plus } from "lucide-react";
 
-interface Announcements {
-    id: number;
-    title: string;
-    description: string;
-    date?: string;
-    dotClass: string;
+import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
+import type { DashboardAnnouncement } from "../../types/dashboard.types";
+
+// Existing dot colours, picked by announcement ID (stable per announcement)
+const DOT_CLASSES = ["green", "yellow", "blue"];
+
+interface AnnouncementsProps {
+    // From GET /v1/dashboard/summary `announcements` (max 3, from the backend)
+    announcements: DashboardAnnouncement[];
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
 }
 
-const announcements: Announcements[] = [
-    {
-        id: 1,
-        title: "Ramadan Schedule Change",
-        description: "Effective from 10 Apr — classes shift to evening",
-        dotClass: "green",
-    },
-    {
-        id: 2,
-        title: "Hifz Exam – End of Month",
-        description: "2026-04-28 · All Hifz levels",
-        dotClass: "yellow",
-    },
-    {
-        id: 3,
-        title: "Parent–Teacher Evening",
-        description: "2026-04-25 · 5:00 PM onward",
-        dotClass: "blue",
-    },
-]
-
-const Announcements = () => {
+const Announcements = ({ announcements, isLoading, error, onRetry }: AnnouncementsProps) => {
     return (
         <div className="announcement dashboard-box">
             <div className="dash-box-top">
@@ -43,7 +28,17 @@ const Announcements = () => {
             </div>
 
             {/* Announcement List */}
-            <div className="announcement-list">
+            <DashboardBoxStatus
+                isLoading={isLoading && announcements.length === 0 && !error}
+                error={announcements.length === 0 ? error : null}
+                onRetry={onRetry}
+                isEmpty={announcements.length === 0}
+                emptyText="No announcements yet."
+                loadingText="Loading announcements..."
+            />
+
+            {announcements.length > 0 && (
+            <div className={`announcement-list ${isLoading ? "dashboard-box-refreshing" : ""}`}>
 
                 {announcements.map((announcement) => (
                     <div
@@ -52,7 +47,7 @@ const Announcements = () => {
                     >
 
                         <span
-                            className={`announcement-dot ${announcement.dotClass}`}
+                            className={`announcement-dot ${DOT_CLASSES[Math.abs(announcement.id) % DOT_CLASSES.length]}`}
                         />
 
                         <div className="announcement-content">
@@ -61,8 +56,9 @@ const Announcements = () => {
                                 {announcement.title}
                             </h3>
 
+                            {/* "<date as sent by the API> · <message>" */}
                             <p className="sm-para announcement-description m-0">
-                                {announcement.description}
+                                {[announcement.created_at, announcement.message].filter(Boolean).join(" · ")}
                             </p>
 
                         </div>
@@ -71,6 +67,7 @@ const Announcements = () => {
                 ))}
 
             </div>
+            )}
 
         </div>
     );

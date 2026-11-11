@@ -1,0 +1,25 @@
+/* Dashboard box loading / error / empty state */
+.dashboard-box-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 110px;
+    padding: 16px 12px;
+    text-align: center;
+    font-size: 1.3rem;
+    color: #7b8177;
+}
+
+/* Previous data stays visible but dimmed while another period loads */
+.dashboard-box-refreshing {
+    opacity: 0.55;
+    transition: opacity 0.15s ease;
+}
+
+/* Statistic values before the first response (never shown as 0) */
+.dash-stat-card.is-loading .stat-value,
+.dash-stat-card.is-loading .stat-change {
+    opacity: 0.5;
+}

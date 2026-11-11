@@ -1,6 +1,6 @@
 import "./AttendanceControls.css";
 import { Users, Check, X, Clock, ShieldAlert } from "lucide-react";
-import type { AttendanceStatus } from "../Attendance.types";
+import type { AttendanceStatus } from "../../../types/attendance.types";
 import AttendanceTabs, { type AttendanceTab, } from "../AttendanceTabs/AttendanceTabs";
 
 interface AttendanceSummary {

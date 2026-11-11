@@ -1,20 +1,4 @@
-export type AttendanceStatus = "present" | "absent" | "late";
+// Rows are the API records (GET /v1/attendances/overview)
+export type { AttendanceStatus } from "../../../types/attendance.types";
 
-export interface StudentsAttendanceOverview {
-    studentId: number;
-    studentName: string;
-    studentImage: string;
-
-    attendance: {
-        mon: AttendanceStatus;
-        tue: AttendanceStatus;
-        wed: AttendanceStatus;
-        thu: AttendanceStatus;
-        fri: AttendanceStatus;
-    };
-
-    rate: number;
-}
-
-
-
+export type { AttendanceOverviewRecord as StudentsAttendanceOverview } from "../../../types/attendance.types";

@@ -1,57 +1,79 @@
 import "./DashbaordStatistics.css"
+import "./DashboardBoxStatus.css";
 import { BookOpen, Clock3, TrendingUp, Users } from "lucide-react";
+import type { DashboardStatistics } from "../../types/dashboard.types";
 
-const statistics = [
-    {
-        id: 1,
-        title: "Total Students",
-        value: "24",
-        icon: Users,
-        iconClass: "students",
-        change: "▲ 3 this month",
-        changeType: "positive",
-    },
-    {
-        id: 2,
-        title: "Teachers",
-        value: "6",
-        icon: BookOpen,
-        iconClass: "teachers",
-        change: "— no change",
-        changeType: "neutral",
-    },
-    {
-        id: 3,
-        title: "Hifz Sessions Today",
-        value: "12",
-        icon: Clock3,
-        iconClass: "sessions",
-        change: "▲ 5 vs yesterday",
-        changeType: "positive",
-    },
-    {
-        id: 4,
-        title: "Attendance Rate",
-        value: "92%",
-        icon: TrendingUp,
-        iconClass: "attendance",
-        change: "▼ 2% this week",
-        changeType: "negative",
-    },
-];
+interface DashboardStatsProps {
+    // From GET /v1/dashboard/summary `statistics`; null until loaded
+    statistics: DashboardStatistics | null;
+    isLoading: boolean;
+}
 
+const PLACEHOLDER = "—";
 
-const DashboardStats = () => {
+// "▲ 3 this month" / "— no change" / "▼ 2% vs last period" (API deltas as-is)
+const formatChange = (value: number | null, suffix: string, unit = "") => {
+    if (value === null) return { text: "", type: "neutral" };
+
+    if (value > 0) return { text: `▲ ${value}${unit} ${suffix}`, type: "positive" };
+
+    if (value < 0) return { text: `▼ ${Math.abs(value)}${unit} ${suffix}`, type: "negative" };
+
+    return { text: "— no change", type: "neutral" };
+};
+
+const show = (value: number | null | undefined, unit = "") =>
+    value === null || value === undefined ? PLACEHOLDER : `${value}${unit}`;
+
+const DashboardStats = ({ statistics, isLoading }: DashboardStatsProps) => {
+
+    const items = [
+        {
+            id: "students",
+            title: "Total Students",
+            value: show(statistics?.total_students),
+            icon: Users,
+            iconClass: "students",
+            change: formatChange(statistics?.students_added_this_month ?? null, "this month"),
+        },
+        {
+            id: "teachers",
+            title: "Teachers",
+            value: show(statistics?.total_teachers),
+            icon: BookOpen,
+            iconClass: "teachers",
+            change: formatChange(statistics?.teachers_added_this_month ?? null, "this month"),
+        },
+        {
+            id: "sessions",
+            title: "Hifz Sessions Today",
+            value: show(statistics?.hifz_sessions_today),
+            icon: Clock3,
+            iconClass: "sessions",
+            change: formatChange(statistics?.sessions_vs_yesterday ?? null, "vs yesterday"),
+        },
+        {
+            id: "attendance",
+            title: "Attendance Rate",
+            value: show(statistics?.attendance_rate, "%"),
+            icon: TrendingUp,
+            iconClass: "attendance",
+            change: formatChange(statistics?.attendance_change ?? null, "vs last period", "%"),
+        },
+    ];
+
+    const isFirstLoad = isLoading && statistics === null;
+
     return (
-        <div className="dashboard-stats">
+        <div className="dashboard-stats" aria-busy={isLoading}>
             <div className="row">
-                {statistics.map((stat) => {
+                {items.map((stat) => {
 
                     const Icon = stat.icon;
 
                     return (
                         <div className="col-12 col-md-6 col-lg-3" key={stat.id}>
-                            <div className="dash-stat-card">
+                            <div className={`dash-stat-card ${isFirstLoad ? "is-loading" : ""}`}>
                                 <div className={`stat-icon ${stat.iconClass}`}>
                                     <Icon
                                         size={18}
@@ -67,8 +89,8 @@ const DashboardStats = () => {
                                         <span className="stat-title">
                                             {stat.title}
                                         </span>
-                                        <span className={`stat-change ${stat.changeType}`} >
-                                            {stat.change}
+                                        <span className={`stat-change ${stat.change.type}`} >
+                                            {stat.change.text}
                                         </span>
                                     </div>
                                 </div>

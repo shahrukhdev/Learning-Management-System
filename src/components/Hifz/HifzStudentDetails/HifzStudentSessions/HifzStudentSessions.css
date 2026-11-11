@@ -220,3 +220,64 @@
         font-size: 9px;
     }
 }
+
+/* ================================
+   API sessions: actions, entry labels, date filter
+================================ */
+
+.hifz-session-content {
+    flex: 1;
+    gap: 4px;
+}
+
+.hifz-session-entry-label {
+    font-family: var(--font-inter);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #535624;
+}
+
+.hifz-session-actions {
+    align-self: flex-start;
+    margin-left: auto;
+}
+
+.hifz-session-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Previous cards stay visible but dimmed while the list reloads */
+.hifz-student-sessions.is-loading {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.hifz-sessions-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 1.3rem;
+    color: #444841;
+}
+
+.hifz-sessions-filter button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #535624;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@media (max-width: 575px) {
+    .hifz-session-card {
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 18px 16px;
+    }
+}

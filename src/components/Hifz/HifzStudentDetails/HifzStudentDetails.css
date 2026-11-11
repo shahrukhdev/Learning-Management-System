@@ -1,3 +1,71 @@
 .hifz-student-tab-content {
     margin-top: 24px;
 }
+/* Quran data loading / error / empty states (compact, same style as Notices) */
+.hifz-data-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 150px;
+    padding: 20px 16px;
+    text-align: center;
+    font-size: 1.4rem;
+    color: #7b8177;
+}
+
+.hifz-data-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: #F1EEE2;
+    color: #535624;
+}
+
+.hifz-data-empty-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 20px;
+    color: #3F421A;
+}
+
+/* Student progress note above the Quran Map / Surah List */
+.hifz-progress-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #F1EEE2;
+    font-size: 1.3rem;
+    color: #535624;
+}
+
+.hifz-progress-note.error {
+    justify-content: space-between;
+    color: #CF0015;
+}
+
+
+/* Editing an existing session (Student Log tab) */
+.hifz-edit-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #F1EEE2;
+    font-size: 1.3rem;
+    color: #3F421A;
+}

@@ -3,15 +3,30 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 import type { StudentsAttendanceOverview } from "./AttendanceOverviewTable.types";
 import AttendanceDot from "./AttendanceDot";
+import AvatarContent from "../../Avatar/AvatarContent";
+import { resolveImageUrl } from "../../../utils/imageUrl";
+import { addDays, fromYmd } from "../attendanceDates";
+import type { WeekdayKey } from "../../../types/attendance.types";
+import dummyImg from "../../../assets/images/student-dummy-img.png";
+
+const WEEKDAYS: { key: WeekdayKey; label: string }[] = [
+    { key: "mon", label: "Mon" },
+    { key: "tue", label: "Tue" },
+    { key: "wed", label: "Wed" },
+    { key: "thu", label: "Thu" },
+    { key: "fri", label: "Fri" },
+];
 
 
-export const attendanceOverviewColumns:
-    ColumnDef<StudentsAttendanceOverview>[] = [
+// Day headers show the date of the selected week, e.g. "Mon (9)"
+export const getAttendanceOverviewColumns = (
+    weekStart: string
+): ColumnDef<StudentsAttendanceOverview>[] => [
 
     /* Student */
 
     {
-        accessorKey: "studentName",
+        accessorKey: "student_name",
 
         header: ({ column }) => (
 
@@ -69,18 +84,15 @@ export const attendanceOverviewColumns:
 
                 <div className="table-attendance-student">
 
-                    <img
-                        src={
-                            student.studentImage
-                        }
-                        alt={
-                            student.studentName
-                        }
+                    <AvatarContent
+                        src={resolveImageUrl(student.student_image)}
+                        alt={student.student_name}
+                        fallback={<img src={dummyImg} alt={student.student_name} />}
                     />
 
                     <span className="table-attendance-student-name">
 
-                        {student.studentName}
+                        {student.student_name}
 
                     </span>
 
@@ -92,114 +104,14 @@ export const attendanceOverviewColumns:
     },
 
 
-    /* Monday */
+    /* Monday - Friday */
 
-    {
-        accessorKey:
-            "attendance.mon",
-
-        header: "Mon (7)",
-
-        cell: ({ row }) => (
-
-            <AttendanceDot
-                status={
-                    row.original
-                        .attendance
-                        .mon
-                }
-            />
-
-        ),
-    },
-
-
-    /* Tuesday */
-
-    {
-        accessorKey:
-            "attendance.tue",
-
-        header: "Tue (8)",
-
-        cell: ({ row }) => (
-
-            <AttendanceDot
-                status={
-                    row.original
-                        .attendance
-                        .tue
-                }
-            />
-
-        ),
-    },
-
-
-    /* Wednesday */
-
-    {
-        accessorKey:
-            "attendance.wed",
-
-        header: "Wed (9)",
-
-        cell: ({ row }) => (
-
-            <AttendanceDot
-                status={
-                    row.original
-                        .attendance
-                        .wed
-                }
-            />
-
-        ),
-    },
-
-
-    /* Thursday */
-
-    {
-        accessorKey:
-            "attendance.thu",
-
-        header: "Thu (10)",
-
-        cell: ({ row }) => (
-
-            <AttendanceDot
-                status={
-                    row.original
-                        .attendance
-                        .thu
-                }
-            />
-
-        ),
-    },
-
-
-    /* Friday */
-
-    {
-        accessorKey:
-            "attendance.fri",
-
-        header: "Fri (11)",
-
-        cell: ({ row }) => (
-
-            <AttendanceDot
-                status={
-                    row.original
-                        .attendance
-                        .fri
-                }
-            />
-
-        ),
-    },
+    ...WEEKDAYS.map(({ key, label }, index): ColumnDef<StudentsAttendanceOverview> => ({
+        id: `attendance.${key}`,
+        header: `${label} (${fromYmd(addDays(weekStart, index)).getDate()})`,
+        enableSorting: false,
+        cell: ({ row }) => <AttendanceDot status={row.original.attendance[key]} />,
+    })),
 
 
     /* Rate */
@@ -258,6 +170,11 @@ export const attendanceOverviewColumns:
 
             const rate =
                 row.original.rate;
+
+            // Shown as returned by the API (not recalculated)
+            if (rate === null) {
+                return <span className="attendance-rate">—</span>;
+            }
 
             return (
 

@@ -1,34 +1,22 @@
 import "./QuranProgressOverview.css";
 
-interface QuranProgress {
-    id: number;
-    title: string;
-    progress: number;
-    status: "on-track" | "needs-attension";
+import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
+import type { DashboardQuranProgress, QuranProgressStatus } from "../../types/dashboard.types";
+
+const STATUS_LABELS: Record<QuranProgressStatus, string> = {
+    "on-track": "On Track",
+    "needs-attention": "Needs Attention",
+};
+
+interface QuranProgressOverviewProps {
+    // From GET /v1/dashboard/summary `quran_progress_overview`
+    items: DashboardQuranProgress[];
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
 }
 
-const quranProgress: QuranProgress[] =[
-    {
-        id: 1,
-        title: "Hifz Class A",
-        progress: 88,
-        status: "on-track",
-    },
-    {
-        id: 2,
-        title: "Noorani Qaida 1",
-        progress: 72,
-        status: "on-track",
-    },
-    {
-        id: 3,
-        title: "Islamic Studies - Adv",
-        progress: 50,
-        status: "needs-attension",
-    }
-]
-
-const QuranProgressOverview = () => {
+const QuranProgressOverview = ({ items, isLoading, error, onRetry }: QuranProgressOverviewProps) => {
     return (
         <div className="quran-progress-overview dashboard-box">
 
@@ -63,9 +51,19 @@ const QuranProgressOverview = () => {
             </div>
 
             {/* Progress List */}
-            <div className="quran-progress-list">
+            <DashboardBoxStatus
+                isLoading={isLoading && items.length === 0 && !error}
+                error={items.length === 0 ? error : null}
+                onRetry={onRetry}
+                isEmpty={items.length === 0}
+                emptyText="No class progress yet."
+                loadingText="Loading progress..."
+            />
 
-                {quranProgress.map((item) => (
+            {items.length > 0 && (
+            <div className={`quran-progress-list ${isLoading ? "dashboard-box-refreshing" : ""}`}>
+
+                {items.map((item) => (
                     <div
                         className="quran-progress-item"
                         key={item.id}
@@ -79,10 +77,17 @@ const QuranProgressOverview = () => {
                             </h3>
 
                             <span className="quran-progress-value">
-                                {item.progress}% {item.status}
+                                {item.progress !== null ? `${item.progress}%` : "—"}
+                                {item.status ? ` ${STATUS_LABELS[item.status]}` : ""}
                             </span>
 
                         </div>
+
+                        {item.student_count !== null && (
+                            <p className="quran-progress-subtitle m-0 mb-1">
+                                {item.student_count} {item.student_count === 1 ? "student" : "students"}
+                            </p>
+                        )}
 
                         {/* Progress Bar */}
                         <div className="quran-progress-bar">
@@ -90,7 +95,7 @@ const QuranProgressOverview = () => {
                             <div
                                 className="quran-progress-fill"
                                 style={{
-                                    width: `${item.progress}%`,
+                                    width: `${Math.min(Math.max(item.progress ?? 0, 0), 100)}%`,
                                 }}
                             />
 
@@ -100,6 +105,7 @@ const QuranProgressOverview = () => {
                 ))}
 
             </div>
+            )}
 
         </div>
     );

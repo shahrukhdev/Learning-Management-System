@@ -7,15 +7,22 @@ import "@daypicker/react/style.css";
 
 import StudentDummyImg from "../../../../assets/images/student-dummy-img.png";
 
-const HifzStudentHeader = () => {
+interface HifzStudentHeaderProps {
+    // The tracker's date (Y-m-d); null = no date selected
+    date: string | null;
+    onDateChange: (date: string | null) => void;
+}
 
-    const [selectedDate, setSelectedDate] = 
-        useState<Date | undefined>(
-        new Date()
-    );
+const toYmd = (date: Date) =>
+    [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+    ].join("-");
 
-    console.log(selectedDate);
-    
+const HifzStudentHeader = ({ date, onDateChange }: HifzStudentHeaderProps) => {
+
+    const selectedDate = date ? new Date(`${date}T00:00:00`) : undefined;
 
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
@@ -81,9 +88,10 @@ const HifzStudentHeader = () => {
                         <DayPicker
                             mode="single"
                             selected={selectedDate}
-                            onSelect={(date) => {
+                            onSelect={(value) => {
 
-                                setSelectedDate(date);
+                                // Clicking the selected day again clears it
+                                onDateChange(value ? toYmd(value) : null);
 
                                 setIsDatePickerOpen(false);
 

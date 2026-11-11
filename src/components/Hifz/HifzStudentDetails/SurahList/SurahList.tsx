@@ -1,14 +1,16 @@
 import { CheckCircle2, Circle } from "lucide-react";
 
-import type { Surah, SurahStatus } from "../QuranMap/QuranMap.data";
+import type { Surah, SurahStatus, SurahStatuses } from "../QuranMap/QuranMap.data";
+import { formatJuzNumbers, type SurahJuzRange } from "../../../../hooks/useQuranData";
 
 import "./SurahList.css";
 
-import { getJuzLabel } from "./SurahList.data";
 
 interface SurahListProps {
     surahs: Surah[];
-    statuses: Record<number, SurahStatus>;
+    // Surah ID -> Juz ranges (from the Juz API)
+    surahJuzRanges: Map<number, SurahJuzRange[]>;
+    statuses: SurahStatuses;
 }
 
 const getStatusLabel = (status: SurahStatus) => {
@@ -19,7 +21,7 @@ const getStatusLabel = (status: SurahStatus) => {
     }
 };
 
-const SurahList = ({ surahs, statuses }: SurahListProps) => {
+const SurahList = ({ surahs, surahJuzRanges, statuses }: SurahListProps) => {
 
     return (
         <div className="table-card surah-list-card">
@@ -59,10 +61,10 @@ const SurahList = ({ surahs, statuses }: SurahListProps) => {
                     <tbody>
                         {surahs.map((surah) => {
 
-                            const status = statuses[surah.number] ?? "not-started";
+                            const status = statuses[surah.id] ?? "not-started";
 
                             return (
-                                <tr key={surah.number}>
+                                <tr key={surah.id}>
 
                                     {/* Number */}
 
@@ -80,7 +82,7 @@ const SurahList = ({ surahs, statuses }: SurahListProps) => {
 
                                     {/* Arabic */}
 
-                                    <td className="surah-arabic">
+                                    <td className="surah-arabic" dir="rtl" lang="ar">
                                         {surah.arabic}
                                     </td>
 
@@ -88,8 +90,8 @@ const SurahList = ({ surahs, statuses }: SurahListProps) => {
                                     {/* Juz */}
 
                                     <td className="surah-juz">
-                                        {getJuzLabel(
-                                            surah.number
+                                        {formatJuzNumbers(
+                                            surahJuzRanges.get(surah.id)
                                         )}
                                     </td>
 
