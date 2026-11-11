@@ -11,10 +11,21 @@ import { deleteRole } from "../../../services/roleService";
 import { parseApiError } from "../../../utils/apiError";
 import { useAuth } from "../../../hooks/useAuth";
 import type { RoleListItem } from "../../../types/role.types";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const DEFAULT_PER_PAGE = 10; // matches the backend default and the existing UI
 
 const Roles = () => {
+
+    // View is checked by the route; each action has its own permission
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_ROLE);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_ROLE);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_ROLE);
 
     // Signed-in user (refreshed if their own role is deleted)
     const { user, refreshUser } = useAuth();
@@ -51,6 +62,7 @@ const Roles = () => {
     const isDeletingRef = useRef(false);
 
     const handleDeleteRole = (role: RoleListItem) => {
+        if (!canDelete) return;
         setDeleteTarget(role);
     };
 
@@ -61,7 +73,7 @@ const Roles = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -121,20 +133,22 @@ const Roles = () => {
                                     </h1>
                                     <p className="section-desc-para m-0">Define and control access levels across the Madrasah portal.</p>
                                 </div>
-                                <Link
-                                    to="/system/roles/create"
-                                    className="new-notice-btn"
-                                >
-                                    <CirclePlus
-                                        color="#fff"
-                                        size={20}
-                                        strokeWidth={2.5}
-                                    />
+                                {canCreate && (
+                                    <Link
+                                        to="/system/roles/create"
+                                        className="new-notice-btn"
+                                    >
+                                        <CirclePlus
+                                            color="#fff"
+                                            size={20}
+                                            strokeWidth={2.5}
+                                        />
 
-                                    <span>
-                                        Create Role
-                                    </span>
-                                </Link>
+                                        <span>
+                                            Create Role
+                                        </span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
@@ -152,7 +166,8 @@ const Roles = () => {
                                 }
                                 onPerPageChange={setPerPage}
                                 onRetry={retry}
-                                onDeleteRole={handleDeleteRole}
+                                onDeleteRole={canDelete ? handleDeleteRole : undefined}
+                                canEditRoles={canEdit}
                             />
                         </div>
                     </div>
@@ -163,7 +178,7 @@ const Roles = () => {
             {/* Delete Confirmation */}
 
             <ConfirmPopup
-                isOpen={deleteTarget !== null}
+                isOpen={deleteTarget !== null && canDelete}
                 title="Delete Role"
                 message={
                     <>

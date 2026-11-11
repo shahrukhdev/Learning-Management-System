@@ -23,9 +23,14 @@ import { parseApiError } from "../../../../utils/apiError";
 import { useAllPermissions } from "../../../../hooks/useAllPermissions";
 
 import "./CreateNewRole.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 
 const CreateNewRole = () => {
+
+    // Back to the list, or the home page without "View Roles"
+    const rolesListPath = usePermittedPath(ROLES_LIST_PATH, PERMISSIONS.VIEW_ROLES);
 
     const navigate = useNavigate();
 
@@ -116,7 +121,7 @@ const CreateNewRole = () => {
 
             // The Roles listing mounts fresh and fetches GET /v1/roles again,
             // so the new role is shown without stale data
-            navigate(ROLES_LIST_PATH);
+            navigate(rolesListPath);
 
         } catch (error) {
 
@@ -157,9 +162,7 @@ const CreateNewRole = () => {
     /* Cancel */
 
     const handleCancel = () => {
-        navigate(
-            ROLES_LIST_PATH
-        );
+        navigate(rolesListPath);
 
     };
 
@@ -187,7 +190,7 @@ const CreateNewRole = () => {
                             <div className="create-role-page-header">
 
                                 <Link 
-                                    to="/system/roles"
+                                    to={rolesListPath}
                                     className="role-back-btn"
                                 >
                                     <ArrowLeft

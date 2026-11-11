@@ -11,12 +11,16 @@ const getRoleDotColor = (roleId: number) =>
     ROLE_DOT_COLORS[Math.abs(roleId) % ROLE_DOT_COLORS.length];
 
 interface RolesColumnsOptions {
-    onDelete: (role: RoleListItem) => void;
+    // Delete is shown only when passed ("Delete Role")
+    onDelete?: (role: RoleListItem) => void;
+    // Edit is shown only when true ("Edit Role")
+    canEdit: boolean;
 }
 
 export const getRolesColumns = ({
     onDelete,
-}: RolesColumnsOptions): ColumnDef<RoleListItem>[] => [
+    canEdit,
+}: RolesColumnsOptions): ColumnDef<RoleListItem>[] => ([
 
     /* Role Name */
 
@@ -99,34 +103,40 @@ export const getRolesColumns = ({
 
                 {/* Edit Role page (name + description). The permission
                     matrix screen is at /system/roles/:id/permissions. */}
-                <Link
-                    to={`/system/roles/${row.original.id}/edit`}
-                    aria-label={`Edit ${row.original.name}`}
-                >
-                    <Pencil
-                        size={16}
-                        strokeWidth={2.4}
-                    />
+                {canEdit && (
+                    <Link
+                        to={`/system/roles/${row.original.id}/edit`}
+                        aria-label={`Edit ${row.original.name}`}
+                    >
+                        <Pencil
+                            size={16}
+                            strokeWidth={2.4}
+                        />
 
-                </Link>
+                    </Link>
+                )}
 
 
-                <button
-                    type="button"
-                    aria-label={`Delete ${row.original.name}`}
-                    onClick={() => onDelete(row.original)}
-                >
+                {onDelete && (
+                    <button
+                        type="button"
+                        aria-label={`Delete ${row.original.name}`}
+                        onClick={() => onDelete(row.original)}
+                    >
 
-                    <Trash2
-                        size={16}
-                        strokeWidth={2.4}
-                    />
+                        <Trash2
+                            size={16}
+                            strokeWidth={2.4}
+                        />
 
-                </button>
+                    </button>
+                )}
 
             </div>
 
         ),
     },
 
-];
+] as ColumnDef<RoleListItem>[])
+    // No Actions column when no action is allowed
+    .filter((column) => column.id !== "actions" || canEdit || onDelete !== undefined);

@@ -23,7 +23,10 @@ interface RolesTableProps {
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
     onRetry: () => void;
-    onDeleteRole: (role: RoleListItem) => void;
+    // Omitted = no Delete action ("Delete Role")
+    onDeleteRole?: (role: RoleListItem) => void;
+    // Shows the Edit action ("Edit Role")
+    canEditRoles: boolean;
 }
 
 
@@ -39,12 +42,13 @@ const RolesTable = ({
     onPerPageChange,
     onRetry,
     onDeleteRole,
+    canEditRoles,
 }: RolesTableProps) => {
 
 
     const rolesColumns = useMemo(
-        () => getRolesColumns({ onDelete: onDeleteRole }),
-        [onDeleteRole]
+        () => getRolesColumns({ onDelete: onDeleteRole, canEdit: canEditRoles }),
+        [onDeleteRole, canEditRoles]
     );
 
 

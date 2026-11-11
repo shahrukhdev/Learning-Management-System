@@ -7,9 +7,14 @@ import PermissionMatrix from "../../../../components/Roles/EditRole/PermissionMa
 import AssignPersonnel from "../../../../components/Roles/EditRole/AssignPersonnel/AssignPersonnel";
 
 import "./EditRole.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 
 const EditRole = () => {
+
+    // Back to the list, or the home page without "View Roles"
+    const rolesListPath = usePermittedPath("/system/roles", PERMISSIONS.VIEW_ROLES);
 
     return (
 
@@ -38,7 +43,7 @@ const EditRole = () => {
                                 <div className="edit-role-header-left">
 
                                     <Link
-                                        to="/system/roles"
+                                        to={rolesListPath}
                                         className="role-back-btn"
                                         aria-label="Back to roles"
                                     >

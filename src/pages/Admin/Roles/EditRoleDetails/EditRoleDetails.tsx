@@ -26,11 +26,16 @@ import { useAllPermissions } from "../../../../hooks/useAllPermissions";
 
 // Same layout and styles as the Add Role page
 import "../CreateNewRole/CreateNewRole.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 
 // Edit Role (name + description), at /system/roles/:roleId/edit. Separate from
 // the permission matrix screen, now at /system/roles/:roleId/permissions.
 const EditRoleDetails = () => {
+
+    // Back to the list, or the home page without "View Roles"
+    const rolesListPath = usePermittedPath(ROLES_LIST_PATH, PERMISSIONS.VIEW_ROLES);
 
     const navigate = useNavigate();
 
@@ -216,7 +221,7 @@ const EditRoleDetails = () => {
             if (isOwnRole) void refreshUser();
 
             // The Roles listing mounts fresh and fetches GET /v1/roles again
-            navigate(ROLES_LIST_PATH);
+            navigate(rolesListPath);
 
         } catch (error) {
 
@@ -257,9 +262,7 @@ const EditRoleDetails = () => {
     /* Cancel */
 
     const handleCancel = () => {
-        navigate(
-            ROLES_LIST_PATH
-        );
+        navigate(rolesListPath);
 
     };
 
@@ -287,7 +290,7 @@ const EditRoleDetails = () => {
                             <div className="create-role-page-header">
 
                                 <Link
-                                    to={ROLES_LIST_PATH}
+                                    to={rolesListPath}
                                     className="role-back-btn"
                                 >
                                     <ArrowLeft

@@ -13,10 +13,21 @@ import { useAuth } from "../../../hooks/useAuth";
 import type { PermissionListItem } from "../../../types/permission.types";
 import "./Permissions.css";
 import "../Roles/Roles.css";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
 
 const Permissions = () => {
+
+    // View is checked by the route; each action has its own permission
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_PERMISSION);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_PERMISSION);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_PERMISSION);
 
     // Signed-in user (refreshed if one of their permissions is deleted)
     const { user, refreshUser } = useAuth();
@@ -59,6 +70,7 @@ const Permissions = () => {
     const isDeletingRef = useRef(false);
 
     const handleDeletePermission = (permission: PermissionListItem) => {
+        if (!canDelete) return;
         setDeleteTarget(permission);
     };
 
@@ -69,7 +81,7 @@ const Permissions = () => {
     // Only runs when the user clicks "Delete" in the confirmation popup
     const handleConfirmDelete = async () => {
 
-        if (!deleteTarget || isDeletingRef.current) return;
+        if (!deleteTarget || isDeletingRef.current || !canDelete) return;
 
         isDeletingRef.current = true;
         setIsDeleting(true);
@@ -126,13 +138,15 @@ const Permissions = () => {
                                     Define and control permissions across the Madrasah portal.
                                 </p>
                             </div>
-                            <Link
-                                to="/system/permissions/create"
-                                className="new-notice-btn"
-                            >
-                                <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
-                                <span>Create Permission</span>
-                            </Link>
+                            {canCreate && (
+                                <Link
+                                    to="/system/permissions/create"
+                                    className="new-notice-btn"
+                                >
+                                    <CirclePlus color="#fff" size={20} strokeWidth={2.5} />
+                                    <span>Create Permission</span>
+                                </Link>
+                            )}
                         </div>
                     </div>
                     <div className="col-12">
@@ -149,7 +163,8 @@ const Permissions = () => {
                             }
                             onPerPageChange={setPerPage}
                             onRetry={retry}
-                            onDeletePermission={handleDeletePermission}
+                            onDeletePermission={canDelete ? handleDeletePermission : undefined}
+                            canEditPermissions={canEdit}
                             moduleNames={moduleNames}
                         />
                     </div>
@@ -159,7 +174,7 @@ const Permissions = () => {
 
         {/* Delete Confirmation */}
         <ConfirmPopup
-            isOpen={deleteTarget !== null}
+            isOpen={deleteTarget !== null && canDelete}
             title="Delete Permission"
             message={
                 <>

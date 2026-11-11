@@ -18,8 +18,13 @@ import { createPermission } from "../../../../services/permissionService";
 import { parseApiError } from "../../../../utils/apiError";
 import { useModules } from "../../../../hooks/useModules";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 const CreateNewPermission = () => {
+
+    // Back to the list, or the home page without "View Permissions"
+    const permissionsListPath = usePermittedPath(PERMISSIONS_LIST_PATH, PERMISSIONS.VIEW_PERMISSIONS);
     const navigate = useNavigate();
     const [formData, setFormData] = useState<PermissionFormData>(EMPTY_PERMISSION_FORM);
 
@@ -74,7 +79,7 @@ const CreateNewPermission = () => {
 
             // The Permissions listing mounts fresh and fetches
             // GET /v1/permissions again, so the new permission is shown
-            navigate(PERMISSIONS_LIST_PATH);
+            navigate(permissionsListPath);
         } catch (error) {
             const { status, message, validationErrors } = parseApiError(error);
 
@@ -111,7 +116,7 @@ const CreateNewPermission = () => {
                         <div className="col-12">
                             <div className="create-role-page-header">
                                 <Link
-                                    to={PERMISSIONS_LIST_PATH}
+                                    to={permissionsListPath}
                                     className="role-back-btn"
                                     aria-label="Back to permissions"
                                 >
@@ -140,7 +145,7 @@ const CreateNewPermission = () => {
                                             type="button"
                                             className="form-btn form-btn-cancel"
                                             onClick={() =>
-                                                navigate(PERMISSIONS_LIST_PATH)
+                                                navigate(permissionsListPath)
                                             }
                                             disabled={isSubmitting}
                                         >

@@ -20,11 +20,16 @@ import { useModules } from "../../../../hooks/useModules";
 import { useAuth } from "../../../../hooks/useAuth";
 import "../../Roles/CreateNewRole/CreateNewRole.css";
 import "../../Roles/Roles.css";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 // Edit Permission (name + module + description), at
 // /system/permissions/:permissionId/edit. Same load / validate / submit
 // behavior as the Edit Role page.
 const EditPermission = () => {
+
+    // Back to the list, or the home page without "View Permissions"
+    const permissionsListPath = usePermittedPath(PERMISSIONS_LIST_PATH, PERMISSIONS.VIEW_PERMISSIONS);
 
     // Signed-in user (refreshed if a permission they have is changed)
     const { user, refreshUser } = useAuth();
@@ -162,7 +167,7 @@ const EditPermission = () => {
 
             // The Permissions listing mounts fresh and fetches
             // GET /v1/permissions again
-            navigate(PERMISSIONS_LIST_PATH);
+            navigate(permissionsListPath);
         } catch (error) {
             const { status, message, validationErrors } = parseApiError(error);
 
@@ -198,7 +203,7 @@ const EditPermission = () => {
                         <div className="col-12">
                             <div className="create-role-page-header">
                                 <Link
-                                    to={PERMISSIONS_LIST_PATH}
+                                    to={permissionsListPath}
                                     className="role-back-btn"
                                     aria-label="Back to permissions"
                                 >
@@ -232,7 +237,7 @@ const EditPermission = () => {
                                             <button
                                                 type="button"
                                                 className="form-btn form-btn-cancel"
-                                                onClick={() => navigate(PERMISSIONS_LIST_PATH)}
+                                                onClick={() => navigate(permissionsListPath)}
                                             >
                                                 Back to Permissions
                                             </button>
@@ -267,7 +272,7 @@ const EditPermission = () => {
                                             type="button"
                                             className="form-btn form-btn-cancel"
                                             onClick={() =>
-                                                navigate(PERMISSIONS_LIST_PATH)
+                                                navigate(permissionsListPath)
                                             }
                                             disabled={isSubmitting}
                                         >

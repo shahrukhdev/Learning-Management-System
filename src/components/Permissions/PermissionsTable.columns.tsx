@@ -11,7 +11,10 @@ const getPermissionDotColor = (permissionId: number) =>
     PERMISSION_DOT_COLORS[Math.abs(permissionId) % PERMISSION_DOT_COLORS.length];
 
 interface PermissionsColumnsOptions {
-    onDelete: (permission: PermissionListItem) => void;
+    // Delete is shown only when passed ("Delete Permission")
+    onDelete?: (permission: PermissionListItem) => void;
+    // Edit is shown only when true ("Edit Permission")
+    canEdit: boolean;
     // Module ID -> name, from the shared GET /v1/modules list
     moduleNames: Map<number, string>;
 }
@@ -28,8 +31,9 @@ const getModuleName = (permission: PermissionListItem, moduleNames: Map<number, 
 
 export const getPermissionsColumns = ({
     onDelete,
+    canEdit,
     moduleNames,
-}: PermissionsColumnsOptions): ColumnDef<PermissionListItem>[] => [
+}: PermissionsColumnsOptions): ColumnDef<PermissionListItem>[] => ([
     {
         accessorKey: "name",
         header: "Permission Name",
@@ -67,20 +71,26 @@ export const getPermissionsColumns = ({
         enableSorting: false,
         cell: ({ row }) => (
             <div className="table-actions">
-                <Link
-                    to={`/system/permissions/${row.original.id}/edit`}
-                    aria-label={`Edit ${row.original.name}`}
-                >
-                    <Pencil size={16} strokeWidth={2.4} />
-                </Link>
-                <button
-                    type="button"
-                    aria-label={`Delete ${row.original.name}`}
-                    onClick={() => onDelete(row.original)}
-                >
-                    <Trash2 size={16} strokeWidth={2.4} />
-                </button>
+                {canEdit && (
+                    <Link
+                        to={`/system/permissions/${row.original.id}/edit`}
+                        aria-label={`Edit ${row.original.name}`}
+                    >
+                        <Pencil size={16} strokeWidth={2.4} />
+                    </Link>
+                )}
+                {onDelete && (
+                    <button
+                        type="button"
+                        aria-label={`Delete ${row.original.name}`}
+                        onClick={() => onDelete(row.original)}
+                    >
+                        <Trash2 size={16} strokeWidth={2.4} />
+                    </button>
+                )}
             </div>
         ),
     },
-];
+] as ColumnDef<PermissionListItem>[])
+    // No Actions column when no action is allowed
+    .filter((column) => column.id !== "actions" || canEdit || onDelete !== undefined);

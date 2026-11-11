@@ -142,40 +142,68 @@ const AppRoutes = () => {
 
                 <Route
                     path="/system/roles"
-                    element={<Roles />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_ROLES]}>
+                            <Roles />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
                     path="/system/roles/create"
-                    element={<CreateNewRole />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.CREATE_ROLE]}>
+                            <CreateNewRole />
+                        </PermissionRoute>
+                    }
                 />
 
                 {/* Edit Role: name + description */}
                 <Route
                     path="/system/roles/:roleId/edit"
-                    element={<EditRoleDetails />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.EDIT_ROLE]}>
+                            <EditRoleDetails />
+                        </PermissionRoute>
+                    }
                 />
 
                 {/* Permission matrix screen (component unchanged; moved from
                     /edit so Edit Role can use that URL) */}
                 <Route
                     path="/system/roles/:roleId/permissions"
-                    element={<EditRole />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.EDIT_ROLE]}>
+                            <EditRole />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
                     path="/system/permissions"
-                    element={<Permissions />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_PERMISSIONS]}>
+                            <Permissions />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
                     path="/system/permissions/create"
-                    element={<CreateNewPermission />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.CREATE_PERMISSION]}>
+                            <CreateNewPermission />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
                     path="/system/permissions/:permissionId/edit"
-                    element={<EditPermission />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.EDIT_PERMISSION]}>
+                            <EditPermission />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route path="/academic/classes" element={<Classes />} />
