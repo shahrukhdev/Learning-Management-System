@@ -1,4 +1,5 @@
 import { PenLine, X } from "lucide-react";
+import { formatNoticeDate } from "../../utils/noticeDate";
 
 // Minimal shape shown by a notice row. Both the API notices (Admin page) and
 // the existing mock notices (Teacher page) fit it.
@@ -31,7 +32,10 @@ const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) 
 
     const color = noticeColors[Math.abs(notice.id - 1) % noticeColors.length];
 
-    const hasMeta = isActive !== undefined || Boolean(date);
+    // Shared notice date format (d-m-Y); missing/invalid dates are hidden
+    const displayDate = formatNoticeDate(date);
+
+    const hasMeta = isActive !== undefined || Boolean(displayDate);
 
     return (
         <div className="notice-item">
@@ -50,7 +54,7 @@ const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) 
                     {notice.description}
                 </p>
 
-                {/* Status (existing table status styling) + date as sent by the API */}
+                {/* Status (existing table status styling) + date (d-m-Y) */}
                 {hasMeta && (
                     <div className="notice-meta">
 
@@ -61,9 +65,9 @@ const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) 
                             </span>
                         )}
 
-                        {date && (
+                        {displayDate && (
                             <span className="notice-date">
-                                {date}
+                                {displayDate}
                             </span>
                         )}
 

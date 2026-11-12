@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePermissions } from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../utils/permissions";
+import { formatNoticeDate } from "../../utils/noticeDate";
 
 import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
 import type { DashboardAnnouncement } from "../../types/dashboard.types";
@@ -74,9 +75,10 @@ const Announcements = ({ announcements, isLoading, error, onRetry }: Announcemen
                                 {announcement.title}
                             </h3>
 
-                            {/* "<date as sent by the API> · <message>" */}
+                            {/* "<date, same format as Notices> · <message>"; a missing
+                                or invalid date is left out (never the raw timestamp) */}
                             <p className="sm-para announcement-description m-0">
-                                {[announcement.created_at, announcement.message].filter(Boolean).join(" · ")}
+                                {[formatNoticeDate(announcement.created_at), announcement.message].filter(Boolean).join(" · ")}
                             </p>
 
                         </div>
