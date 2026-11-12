@@ -46,6 +46,7 @@ const navItems: NavItem[] = [
         title: "Attendance",
         path: "/attendance",
         icon: NavIcon2,
+        permission: PERMISSIONS.VIEW_ATTENDANCE,
     },
     {
         title: "Hifz",

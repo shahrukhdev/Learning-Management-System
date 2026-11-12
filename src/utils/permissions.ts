@@ -32,6 +32,10 @@ export const PERMISSIONS = {
     CREATE_PERMISSION: "Create Permission",
     EDIT_PERMISSION: "Edit Permission",
     DELETE_PERMISSION: "Delete Permission",
+
+    VIEW_ATTENDANCE: "View Attendance",
+    MARK_ATTENDANCE: "Mark Attendance",
+    ATTENDANCE_OVERVIEW: "Attendance Overview",
 } as const;
 
 export type PermissionName = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

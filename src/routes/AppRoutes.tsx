@@ -101,7 +101,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/attendance"
-                    element={<RoleBasedRoute admin={<Attendance />} teacher={<TeacherAttendance />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_ATTENDANCE]}>
+                            <RoleBasedRoute admin={<Attendance />} teacher={<TeacherAttendance />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
