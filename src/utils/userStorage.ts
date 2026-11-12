@@ -21,13 +21,15 @@ const toAuthUser = (value: unknown): AuthUser | null => {
         typeof user.role === "string" &&
         // Missing phone_no / image is allowed (records saved before they were added)
         isOptionalString(user.phone_no) &&
-        isOptionalString(user.image);
+        isOptionalString(user.image) &&
+        isOptionalString(user.initials);
 
     if (!isValid) return null;
 
     return {
         id: user.id as number,
         name: user.name as string,
+        initials: (user.initials as string | null | undefined) ?? "",
         email: user.email as string,
         phone_no: (user.phone_no as string | null | undefined) ?? null,
         role: user.role as string,
