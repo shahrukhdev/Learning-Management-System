@@ -56,6 +56,14 @@ const toStudent = (item: RawObject): ProgressStudentItem | null => {
         class_name: toText(item.class_name) ?? "",
         total_records: toNumber(item.total_records),
         last_progress_date: toText(item.last_progress_date),
+        memorised_surahs: toNumber(item.memorised_surahs),
+        total_surahs: toNumber(item.total_surahs),
+        hifz_percentage: toNumber(item.hifz_percentage),
+        attendance: toNumber(item.attendance),
+        present: toNumber(item.present),
+        late: toNumber(item.late),
+        absent: toNumber(item.absent),
+        total_attendance_days: toNumber(item.total_attendance_days),
     };
 };
 

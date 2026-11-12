@@ -11,7 +11,7 @@ import TablePageNumbers from "../../../components/Table/TablePageNumbers";
 
 import { useProgressStudents } from "../../../hooks/useStudentProgress";
 import type { ProgressStudentItem } from "../../../types/studentProgress.types";
-import { formatProgressDate, toPopupStudent } from "../../../utils/studentProgress";
+import { toPopupStudent } from "../../../utils/studentProgress";
 
 import "../../../components/Table/Table.css";
 import "./StudentProgress.css";
@@ -189,7 +189,17 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
                 >
                     {students.map((student) => {
 
-                        const lastProgress = formatProgressDate(student.last_progress_date);
+                        const memorisedSurahs = student.memorised_surahs ?? 0;
+
+                        const totalSurahs = student.total_surahs ?? 0;
+
+                        const progressPercentage = Math.round(student.hifz_percentage ?? 0);
+
+                        const attendance = student.attendance ?? 0;
+
+                        const late = student.late ?? 0;
+
+                        const absent = student.absent ?? 0;
 
                         return (
                             <div
@@ -227,17 +237,14 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
                                     </div>
                                 </div>
 
-                                {/*
-                                    Hifz progress and attendance are not part of the
-                                    Student Progress API; hidden for now.
-
+                                {/* Hifz progress */}
                                 <div className="student-hifz-progress">
                                     <div className="student-hifz-progress-info">
                                         <span>Hifz Progress</span>
 
                                         <strong>
-                                            {student.memorisedSurahs}/
-                                            {student.totalSurahs}
+                                            {memorisedSurahs}/
+                                            {totalSurahs}
                                         </strong>
                                     </div>
 
@@ -261,53 +268,32 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
                                     </span>
                                 </div>
 
+                                {/* Attendance summary */}
                                 <div className="student-progress-stats">
                                     <div
                                         className={`student-progress-stat ${
-                                            student.attendance < 70
+                                            attendance < 70
                                                 ? "attendance-low"
                                                 : "attendance-good"
                                         }`}
                                     >
                                         <strong>
-                                            {student.attendance}%
+                                            {attendance}%
                                         </strong>
 
                                         <span>Attendance</span>
                                     </div>
 
                                     <div className="student-progress-stat late-stat">
-                                        <strong>{student.late}</strong>
+                                        <strong>{late}</strong>
 
                                         <span>Late</span>
                                     </div>
 
                                     <div className="student-progress-stat absent-stat">
-                                        <strong>{student.absent}</strong>
+                                        <strong>{absent}</strong>
 
                                         <span>Absent</span>
-                                    </div>
-                                </div>
-                                */}
-
-                                {/* Progress summary (from the API) */}
-                                <div className="student-progress-stats">
-                                    <div className="student-progress-stat attendance-good">
-                                        <strong>{student.total_records ?? 0}</strong>
-
-                                        <span>Records</span>
-                                    </div>
-
-                                    <div className="student-progress-stat late-stat">
-                                        <strong>{lastProgress ?? "—"}</strong>
-
-                                        <span>Last Progress</span>
-                                    </div>
-
-                                    <div className="student-progress-stat absent-stat">
-                                        <strong>{student.admission_number || "—"}</strong>
-
-                                        <span>Admission No.</span>
                                     </div>
                                 </div>
 

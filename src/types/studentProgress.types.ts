@@ -20,6 +20,16 @@ export interface ProgressStudentItem {
     // Only in the list
     total_records: number | null;
     last_progress_date: string | null; // Y-m-d
+    // Hifz progress
+    memorised_surahs: number | null;
+    total_surahs: number | null;
+    hifz_percentage: number | null;
+    // Attendance (attendance = percentage, e.g. 80)
+    attendance: number | null;
+    present: number | null;
+    late: number | null;
+    absent: number | null;
+    total_attendance_days: number | null;
 }
 
 export interface ProgressSummary {
