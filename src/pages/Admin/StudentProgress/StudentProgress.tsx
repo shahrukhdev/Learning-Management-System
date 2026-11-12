@@ -1,139 +1,23 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { BookOpen, CheckCircle2, Eye, Plus, UserRound } from "lucide-react";
+import { BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Eye, Plus, UserRound } from "lucide-react";
 
 import SEO from "../../../components/Seo/SEO";
 
-import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../../components/Popups/LogProgressPopup/LogProgressPopup";
+import LogProgressPopup from "../../../components/Popups/LogProgressPopup/LogProgressPopup";
+import AvatarContent from "../../../components/Avatar/AvatarContent";
+import TablePageNumbers from "../../../components/Table/TablePageNumbers";
 
+import { useProgressStudents } from "../../../hooks/useStudentProgress";
+import type { ProgressStudentItem } from "../../../types/studentProgress.types";
+import { formatProgressDate, toPopupStudent } from "../../../utils/studentProgress";
+
+import "../../../components/Table/Table.css";
 import "./StudentProgress.css";
 
-interface StudentProgressData {
-    id: number;
-    name: string;
-    email: string;
-    className: string;
-    image?: string;
-    memorisedSurahs: number;
-    totalSurahs: number;
-    attendance: number;
-    late: number;
-    absent: number;
-}
-
-export const INITIAL_STUDENTS: StudentProgressData[] = [
-    {
-        id: 1,
-        name: "Ahmad Al-Hassan",
-        email: "ahmad@madrassah.edu",
-        className: "Hifz Level 2",
-        memorisedSurahs: 25,
-        totalSurahs: 114,
-        attendance: 60,
-        late: 1,
-        absent: 1,
-    },
-    {
-        id: 2,
-        name: "Maryam Yusuf",
-        email: "maryam@madrassah.edu",
-        className: "Arabic Foundations",
-        memorisedSurahs: 0,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 0,
-        absent: 1,
-    },
-    {
-        id: 3,
-        name: "Bilal Karimi",
-        email: "bilal@madrassah.edu",
-        className: "Hifz Level 1",
-        memorisedSurahs: 5,
-        totalSurahs: 114,
-        attendance: 60,
-        late: 1,
-        absent: 1,
-    },
-    {
-        id: 4,
-        name: "Zainab Osman",
-        email: "zainab@madrassah.edu",
-        className: "Tajweed Intermediate",
-        memorisedSurahs: 0,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-    {
-        id: 5,
-        name: "Uzair",
-        email: "uzair@madrassah.edu",
-        className: "Tajweed Intermediate",
-        memorisedSurahs: 114,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 20,
-    },
-    {
-        id: 6,
-        name: "Sadaf Jabeen",
-        email: "sadaf@madrassah.edu",
-        className: "Tajweed Intermediate",
-        memorisedSurahs: 20,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-    {
-        id: 7,
-        name: "Ahmed",
-        email: "ahmad@madrassah.edu",
-        className: "Hifz Level 2",
-        memorisedSurahs: 20,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-    {
-        id: 8,
-        name: "Aisha",
-        email: "aisha@madrassah.edu",
-        className: "Arabic Foundations",
-        memorisedSurahs: 20,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-    {
-        id: 9,
-        name: "Bilal",
-        email: "bilal@madrassah.edu",
-        className: "Hifz Level 2",
-        memorisedSurahs: 20,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-    {
-        id: 10,
-        name: "Zainab",
-        email: "zainab@madrassah.edu",
-        className: "Tajweed Intermediate",
-        memorisedSurahs: 20,
-        totalSurahs: 114,
-        attendance: 80,
-        late: 1,
-        absent: 0,
-    },
-];
+// Backend default page size (10 per page)
+const PER_PAGE = 10;
 
 const getInitials = (name: string) => {
     const words = name.trim().split(/\s+/).filter(Boolean);
@@ -152,74 +36,123 @@ const getInitials = (name: string) => {
     ).toUpperCase();
 };
 
-const StudentProgress = () => {
+interface StudentProgressProps {
+    // Extra section class (the Teacher page adds "teacher")
+    className?: string;
+}
+
+// Students Progress list (GET /v1/student-progress). The backend returns all
+// students for Super Admin / Admin and only their classes' students for
+// Teachers.
+const StudentProgress = ({ className = "" }: StudentProgressProps) => {
 
     const navigate = useNavigate();
 
-    const [students] = useState<StudentProgressData[]>( INITIAL_STUDENTS );
+    // Page kept in the URL so "Back to Students" returns to the same page
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const [showLogProgress, setShowLogProgress] = useState(false);
+    const page = Math.max(Number.parseInt(searchParams.get("page") ?? "1", 10) || 1, 1);
 
-    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
-
-    /*
-     * Popup ke liye student data ka format.
-     * Baad mein API se data aaye to isi structure ko map kar sakte hain.
-     */
-    const progressStudents: ProgressStudent[] = students.map(
-        (student) => ({
-            id: student.id,
-            name: student.name,
-            email: student.email,
-            className: student.className,
-        })
-    );
-
-    /*
-     * Log Progress button click
-     */
-    const handleLogProgress = (student: StudentProgressData) => {
-        setSelectedStudentId(student.id);
-        setShowLogProgress(true);
+    const goToPage = (nextPage: number) => {
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
+            if (nextPage > 1) next.set("page", String(nextPage));
+            else next.delete("page");
+            return next;
+        });
     };
 
+    const {
+        students,
+        pagination,
+        error,
+        isLoading,
+        hasLoaded,
+        retry,
+    } = useProgressStudents({ page, perPage: PER_PAGE });
+
+    const totalResults = pagination?.total ?? students.length;
+    const resultsPerPage = pagination?.per_page ?? PER_PAGE;
+    const currentPage = pagination?.current_page ?? page;
+    const totalPages = Math.max(pagination?.last_page ?? 1, 1);
+    const firstResult = totalResults === 0 ? 0 : (currentPage - 1) * resultsPerPage + 1;
+    const lastResult = Math.min(currentPage * resultsPerPage, totalResults);
+
     /*
-     * Popup close
+     * Log Progress popup (subjects/grades are loaded by the popup)
      */
+    const [logStudent, setLogStudent] = useState<ProgressStudentItem | null>(null);
+
+    const handleLogProgress = (student: ProgressStudentItem) => {
+        setLogStudent(student);
+    };
+
     const handleCloseLogProgress = () => {
-        setShowLogProgress(false);
-        setSelectedStudentId(null);
+        setLogStudent(null);
     };
 
-    /*
-     * Save progress entries.
-     * Filhal console mein data jayega.
-     * API integration baad mein yahan add hogi.
-     */
-    const [progressEntries, setProgressEntries] = useState<
-        LogProgressPayload[]
-    >([]);
-
-    const handleSaveProgress = (data: LogProgressPayload) => {
-        setProgressEntries((current) => [...current, data]);
-
-        console.log("New Progress Entry:", data);
-        console.log("All Progress Entries:", [
-            ...progressEntries,
-            data,
-        ]);
-
-        setShowLogProgress(false);
-        setSelectedStudentId(null);
+    // Refresh the list so the record count / last progress date update
+    const handleProgressSaved = () => {
+        setLogStudent(null);
+        retry();
     };
 
-    const handleViewProgress = (student: StudentProgressData) => {
+    const handleViewProgress = (student: ProgressStudentItem) => {
         navigate(`/students-progress/${student.id}`, {
             state: {
                 student,
-                progressEntries,
+                // Back to this page of the list
+                backTo: `/students-progress${page > 1 ? `?page=${page}` : ""}`,
             },
         });
+    };
+
+    const renderStatus = () => {
+        if (!hasLoaded && isLoading) {
+            return (
+                <div className="student-progress-empty">
+                    <UserRound size={28} />
+
+                    <h3>Loading students...</h3>
+                </div>
+            );
+        }
+
+        if (error && students.length === 0) {
+            return (
+                <div className="student-progress-empty">
+                    <CheckCircle2 size={28} />
+
+                    <h3>Students could not be loaded</h3>
+
+                    <p>{error}</p>
+
+                    <button
+                        type="button"
+                        className="student-progress-view-button"
+                        onClick={retry}
+                    >
+                        <span>Try Again</span>
+                    </button>
+                </div>
+            );
+        }
+
+        if (students.length === 0) {
+            return (
+                <div className="student-progress-empty">
+                    <CheckCircle2 size={28} />
+
+                    <h3>No students found</h3>
+
+                    <p>
+                        Student progress will appear here.
+                    </p>
+                </div>
+            );
+        }
+
+        return null;
     };
 
     return (
@@ -229,7 +162,7 @@ const StudentProgress = () => {
                 description="Manage students progress for Noor Ul Imaan Masjid Madrassah Portal."
             />
 
-            <section className="student-progress-section">
+            <section className={`${className} student-progress-section`.trim()}>
                 {/* Page heading */}
                 <div className="student-progress-heading">
                     <div>
@@ -242,21 +175,21 @@ const StudentProgress = () => {
                         <UserRound size={16} />
 
                         <span>
-                            {students.length} students
+                            {hasLoaded ? totalResults : "—"} students
                         </span>
                     </div>
                 </div>
 
                 {/* Student cards */}
-                <div className="student-progress-grid">
+                {students.length > 0 && (
+                <div
+                    className="student-progress-grid"
+                    style={isLoading ? { opacity: 0.6 } : undefined}
+                    aria-busy={isLoading}
+                >
                     {students.map((student) => {
-                        const progressPercentage = Math.round(
-                            (student.memorisedSurahs /
-                                student.totalSurahs) *
-                                100
-                        );
 
-                        const hasImage = Boolean(student.image);
+                        const lastProgress = formatProgressDate(student.last_progress_date);
 
                         return (
                             <div
@@ -266,16 +199,15 @@ const StudentProgress = () => {
                                 {/* Student details */}
                                 <div className="student-progress-profile">
                                     <div className="student-progress-avatar">
-                                        {hasImage ? (
-                                            <img
-                                                src={student.image}
-                                                alt={student.name}
-                                            />
-                                        ) : (
-                                            <span>
-                                                {getInitials(student.name)}
-                                            </span>
-                                        )}
+                                        <AvatarContent
+                                            src={student.image}
+                                            alt={student.name}
+                                            fallback={
+                                                <span>
+                                                    {student.initials || getInitials(student.name)}
+                                                </span>
+                                            }
+                                        />
                                     </div>
 
                                     <div className="student-progress-identity">
@@ -289,13 +221,16 @@ const StudentProgress = () => {
                                             <BookOpen size={13} />
 
                                             <span>
-                                                {student.className}
+                                                {student.class_name || "No class assigned"}
                                             </span>
                                         </p>
                                     </div>
                                 </div>
 
-                                {/* Hifz progress */}
+                                {/*
+                                    Hifz progress and attendance are not part of the
+                                    Student Progress API; hidden for now.
+
                                 <div className="student-hifz-progress">
                                     <div className="student-hifz-progress-info">
                                         <span>Hifz Progress</span>
@@ -326,7 +261,6 @@ const StudentProgress = () => {
                                     </span>
                                 </div>
 
-                                {/* Attendance summary */}
                                 <div className="student-progress-stats">
                                     <div
                                         className={`student-progress-stat ${
@@ -352,6 +286,28 @@ const StudentProgress = () => {
                                         <strong>{student.absent}</strong>
 
                                         <span>Absent</span>
+                                    </div>
+                                </div>
+                                */}
+
+                                {/* Progress summary (from the API) */}
+                                <div className="student-progress-stats">
+                                    <div className="student-progress-stat attendance-good">
+                                        <strong>{student.total_records ?? 0}</strong>
+
+                                        <span>Records</span>
+                                    </div>
+
+                                    <div className="student-progress-stat late-stat">
+                                        <strong>{lastProgress ?? "—"}</strong>
+
+                                        <span>Last Progress</span>
+                                    </div>
+
+                                    <div className="student-progress-stat absent-stat">
+                                        <strong>{student.admission_number || "—"}</strong>
+
+                                        <span>Admission No.</span>
                                     </div>
                                 </div>
 
@@ -385,28 +341,56 @@ const StudentProgress = () => {
                         );
                     })}
                 </div>
+                )}
 
-                {/* Empty state */}
-                {students.length === 0 && (
-                    <div className="student-progress-empty">
-                        <CheckCircle2 size={28} />
+                {/* Loading / error / empty state */}
+                {renderStatus()}
 
-                        <h3>No students found</h3>
-
-                        <p>
-                            Student progress will appear here.
-                        </p>
+                {/* Pagination (existing table footer styles) */}
+                {hasLoaded && totalResults > 0 && (
+                    <div className="table-footer">
+                        <div className="table-results">
+                            Showing <strong>{firstResult}</strong>–<strong>{lastResult}</strong> of{" "}
+                            <strong>{totalResults}</strong> students
+                        </div>
+                        <div className="table-pagination">
+                            <span>
+                                Page {page} of {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                disabled={page <= 1 || isLoading}
+                                onClick={() => goToPage(page - 1)}
+                                aria-label="Previous page"
+                            >
+                                <ChevronLeft size={16} strokeWidth={2} />
+                            </button>
+                            <TablePageNumbers
+                                page={page}
+                                totalPages={totalPages}
+                                onPageChange={goToPage}
+                                disabled={isLoading}
+                            />
+                            <button
+                                type="button"
+                                disabled={page >= totalPages || isLoading}
+                                onClick={() => goToPage(page + 1)}
+                                aria-label="Next page"
+                            >
+                                <ChevronRight size={16} strokeWidth={2} />
+                            </button>
+                        </div>
                     </div>
                 )}
             </section>
 
             {/* Log Progress Popup */}
-            {showLogProgress && selectedStudentId !== null && (
+            {logStudent && (
                 <LogProgressPopup
-                    students={progressStudents}
-                    selectedStudentId={selectedStudentId}
+                    key={logStudent.id}
+                    student={toPopupStudent(logStudent)}
                     onClose={handleCloseLogProgress}
-                    onSave={handleSaveProgress}
+                    onSaved={handleProgressSaved}
                 />
             )}
         </>

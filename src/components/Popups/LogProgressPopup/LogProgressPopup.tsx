@@ -1,61 +1,52 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 
 import { X, BookOpen, ChevronDown } from "lucide-react";
+import { toast } from "react-toastify";
+
+import AvatarContent from "../../Avatar/AvatarContent";
+import { useStudentProgressDetails } from "../../../hooks/useStudentProgress";
+import { storeStudentProgressRecord } from "../../../services/studentProgressService";
+import { getFirstFieldErrors, parseApiError } from "../../../utils/apiError";
+import type {
+    ProgressCourse,
+    ProgressRecordField,
+    ProgressRecordFormErrors,
+    StudentProgressRecord,
+} from "../../../types/studentProgress.types";
 
 import "./LogProgressPopup.css";
 
+// The student shown at the top of the popup
 export interface ProgressStudent {
     id: number;
     name: string;
     email: string;
     className: string;
+    initials?: string;
+    image?: string | null;
 }
 
-export interface ProgressEntry {
-    id: number;
-    studentId: number;
-    subject: string;
-    lesson: string;
-    grade: string;
-    notes: string;
-    date: string;
-}
-
-export interface LogProgressPayload {
-    id: number;
-    studentId: number;
-    studentName: string;
-    subject: string;
-    lesson: string;
-    grade: string;
-    notes: string;
-    date: string;
+// Subjects (the student's class courses) and grades from
+// GET /v1/student-progress/{id}. Fetched by the popup when not passed.
+export interface ProgressOptions {
+    courses: ProgressCourse[];
+    grades: string[];
 }
 
 interface LogProgressPopupProps {
-    students: ProgressStudent[];
-    selectedStudentId: number;
+    student: ProgressStudent;
+    options?: ProgressOptions | null;
     onClose: () => void;
-    onSave: (data: LogProgressPayload) => void;
+    // Called after POST /v1/student-progress/{id}/records succeeds
+    onSaved: (record: StudentProgressRecord | null) => void;
 }
 
-const SUBJECTS = [
-    "Quran",
-    "Tajweed",
-    "Arabic",
-    "Fiqh",
-    "Islamic Studies",
-];
+const DEFAULT_GRADE = "A";
 
-const GRADES = [
-    "A+",
-    "A",
-    "B+",
-    "B",
-    "C",
-    "Needs Improvement",
-];
+const MAX_LESSON_LENGTH = 255;
+
+const MAX_NOTES_LENGTH = 5000;
 
 const getInitials = (name: string) => {
 
@@ -73,43 +64,134 @@ const getInitials = (name: string) => {
     ).toUpperCase();
 };
 
-const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogProgressPopupProps) => {
+// Client-side rules (same wording as the backend)
+const validate = (courseId: string, lesson: string, grade: string, notes: string): ProgressRecordFormErrors => {
+    const errors: ProgressRecordFormErrors = {};
 
-    const [subject, setSubject] = useState("Quran");
+    if (!courseId) errors.course_id = "The subject field is required.";
+
+    if (!lesson.trim()) {
+        errors.lesson = "The lesson / topic field is required.";
+    } else if (lesson.trim().length > MAX_LESSON_LENGTH) {
+        errors.lesson = `The lesson / topic field must not be greater than ${MAX_LESSON_LENGTH} characters.`;
+    }
+
+    if (!grade) errors.grade = "The grade field is required.";
+
+    if (notes.trim().length > MAX_NOTES_LENGTH) {
+        errors.notes = `The notes field must not be greater than ${MAX_NOTES_LENGTH} characters.`;
+    }
+
+    return errors;
+};
+
+const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPopupProps) => {
+
+    // Subjects/grades: from the caller, otherwise loaded here
+    const fetched = useStudentProgressDetails(options ? null : student.id);
+
+    const courses = options?.courses ?? fetched.details?.courses ?? [];
+
+    const grades = options?.grades ?? fetched.details?.grades ?? [];
+
+    const isLoadingOptions = !options && fetched.isLoading;
+
+    const optionsError = options ? null : fetched.error;
+
+    // Empty = "use the default" (first subject / grade A), so the defaults
+    // apply as soon as the options arrive
+    const [courseValue, setCourseValue] = useState("");
     const [lesson, setLesson] = useState("");
-    const [grade, setGrade] = useState("A");
+    const [gradeValue, setGradeValue] = useState("");
     const [notes, setNotes] = useState("");
 
-    // Only the student clicked on the Student Progress page.
-    const selectedStudent = students.find(
-        (student) => student.id === selectedStudentId
-    );
+    const courseId = courses.some((course) => String(course.id) === courseValue)
+        ? courseValue
+        : courses[0] ? String(courses[0].id) : "";
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const grade = grades.includes(gradeValue)
+        ? gradeValue
+        : grades.includes(DEFAULT_GRADE) ? DEFAULT_GRADE : grades[0] ?? "";
 
-        if (!selectedStudent || !lesson.trim()) return;
+    const [errors, setErrors] = useState<ProgressRecordFormErrors>({});
 
-        const payload: LogProgressPayload = {
-            id: Date.now(),
-            studentId: selectedStudent.id,
-            studentName: selectedStudent.name,
-            subject,
-            lesson: lesson.trim(),
-            grade,
-            notes: notes.trim(),
-            date: new Date().toLocaleDateString("en-CA"),
-        };
+    const [isSaving, setIsSaving] = useState(false);
 
-        onSave(payload);
+    // Synchronous guard against double submits
+    const isSavingRef = useRef(false);
+
+    const clearError = (field: ProgressRecordField) => {
+        if (errors[field]) setErrors((current) => ({ ...current, [field]: undefined }));
     };
 
+    const handleClose = () => {
+        if (!isSavingRef.current) onClose();
+    };
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (isSavingRef.current) return;
+
+        const clientErrors = validate(courseId, lesson, grade, notes);
+
+        if (Object.values(clientErrors).some(Boolean)) {
+            setErrors(clientErrors);
+            return;
+        }
+
+        isSavingRef.current = true;
+        setIsSaving(true);
+        setErrors({});
+
+        try {
+            // progress_date is left to the backend (defaults to today)
+            const response = await storeStudentProgressRecord(student.id, {
+                course_id: Number(courseId),
+                lesson: lesson.trim(),
+                grade,
+                notes: notes.trim() || null,
+            });
+
+            toast.success(response.message || "Progress logged successfully.");
+
+            isSavingRef.current = false;
+
+            onSaved(response.record);
+        } catch (error) {
+            const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 422 && validationErrors) {
+                const fieldErrors = getFirstFieldErrors<string>(validationErrors);
+
+                const inlineErrors: ProgressRecordFormErrors = {
+                    course_id: fieldErrors.course_id,
+                    lesson: fieldErrors.lesson,
+                    grade: fieldErrors.grade,
+                    notes: fieldErrors.notes,
+                    progress_date: fieldErrors.progress_date,
+                };
+
+                setErrors(inlineErrors);
+
+                if (!Object.values(inlineErrors).some(Boolean)) toast.error(message);
+            } else if (status !== 401) {
+                toast.error(message);
+            }
+
+            isSavingRef.current = false;
+            setIsSaving(false);
+        }
+    };
+
+    const canSave = !isSaving && !isLoadingOptions && courses.length > 0 && grades.length > 0;
+
     return (
-        
+
         <div className="log-progress-overlay"
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget) {
-                    onClose();
+                    handleClose();
                 }
             }}
         >
@@ -140,7 +222,8 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                     <button
                         type="button"
                         className="log-progress-close"
-                        onClick={onClose}
+                        onClick={handleClose}
+                        disabled={isSaving}
                         aria-label="Close popup"
                     >
                         <X size={20} />
@@ -150,36 +233,38 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                 <form
                     className="log-progress-form"
                     onSubmit={handleSubmit}
+                    noValidate
                 >
                     {/* Selected Student */}
                     <div className="log-progress-student-section">
 
-                        {selectedStudent ? (
-                            <div className="log-progress-student-info">
-                                <span className="log-progress-avatar">
-                                    {getInitials(selectedStudent.name)}
-                                </span>
+                        <div className="log-progress-student-info">
+                            <span className="log-progress-avatar">
+                                <AvatarContent
+                                    src={student.image ?? null}
+                                    alt={student.name}
+                                    fallback={student.initials || getInitials(student.name)}
+                                />
+                            </span>
 
-                                <div>
-                                    <strong>
-                                        {selectedStudent.name}
-                                    </strong>
+                            <div>
+                                <strong>
+                                    {student.name}
+                                </strong>
 
+                                {student.email && (
                                     <span>
-                                        {selectedStudent.email}
+                                        {student.email}
                                     </span>
+                                )}
 
+                                {student.className && (
                                     <span>
-                                        {selectedStudent.className}
+                                        {student.className}
                                     </span>
-                                </div>
+                                )}
                             </div>
-                        ) : (
-                            <p>
-                                Student not found. Please close this
-                                popup and select a student again.
-                            </p>
-                        )}
+                        </div>
                     </div>
 
                     {/* Progress Details */}
@@ -196,7 +281,7 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
 
                     <div className="log-progress-entry">
                         <div className="log-progress-fields-grid">
-                            {/* Subject */}
+                            {/* Subject: the student's class courses */}
                             <div className="log-progress-field full-width">
                                 <label
                                     className="log-progress-label"
@@ -209,17 +294,29 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                     <select
                                         id="progress-subject"
                                         className="log-progress-input"
-                                        value={subject}
-                                        onChange={(event) =>
-                                            setSubject(event.target.value)
-                                        }
+                                        value={courseId}
+                                        onChange={(event) => {
+                                            setCourseValue(event.target.value);
+                                            clearError("course_id");
+                                        }}
+                                        disabled={isSaving || courses.length === 0}
+                                        aria-invalid={Boolean(errors.course_id)}
                                     >
-                                        {SUBJECTS.map((item) => (
+                                        {courses.length === 0 && (
+                                            <option value="">
+                                                {isLoadingOptions
+                                                    ? "Loading..."
+                                                    : optionsError
+                                                        ? "Subjects could not be loaded"
+                                                        : "No subjects assigned"}
+                                            </option>
+                                        )}
+                                        {courses.map((course) => (
                                             <option
-                                                key={item}
-                                                value={item}
+                                                key={course.id}
+                                                value={course.id}
                                             >
-                                                {item}
+                                                {course.name}
                                             </option>
                                         ))}
                                     </select>
@@ -229,6 +326,29 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                         className="log-progress-select-icon"
                                     />
                                 </div>
+
+                                {errors.course_id && (
+                                    <span className="error-text">{errors.course_id}</span>
+                                )}
+
+                                {!isLoadingOptions && !optionsError && courses.length === 0 && (
+                                    <span className="error-text">
+                                        No subjects are assigned to this student's class.
+                                    </span>
+                                )}
+
+                                {optionsError && (
+                                    <span className="error-text">
+                                        {optionsError}{" "}
+                                        <button
+                                            type="button"
+                                            className="btn btn-link p-0 align-baseline"
+                                            onClick={fetched.retry}
+                                        >
+                                            Retry
+                                        </button>
+                                    </span>
+                                )}
                             </div>
 
                             {/* Lesson / Topic */}
@@ -246,11 +366,19 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                     type="text"
                                     placeholder="e.g. Surah Al-Baqarah 1–10"
                                     value={lesson}
-                                    onChange={(event) =>
-                                        setLesson(event.target.value)
-                                    }
+                                    onChange={(event) => {
+                                        setLesson(event.target.value);
+                                        clearError("lesson");
+                                    }}
+                                    maxLength={MAX_LESSON_LENGTH}
+                                    disabled={isSaving}
+                                    aria-invalid={Boolean(errors.lesson)}
                                     required
                                 />
+
+                                {errors.lesson && (
+                                    <span className="error-text">{errors.lesson}</span>
+                                )}
                             </div>
 
                             {/* Grade */}
@@ -267,11 +395,19 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                         id="progress-grade"
                                         className="log-progress-input"
                                         value={grade}
-                                        onChange={(event) =>
-                                            setGrade(event.target.value)
-                                        }
+                                        onChange={(event) => {
+                                            setGradeValue(event.target.value);
+                                            clearError("grade");
+                                        }}
+                                        disabled={isSaving || grades.length === 0}
+                                        aria-invalid={Boolean(errors.grade)}
                                     >
-                                        {GRADES.map((item) => (
+                                        {grades.length === 0 && (
+                                            <option value="">
+                                                {isLoadingOptions ? "Loading..." : "No grades available"}
+                                            </option>
+                                        )}
+                                        {grades.map((item) => (
                                             <option
                                                 key={item}
                                                 value={item}
@@ -286,6 +422,10 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                         className="log-progress-select-icon"
                                     />
                                 </div>
+
+                                {errors.grade && (
+                                    <span className="error-text">{errors.grade}</span>
+                                )}
                             </div>
 
                             {/* Notes / Feedback */}
@@ -303,10 +443,22 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                                     placeholder="Add feedback or additional notes..."
                                     rows={3}
                                     value={notes}
-                                    onChange={(event) =>
-                                        setNotes(event.target.value)
-                                    }
+                                    onChange={(event) => {
+                                        setNotes(event.target.value);
+                                        clearError("notes");
+                                    }}
+                                    maxLength={MAX_NOTES_LENGTH}
+                                    disabled={isSaving}
+                                    aria-invalid={Boolean(errors.notes)}
                                 />
+
+                                {errors.notes && (
+                                    <span className="error-text">{errors.notes}</span>
+                                )}
+
+                                {errors.progress_date && (
+                                    <span className="error-text">{errors.progress_date}</span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -316,7 +468,8 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                         <button
                             type="button"
                             className="log-progress-cancel"
-                            onClick={onClose}
+                            onClick={handleClose}
+                            disabled={isSaving}
                         >
                             Cancel
                         </button>
@@ -324,9 +477,10 @@ const LogProgressPopup = ({ students, selectedStudentId, onClose, onSave }: LogP
                         <button
                             type="submit"
                             className="log-progress-save"
-                            disabled={!selectedStudent}
+                            disabled={!canSave}
+                            aria-busy={isSaving}
                         >
-                            Save Progress
+                            {isSaving ? "Saving..." : "Save Progress"}
                         </button>
                     </div>
                 </form>

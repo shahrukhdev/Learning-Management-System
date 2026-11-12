@@ -1,28 +1,26 @@
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { ArrowLeft, Award, BookOpen, CalendarDays, ClipboardList, GraduationCap, Plus, UserRound } from "lucide-react";
+import { ArrowLeft, Award, BookOpen, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, GraduationCap, Plus, UserRound } from "lucide-react";
 
 import SEO from "../../../../components/Seo/SEO";
 
-import LogProgressPopup, { type ProgressStudent, type LogProgressPayload } from "../../../../components/Popups/LogProgressPopup/LogProgressPopup";
+import LogProgressPopup from "../../../../components/Popups/LogProgressPopup/LogProgressPopup";
+import AvatarContent from "../../../../components/Avatar/AvatarContent";
+import TablePageNumbers from "../../../../components/Table/TablePageNumbers";
 
-import { INITIAL_STUDENTS } from "../StudentProgress";
+import { useStudentProgressDetails, useStudentProgressRecords } from "../../../../hooks/useStudentProgress";
+import type { ProgressStudentItem } from "../../../../types/studentProgress.types";
+import { formatProgressDate, getGradeClass, toPopupStudent } from "../../../../utils/studentProgress";
+
+import "../../../../components/Table/Table.css";
 import "./StudentProgressDetails.css";
 
-const SUBJECTS = [
-    "All Subjects",
-    "Quran",
-    "Tajweed",
-    "Arabic",
-    "Fiqh",
-    "Islamic Studies",
-];
+const LIST_PATH = "/students-progress";
 
-type Student = ProgressStudent & {
-    image?: string;
-};
+// Backend default page size (10 per page)
+const RECORDS_PER_PAGE = 10;
 
 const getInitials = (name: string) => {
     const words = name.trim().split(/\s+/).filter(Boolean);
@@ -33,100 +31,108 @@ const getInitials = (name: string) => {
     return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase();
 };
 
-const formatDate = (date: string) => {
-    const parsedDate = new Date(`${date}T00:00:00`);
+interface StudentProgressDetailsProps {
+    // Extra section class (the Teacher page adds "teacher")
+    className?: string;
+}
 
-    if (Number.isNaN(parsedDate.getTime())) return date;
-
-    return parsedDate.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    });
-};
-
-const getGradeClass = (grade: string) => {
-    if (grade === "A+" || grade === "A") return "grade-high";
-    if (grade === "B+" || grade === "B") return "grade-good";
-    return "grade-review";
-};
-
-const StudentProgressDetails = () => {
+// Student Progress details: profile + summary + subjects
+// (GET /v1/student-progress/{id}) and the paginated history
+// (GET /v1/student-progress/{id}/records, optionally by course).
+const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { studentId } = useParams();
+    const { studentId: studentIdParam } = useParams();
 
-    const students = INITIAL_STUDENTS as Student[];
+    const parsedId = Number(studentIdParam);
 
-    const student = useMemo(() => {
-        const stateStudent = location.state?.student as Student | undefined;
+    const studentId = Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
 
-        if (stateStudent && String(stateStudent.id) === studentId) {
-            return stateStudent;
-        }
+    const sectionClassName = `${className} student-progress-detail`.trim();
 
-        return students.find(
-            (item) => String(item.id) === studentId
-        );
-    }, [location.state, studentId, students]);
+    // List card data passed on navigation: shown while the profile loads
+    const stateStudent = location.state?.student as ProgressStudentItem | undefined;
 
-    const [progressEntries, setProgressEntries] = useState<
-        LogProgressPayload[]
-    >(() => location.state?.progressEntries ?? []);
+    const backTo = typeof location.state?.backTo === "string" ? location.state.backTo : LIST_PATH;
 
-    const [activeSubject, setActiveSubject] = useState("All Subjects");
+    const {
+        details,
+        error: detailsError,
+        isNotFound,
+        isLoading: isLoadingDetails,
+        retry: retryDetails,
+    } = useStudentProgressDetails(studentId);
+
+    const student = details?.student ?? (stateStudent && stateStudent.id === studentId ? stateStudent : null);
+
+    /* Subject filter + page (the page resets whenever the filter changes) */
+
+    const [activeCourseState, setActiveCourseState] = useState<{ studentId: number | null; courseId: number | null }>({
+        studentId,
+        courseId: null,
+    });
+
+    // A filter chosen for another student never applies here
+    const activeCourseId = activeCourseState.studentId === studentId ? activeCourseState.courseId : null;
+
+    const filterKey = `${studentId}-${activeCourseId}`;
+
+    const [pageState, setPageState] = useState({ key: filterKey, page: 1 });
+
+    const page = pageState.key === filterKey ? pageState.page : 1;
+
+    const goToPage = (nextPage: number) => setPageState({ key: filterKey, page: nextPage });
+
+    const selectCourse = (courseId: number | null) => setActiveCourseState({ studentId, courseId });
+
+    const {
+        records,
+        pagination,
+        error: recordsError,
+        isLoading: isLoadingRecords,
+        hasLoaded: hasLoadedRecords,
+        retry: retryRecords,
+    } = useStudentProgressRecords({
+        studentId: isNotFound ? null : studentId,
+        courseId: activeCourseId,
+        page,
+        perPage: RECORDS_PER_PAGE,
+    });
+
+    const totalRecords = pagination?.total ?? records.length;
+    const totalPages = Math.max(pagination?.last_page ?? 1, 1);
+    const resultsPerPage = pagination?.per_page ?? RECORDS_PER_PAGE;
+    const currentPage = pagination?.current_page ?? page;
+    const firstResult = totalRecords === 0 ? 0 : (currentPage - 1) * resultsPerPage + 1;
+    const lastResult = Math.min(currentPage * resultsPerPage, totalRecords);
+
+    const summary = details?.summary ?? null;
+
+    const courses = details?.courses ?? [];
+
+    // "Latest" = first record of the unfiltered history
+    const showLatest = activeCourseId === null && page === 1;
+
     const [showPopup, setShowPopup] = useState(false);
 
-    const popupStudents: ProgressStudent[] = students.map((item) => ({
-        id: item.id,
-        name: item.name,
-        email: item.email,
-        className: item.className,
-    }));
-
-    const studentEntries = useMemo(() => {
-        if (!student) return [];
-
-        return progressEntries
-            .filter((entry) => entry.studentId === student.id)
-            .sort((a, b) => b.id - a.id);
-    }, [progressEntries, student]);
-
-    const filteredEntries = useMemo(() => {
-        if (activeSubject === "All Subjects") {
-            return studentEntries;
-        }
-
-        return studentEntries.filter(
-            (entry) => entry.subject === activeSubject
-        );
-    }, [studentEntries, activeSubject]);
-
-    const strongCount = studentEntries.filter(
-        (entry) => entry.grade === "A+" || entry.grade === "A"
-    ).length;
-
-    const attentionCount = studentEntries.filter(
-        (entry) =>
-            entry.grade === "C" ||
-            entry.grade === "Needs Improvement"
-    ).length;
-
-    const handleSaveProgress = (data: LogProgressPayload) => {
-        setProgressEntries((current) => [data, ...current]);
+    const handleSaveProgress = () => {
         setShowPopup(false);
+
+        // Summary cards and history (latest first) both change
+        retryDetails();
+
+        if (page === 1) retryRecords();
+        else goToPage(1);
     };
 
     const handleBack = () => {
-        navigate("/students-progress", {
-            state: { progressEntries },
-        });
+        navigate(backTo);
     };
 
-    if (!student) {
+    if (studentId === null || isNotFound) {
 
         return (
-            <section className="student-progress-detail">
+            <section className={sectionClassName}>
                 <div className="spd-empty-page">
                     <UserRound size={38} />
                     <h2>Student Not Found</h2>
@@ -143,6 +149,32 @@ const StudentProgressDetails = () => {
         );
     }
 
+    if (!student) {
+
+        return (
+            <section className={sectionClassName}>
+                <div className="spd-empty-page">
+                    <UserRound size={38} />
+                    <h2>{isLoadingDetails ? "Loading student..." : "Student progress could not be loaded"}</h2>
+                    {!isLoadingDetails && detailsError && <p>{detailsError}</p>}
+                    {!isLoadingDetails ? (
+                        <button type="button" onClick={retryDetails}>
+                            Try Again
+                        </button>
+                    ) : (
+                        <button type="button" onClick={handleBack}>
+                            <ArrowLeft size={17} />
+                            Back to Students
+                        </button>
+                    )}
+                </div>
+            </section>
+        );
+    }
+
+    const renderSummaryValue = (value: number | undefined) =>
+        summary ? value : isLoadingDetails ? "…" : "—";
+
     return (
         <>
             <SEO
@@ -150,7 +182,7 @@ const StudentProgressDetails = () => {
                 description={`Learning progress and assessment records for ${student.name}.`}
             />
 
-            <section className="student-progress-detail">
+            <section className={sectionClassName}>
 
                 {/* Page heading */}
                 <div className="spd-page-heading">
@@ -181,11 +213,11 @@ const StudentProgressDetails = () => {
                 {/* Student profile */}
                 <div className="spd-profile">
                     <div className="spd-avatar">
-                        {student.image ? (
-                            <img src={student.image} alt={student.name} />
-                        ) : (
-                            <span>{getInitials(student.name)}</span>
-                        )}
+                        <AvatarContent
+                            src={student.image}
+                            alt={student.name}
+                            fallback={<span>{student.initials || getInitials(student.name)}</span>}
+                        />
                     </div>
 
                     <div className="spd-profile-content">
@@ -197,17 +229,19 @@ const StudentProgressDetails = () => {
                         <div className="spd-profile-meta">
                             <span>
                                 <GraduationCap size={15} />
-                                {student.className}
+                                {student.class_name || "No class assigned"}
                             </span>
                             <span>
                                 <BookOpen size={15} />
-                                Madrassah Student
+                                {student.admission_number
+                                    ? `Admission No. ${student.admission_number}`
+                                    : "Madrassah Student"}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                {/* Summary */}
+                {/* Summary (from the API: all records of the student) */}
                 <div className="spd-summary">
 
                     <div className="spd-summary-card">
@@ -215,7 +249,7 @@ const StudentProgressDetails = () => {
                             <ClipboardList size={21} />
                         </div>
                         <p>Total Records</p>
-                        <h3>{studentEntries.length}</h3>
+                        <h3>{renderSummaryValue(summary?.total_records)}</h3>
                         <span>Progress entries recorded</span>
                     </div>
 
@@ -224,7 +258,7 @@ const StudentProgressDetails = () => {
                             <Award size={21} />
                         </div>
                         <p>Strong Results</p>
-                        <h3>{strongCount}</h3>
+                        <h3>{renderSummaryValue(summary?.strong_results)}</h3>
                         <span>Grades A+ and A</span>
                     </div>
 
@@ -233,10 +267,10 @@ const StudentProgressDetails = () => {
                             <BookOpen size={21} />
                         </div>
                         <p>Needs Attention</p>
-                        <h3>{attentionCount}</h3>
+                        <h3>{renderSummaryValue(summary?.needs_attention)}</h3>
                         <span>Grades needing improvement</span>
                     </div>
-                    
+
                 </div>
 
                 {/* Progress history */}
@@ -253,38 +287,75 @@ const StudentProgressDetails = () => {
                         </div>
 
                         <span className="spd-record-count">
-                            {filteredEntries.length}{" "}
-                            {filteredEntries.length === 1
+                            {totalRecords}{" "}
+                            {totalRecords === 1
                                 ? "record"
                                 : "records"}
                         </span>
                     </div>
 
-                    {/* Subject filters — no search bar */}
+                    {/* Subject filters (the student's class courses) — no search bar */}
                     <div className="spd-filters">
-                        {SUBJECTS.map((subjectName) => (
+                        <button
+                            type="button"
+                            className={activeCourseId === null ? "spd-filter active" : "spd-filter"}
+                            onClick={() => selectCourse(null)}
+                        >
+                            All Subjects
+                        </button>
+
+                        {courses.map((course) => (
                             <button
                                 type="button"
-                                key={subjectName}
+                                key={course.id}
                                 className={
-                                    activeSubject === subjectName
+                                    activeCourseId === course.id
                                         ? "spd-filter active"
                                         : "spd-filter"
                                 }
-                                onClick={() => setActiveSubject(subjectName)}
+                                onClick={() => selectCourse(course.id)}
                             >
-                                {subjectName}
+                                {course.name}
                             </button>
                         ))}
                     </div>
 
-                    {filteredEntries.length > 0 ? (
-                        <div className="spd-record-list">
-                            {filteredEntries.map((entry, index) => (
+                    {!hasLoadedRecords || (recordsError && records.length === 0) ? (
+                        <div className="spd-empty">
+                            <div className="spd-empty-icon">
+                                <BookOpen size={25} />
+                            </div>
+
+                            <h3>
+                                {recordsError && !isLoadingRecords
+                                    ? "Progress could not be loaded"
+                                    : "Loading progress..."}
+                            </h3>
+
+                            {recordsError && !isLoadingRecords && (
+                                <>
+                                    <p>{recordsError}</p>
+
+                                    <button type="button" onClick={retryRecords}>
+                                        Try Again
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    ) : records.length > 0 ? (
+                        <div
+                            className="spd-record-list"
+                            style={isLoadingRecords ? { opacity: 0.6 } : undefined}
+                            aria-busy={isLoadingRecords}
+                        >
+                            {records.map((entry, index) => {
+
+                                const isLatest = showLatest && index === 0;
+
+                                return (
                                 <article
                                     className={`spd-record ${
-                                        index === 0 &&
-                                        activeSubject === "All Subjects"
+                                        isLatest
                                             ? "spd-record-latest"
                                             : ""
                                     }`}
@@ -298,25 +369,27 @@ const StudentProgressDetails = () => {
                                         <div className="spd-record-heading">
                                             <div className="spd-record-title">
                                                 <div className="spd-record-tags">
-                                                    <span className="spd-subject-tag">
-                                                        {entry.subject}
-                                                    </span>
+                                                    {entry.course_name && (
+                                                        <span className="spd-subject-tag">
+                                                            {entry.course_name}
+                                                        </span>
+                                                    )}
 
-                                                    {index === 0 &&
-                                                        activeSubject ===
-                                                            "All Subjects" && (
-                                                            <span className="spd-latest-tag">
-                                                                Latest
-                                                            </span>
-                                                        )}
+                                                    {isLatest && (
+                                                        <span className="spd-latest-tag">
+                                                            Latest
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                                 <h3>{entry.lesson}</h3>
 
-                                                <span className="spd-date">
-                                                    <CalendarDays size={14} />
-                                                    {formatDate(entry.date)}
-                                                </span>
+                                                {formatProgressDate(entry.progress_date) && (
+                                                    <span className="spd-date">
+                                                        <CalendarDays size={14} />
+                                                        {formatProgressDate(entry.progress_date)}
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <span
@@ -329,7 +402,10 @@ const StudentProgressDetails = () => {
                                         </div>
 
                                         <div className="spd-feedback">
-                                            <span>Teacher Feedback</span>
+                                            <span>
+                                                Teacher Feedback
+                                                {entry.recorded_by_name ? ` · ${entry.recorded_by_name}` : ""}
+                                            </span>
                                             <p>
                                                 {entry.notes ||
                                                     "No feedback has been added for this lesson."}
@@ -337,7 +413,8 @@ const StudentProgressDetails = () => {
                                         </div>
                                     </div>
                                 </article>
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="spd-empty">
@@ -346,18 +423,18 @@ const StudentProgressDetails = () => {
                             </div>
 
                             <h3>
-                                {studentEntries.length === 0
+                                {activeCourseId === null
                                     ? "No Progress Yet"
                                     : "No Records for This Subject"}
                             </h3>
 
                             <p>
-                                {studentEntries.length === 0
+                                {activeCourseId === null
                                     ? "Add the first lesson record to start tracking this student's learning."
                                     : "Try selecting another subject to view its records."}
                             </p>
 
-                            {studentEntries.length === 0 && (
+                            {activeCourseId === null && (
                                 <button
                                     type="button"
                                     onClick={() => setShowPopup(true)}
@@ -368,15 +445,54 @@ const StudentProgressDetails = () => {
                             )}
                         </div>
                     )}
+
+                    {/* Pagination (existing table footer styles) */}
+                    {hasLoadedRecords && totalPages > 1 && (
+                        <div className="table-footer">
+                            <div className="table-results">
+                                Showing <strong>{firstResult}</strong>–<strong>{lastResult}</strong> of{" "}
+                                <strong>{totalRecords}</strong> records
+                            </div>
+                            <div className="table-pagination">
+                                <span>
+                                    Page {page} of {totalPages}
+                                </span>
+                                <button
+                                    type="button"
+                                    disabled={page <= 1 || isLoadingRecords}
+                                    onClick={() => goToPage(page - 1)}
+                                    aria-label="Previous page"
+                                >
+                                    <ChevronLeft size={16} strokeWidth={2} />
+                                </button>
+                                <TablePageNumbers
+                                    page={page}
+                                    totalPages={totalPages}
+                                    onPageChange={goToPage}
+                                    disabled={isLoadingRecords}
+                                />
+                                <button
+                                    type="button"
+                                    disabled={page >= totalPages || isLoadingRecords}
+                                    onClick={() => goToPage(page + 1)}
+                                    aria-label="Next page"
+                                >
+                                    <ChevronRight size={16} strokeWidth={2} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 
             {showPopup && (
                 <LogProgressPopup
-                    students={popupStudents}
-                    selectedStudentId={student.id}
+                    student={toPopupStudent(student)}
+                    // Subjects/grades already loaded here; the popup loads
+                    // them itself until then
+                    options={details ? { courses: details.courses, grades: details.grades } : null}
                     onClose={() => setShowPopup(false)}
-                    onSave={handleSaveProgress}
+                    onSaved={handleSaveProgress}
                 />
             )}
         </>
