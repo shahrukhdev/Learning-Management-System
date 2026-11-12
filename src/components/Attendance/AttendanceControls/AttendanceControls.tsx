@@ -23,6 +23,8 @@ interface AttendanceControlsProps {
 
     activeTab: AttendanceTab;
     onTabChange: (tab: AttendanceTab) => void;
+    canMarkAttendance: boolean;
+    canViewOverview: boolean;
 }
 
 const AttendanceControls = ({
@@ -34,6 +36,8 @@ const AttendanceControls = ({
     onMarkAttendance,
     activeTab,
     onTabChange,
+    canMarkAttendance,
+    canViewOverview,
     
 }: AttendanceControlsProps) => {
  
@@ -54,7 +58,12 @@ const AttendanceControls = ({
         <div className="attendance-controlS">
 
             {/* Attendance Tabs */}
-            <AttendanceTabs activeTab={activeTab} onTabChange={onTabChange} />
+            <AttendanceTabs
+                activeTab={activeTab}
+                onTabChange={onTabChange}
+                canMarkAttendance={canMarkAttendance}
+                canViewOverview={canViewOverview}
+            />
 
             {activeTab === "mark-attendance" && (
                 <>

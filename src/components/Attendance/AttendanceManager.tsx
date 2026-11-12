@@ -16,6 +16,8 @@ import { useAttendanceOverview } from "../../hooks/useAttendanceOverview";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { saveAttendance } from "../../services/attendanceService";
 import { parseApiError } from "../../utils/apiError";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 import type { AttendanceStatus, MarkedAttendanceStatus } from "../../types/attendance.types";
 
 // Same as Users Management
@@ -35,9 +37,20 @@ interface AttendanceManagerProps {
 //   (POST /v1/attendances).
 // - Attendance Overview: Mon-Fri of a week for the same class
 //   (GET /v1/attendances/overview).
+
 const AttendanceManager = ({ sectionClassName = "attendance-section" }: AttendanceManagerProps) => {
 
-    const [activeTab, setActiveTab] = useState<AttendanceTab>("mark-attendance");
+    const { hasPermission } = usePermissions();
+
+    const canMarkAttendance = hasPermission(PERMISSIONS.MARK_ATTENDANCE);
+    const canViewOverview = hasPermission(PERMISSIONS.ATTENDANCE_OVERVIEW);
+
+    const [activeTab, setActiveTab] = useState<AttendanceTab>(() => {
+        if (canMarkAttendance) return "mark-attendance";
+        if (canViewOverview) return "attendance-overview";
+
+        return "mark-attendance";
+    });
 
     const [search, setSearch] = useState("");
 
@@ -97,7 +110,10 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         statuses: {},
     });
 
-    const [selection, setSelection] = useState<{ key: string | null; ids: number[] }>({ key: null, ids: [] });
+    const [selection, setSelection] = useState<{ key: string | null; ids: number[] }>({
+        key: null,
+        ids: [],
+    });
 
     // Edits/selection only apply to the class/date they were made for
     const currentEdits = edits.key === selectionKey ? edits.statuses : NO_EDITS;
@@ -122,7 +138,7 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
     const overview = useAttendanceOverview(
         selectedClassId,
         weekStart,
-        activeTab === "attendance-overview"
+        canViewOverview && activeTab === "attendance-overview"
     );
 
     const currentWeekStart = getWeekStart(todayYmd());
@@ -170,6 +186,9 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
     -------------------------------- */
 
     const handleStudentSelect = (studentId: number) => {
+
+        if (!canMarkAttendance) return;
+
         const ids = selectedStudents.includes(studentId)
             ? selectedStudents.filter((id) => id !== studentId)
             : [...selectedStudents, studentId];
@@ -187,6 +206,9 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         visibleIds.length > 0 && visibleIds.every((id) => selectedStudents.includes(id));
 
     const handleSelectAll = () => {
+
+        if (!canMarkAttendance) return;
+
         setSelection({ key: selectionKey, ids: allVisibleSelected ? [] : visibleIds });
     };
 
@@ -195,6 +217,8 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
     -------------------------------- */
 
     const handleMarkAttendance = (status: AttendanceStatus) => {
+
+        if (!canMarkAttendance) return;
 
         if (selectedStudents.length === 0 || status === "not-marked") {
             return;
@@ -229,8 +253,8 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
         setDraftDate(value);
     };
 
-    // Filter button: apply the picked class + date and load their data. With
-    // nothing changed, the same data is requested again.
+    // Filter button: apply the picked class + date and load their data.
+    // With nothing changed, the same data is requested again.
     const handleApplyFilters = () => {
         const nextClassId = pendingClassId;
 
@@ -238,16 +262,35 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
 
         if (isUnchanged) {
             reloadAttendance();
-            overview.invalidate();
+
+            if (canViewOverview) {
+                overview.invalidate();
+            }
+
             return;
         }
 
         setChosenClassId(nextClassId);
         setDraftClassId(null);
         setDate(draftDate);
+
         // Keep the overview on the week of the applied date
         setWeekStart(getWeekStart(draftDate));
+
         resetLocalChanges();
+    };
+
+    /* --------------------------------
+       Tab Change
+    -------------------------------- */
+
+    const handleTabChange = (tab: AttendanceTab) => {
+
+        if (tab === "mark-attendance" && !canMarkAttendance) return;
+
+        if (tab === "attendance-overview" && !canViewOverview) return;
+
+        setActiveTab(tab);
     };
 
     /* --------------------------------
@@ -261,11 +304,16 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
 
     const handleSave = async () => {
 
+        if (!canMarkAttendance) return;
+
         if (isSavingRef.current || selectedClassId === null || selectionKey === null) return;
 
         // "not-marked" students are never submitted
         const attendances = records
-            .map((record) => ({ student_id: record.student_id, status: attendance[record.student_id] }))
+            .map((record) => ({
+                student_id: record.student_id,
+                status: attendance[record.student_id],
+            }))
             .filter((item): item is { student_id: number; status: MarkedAttendanceStatus } =>
                 item.status !== "not-marked"
             );
@@ -296,23 +344,34 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                 reloadAttendance();
             }
 
-            setEdits((current) => (current.key === savedKey ? { key: null, statuses: NO_EDITS } : current));
+            setEdits((current) => (
+                current.key === savedKey
+                    ? { key: null, statuses: NO_EDITS }
+                    : current
+            ));
 
             // The weekly overview reloads with the saved attendance
-            overview.invalidate();
+            if (canViewOverview) {
+                overview.invalidate();
+            }
+
         } catch (error) {
+
             const { status, message, validationErrors } = parseApiError(error);
 
             if (status === 422 && validationErrors) {
+
                 // No per-field inputs here: show the first backend message
                 const firstMessage = Object.values(validationErrors).find(
                     (messages) => Array.isArray(messages) && messages.length > 0
                 )?.[0];
 
                 toast.error(firstMessage || message);
+
             } else if (status !== 401) {
                 toast.error(message);
             }
+
         } finally {
             isSavingRef.current = false;
             setIsSaving(false);
@@ -344,6 +403,7 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
             <section className={sectionClassName}>
                 <div className="container-fluid">
                     <div className="row">
+
                         <div className="col-12">
                             <h1 className="section-title">
                                 Attendance
@@ -380,7 +440,6 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
 
                         </div>
 
-
                         {/* Attendance Controls */}
                         <div className="col-12">
                             <AttendanceControls
@@ -391,60 +450,64 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
                                 onMarkAttendance={handleMarkAttendance}
                                 attendance={attendance}
                                 activeTab={activeTab}
-                                onTabChange={setActiveTab}
+                                onTabChange={handleTabChange}
+                                canMarkAttendance={canMarkAttendance}
+                                canViewOverview={canViewOverview}
                             />
                         </div>
 
-                        {activeTab === "mark-attendance" && (
-                            <>
-                                {/* Attendance Student List */}
-                                <div className="col-12">
-                                    <AttendanceStudentList
-                                        students={visibleStudents}
-                                        totalStudents={records.length}
-                                        attendance={attendance}
-                                        selectedStudents={selectedStudents}
-                                        onStudentSelect={handleStudentSelect}
-                                        classOptions={classes}
-                                        selectedClassId={pendingClassId}
-                                        onClassChange={handleClassChange}
-                                        classesLoading={classesLoading}
-                                        classesError={classesError}
-                                        onRetryClasses={retryClasses}
-                                        date={date}
-                                        isLoading={attendanceLoading}
-                                        error={attendanceError}
-                                        onRetry={reloadAttendance}
-                                        onSave={handleSave}
-                                        isSaving={isSaving}
-                                    />
-                                </div>
-                            </>
+                        {/* Mark Attendance: visible only with Mark Attendance permission */}
+                        {activeTab === "mark-attendance" && canMarkAttendance && (
+                            <div className="col-12">
+                                <AttendanceStudentList
+                                    students={visibleStudents}
+                                    totalStudents={records.length}
+                                    attendance={attendance}
+                                    selectedStudents={selectedStudents}
+                                    onStudentSelect={handleStudentSelect}
+                                    classOptions={classes}
+                                    selectedClassId={pendingClassId}
+                                    onClassChange={handleClassChange}
+                                    classesLoading={classesLoading}
+                                    classesError={classesError}
+                                    onRetryClasses={retryClasses}
+                                    date={date}
+                                    isLoading={attendanceLoading}
+                                    error={attendanceError}
+                                    onRetry={reloadAttendance}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
+                            </div>
                         )}
 
-                        {activeTab === "attendance-overview" && (
-                            <>
-                                {/* Attendance Overview Table */}
-                                <div className="col-12">
-                                    <AttendanceOverviewTable
-                                        records={visibleOverview}
-                                        weekStart={weekStart}
-                                        isLoading={overview.isLoading}
-                                        error={overview.error}
-                                        onRetry={overview.retry}
-                                        onPreviousWeek={() => setWeekStart((current) => addDays(current, -7))}
-                                        onNextWeek={() => setWeekStart((current) => addDays(current, 7))}
-                                        canGoToNextWeek={weekStart < currentWeekStart}
-                                        emptyMessage={overviewEmptyMessage}
-                                    />
-                                </div>
-                            </>
+                        {/* Attendance Overview: visible only with Attendance Overview permission */}
+                        {activeTab === "attendance-overview" && canViewOverview && (
+                            <div className="col-12">
+                                <AttendanceOverviewTable
+                                    records={visibleOverview}
+                                    weekStart={weekStart}
+                                    isLoading={overview.isLoading}
+                                    error={overview.error}
+                                    onRetry={overview.retry}
+                                    onPreviousWeek={() => setWeekStart((current) => addDays(current, -7))}
+                                    onNextWeek={() => setWeekStart((current) => addDays(current, 7))}
+                                    canGoToNextWeek={weekStart < currentWeekStart}
+                                    emptyMessage={overviewEmptyMessage}
+                                />
+                            </div>
+                        )}
+
+                        {/* No attendance feature permissions */}
+                        {!canMarkAttendance && !canViewOverview && (
+                            <div className="col-12">
+                                <p>You don't have permission to access attendance features.</p>
+                            </div>
                         )}
 
                     </div>
                 </div>
             </section>
-
         </>
     );
 };
