@@ -146,7 +146,7 @@ const StudentProgressDetails = () => {
     return (
         <>
             <SEO
-                title={`${student.name} Progress | Noor Ul Imaan Masjid`}
+                title={`${student.name} Progress - Noor Ul Imaan Masjid`}
                 description={`Learning progress and assessment records for ${student.name}.`}
             />
 

@@ -98,7 +98,7 @@ const ForgotPassword = () => {
         <>
 
             <SEO
-                title="Forgot Password | Noor Ul Imaan Masjid"
+                title="Forgot Password - Noor Ul Imaan Masjid"
                 description="Forgot password for Noor Ul Imaan Masjid Madrassah Portal."
             />
 

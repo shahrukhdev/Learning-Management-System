@@ -87,7 +87,7 @@ const Hifz = () => {
     return (
         <>
             <SEO
-                title="Hifz | Noor Ul Imaan Masjid"
+                title="Hifz - Noor Ul Imaan Masjid"
                 description="Manage your Noor Ul Imaan Masjid Madrassah Portal Hifz."
             />
 

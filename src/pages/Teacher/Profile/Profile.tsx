@@ -10,7 +10,7 @@ const Profile = () => {
         <>
 
             <SEO
-                title="Profile | Noor Ul Imaan Masjid"
+                title="Profile - Noor Ul Imaan Masjid"
                 description="Manage profile for Noor Ul Imaan Masjid Madrassah Portal."
             />
 

@@ -224,7 +224,7 @@ const Notices = () => {
     return (
         <>
             <SEO
-                title="Notices | Noor Ul Imaan Masjid"
+                title="Notices - Noor Ul Imaan Masjid"
                 description="Manage notices for Noor Ul Imaan Masjid Madrassah Portal."
             />
 

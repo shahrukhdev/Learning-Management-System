@@ -146,7 +146,7 @@ const Login = () => {
         <>
 
             <SEO
-                title="Login | Noor Ul Imaan Masjid"
+                title="Login - Noor Ul Imaan Masjid"
                 description="Sign in to Noor Ul Imaan Masjid Madrassah Portal."
             />
 

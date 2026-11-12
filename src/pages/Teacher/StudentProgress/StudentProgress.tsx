@@ -225,7 +225,7 @@ const StudentProgress = () => {
     return (
         <>
             <SEO
-                title="Students Progress | Noor Ul Imaan Masjid"
+                title="Students Progress - Noor Ul Imaan Masjid"
                 description="Manage students progress for Noor Ul Imaan Masjid Madrassah Portal."
             />
 

@@ -25,7 +25,7 @@ const Dashboard = () => {
     return (
         <>
             <SEO
-                title="Dashboard | Noor Ul Imaan Masjid"
+                title="Dashboard - Noor Ul Imaan Masjid"
                 description="Manage your Noor Ul Imaan Masjid Madrassah Portal dashboard."
             />
 

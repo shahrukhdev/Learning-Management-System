@@ -168,7 +168,7 @@ const ResetPassword = () => {
         <>
 
             <SEO
-                title="Reset Password | Noor Ul Imaan Masjid"
+                title="Reset Password - Noor Ul Imaan Masjid"
                 description="Reset password for Noor Ul Imaan Masjid Madrassah Portal."
             />
 

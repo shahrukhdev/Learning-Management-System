@@ -203,7 +203,7 @@ const Classes = () => {
     return (
         <>
             <SEO
-                title="Classes Management | Noor Ul Imaan Masjid"
+                title="Classes Management - Noor Ul Imaan Masjid"
                 description="Create and manage classes across the Madrasah portal."
             />
             <section className="admin-list-section">

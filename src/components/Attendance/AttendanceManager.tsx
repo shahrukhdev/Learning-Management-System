@@ -396,7 +396,7 @@ const AttendanceManager = ({ sectionClassName = "attendance-section" }: Attendan
     return (
         <>
             <SEO
-                title="Attendance | Noor Ul Imaan Masjid"
+                title="Attendance - Noor Ul Imaan Masjid"
                 description="Manage your Noor Ul Imaan Masjid Madrassah Portal attendance."
             />
 
