@@ -2,9 +2,40 @@ import "./WelcomeBanner.css"
 import welcomeBannerImg from "../../assets/images/welcome-banner-img.png";
 import { Bell, Sparkle, SquareCheckBig } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
+// "Tuesday, 28 July 2026" (weekday, day, full month, year) in local time
+const formatBannerDate = (date: Date) =>
+    `${date.toLocaleDateString("en-GB", { weekday: "long" })}, ${date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    })}`;
+
+// Today's local date; re-renders just after midnight so it never goes stale
+const useToday = () => {
+    const [today, setToday] = useState(() => new Date());
+
+    useEffect(() => {
+        const nextMidnight = new Date(today);
+        nextMidnight.setHours(24, 0, 0, 0);
+
+        const timer = window.setTimeout(() => setToday(new Date()), nextMidnight.getTime() - Date.now() + 1000);
+
+        return () => window.clearTimeout(timer);
+    }, [today]);
+
+    return today;
+};
 
 const WelcomeBanner = () => {
+
+    // Signed-in user's name from AuthContext
+    const { user } = useAuth();
+
+    const today = useToday();
+
     return (
         <div className="col-12">
             <div className="welcome-banner">
@@ -14,10 +45,10 @@ const WelcomeBanner = () => {
                         Dashboard Overview
                     </span>
                     <h1 className="banner-title">
-                        Assalamu Alaikum, Admin
+                        Assalamu Alaikum{user?.name ? `, ${user.name}` : ""}
                     </h1>
                     <p className="welcome-banner-text mb-0">
-                        Tuesday, 28 July 2026 — The Current State of the Madrassah
+                        {formatBannerDate(today)}
                     </p>
                     <div className="welcome-banner-actions">
 
