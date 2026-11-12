@@ -49,12 +49,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const setUser = useCallback((nextUser: AuthUserInput) => {
         setUserState((current) => {
+            const isSameUser = current !== null && current.id === nextUser.id;
+
             const merged: AuthUser = {
                 ...nextUser,
-                // Missing permissions: keep the same user's current ones
+                // Missing initials / permissions: keep the same user's current ones
+                initials: nextUser.initials ?? (isSameUser ? current.initials : ""),
                 permissions:
                     nextUser.permissions ??
-                    (current && current.id === nextUser.id ? current.permissions : []),
+                    (isSameUser ? current.permissions : []),
             };
 
             setStoredUser(merged);

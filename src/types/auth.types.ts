@@ -24,9 +24,12 @@ export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "initials" | "ema
     permissions: string[];
 };
 
-// What callers pass to setUser: `permissions` left out = keep the current
-// user's permissions (e.g. a response that does not include them)
-export type AuthUserInput = Omit<AuthUser, "permissions"> & { permissions?: string[] };
+// What callers pass to setUser: `permissions` / `initials` left out = keep
+// the current user's (e.g. a response that does not include them)
+export type AuthUserInput = Omit<AuthUser, "permissions" | "initials"> & {
+    permissions?: string[];
+    initials?: string;
+};
 
 export interface LoginResponseData {
     user: AuthenticatedUser;

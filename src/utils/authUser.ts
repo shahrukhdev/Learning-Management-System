@@ -23,10 +23,16 @@ export const toPermissionNames = (value: unknown): string[] | null =>
 export const toAuthUser = (user: UserSource): AuthUserInput => {
     const permissions = toPermissionNames(user.permissions);
 
+    // Initials come from the API (login `data.user.initials`, profile
+    // `data.initials`, user `data.initials`); never generated here
+    const initials = typeof user.initials === "string" && user.initials.trim() !== ""
+        ? user.initials
+        : null;
+
     return {
         id: user.id,
         name: user.name,
-        initials: user.initials ?? "",
+        ...(initials !== null ? { initials } : {}),
         email: user.email,
         phone_no: user.phone_no ?? null,
         role: user.role,

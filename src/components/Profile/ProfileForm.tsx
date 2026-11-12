@@ -112,7 +112,7 @@ const validateForm = (values: ProfileFormValues, imageFile: File | null): Profil
 
 const ProfileForm = () => {
 
-    const { setUser } = useAuth();
+    const { user, setUser } = useAuth();
 
     // Last profile saved on the server
     const [profile, setProfile] = useState<ProfileUser | null>(null);
@@ -364,7 +364,8 @@ const ProfileForm = () => {
                         <AvatarContent
                             src={displayedAvatar}
                             alt={profile.name}
-                            fallback={<span>{profile.initials}</span>}
+                            // Same API initials as the Header/Sidebar (AuthContext)
+                            fallback={<span>{user?.initials || profile.initials}</span>}
                         />
                     </div>
 

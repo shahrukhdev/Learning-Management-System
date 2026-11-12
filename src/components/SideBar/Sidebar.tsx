@@ -408,7 +408,7 @@ const Sidebar = () => {
                         <AvatarContent
                             src={resolveImageUrl(user?.image)}
                             alt={user?.name ?? "User"}
-                            fallback="AM"
+                            fallback={user?.initials ?? ""}
                             className="user-avatar-img"
                         />
                     </div>

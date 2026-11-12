@@ -81,7 +81,8 @@ export const getUserManagementColumns = ({
                         <AvatarContent
                             src={resolveImageUrl(user.image)}
                             alt={user.name}
-                            fallback={user.name.charAt(0)}
+                            // API-provided initials (UserResource `initials`)
+                            fallback={user.initials}
                         />
 
                     </div>

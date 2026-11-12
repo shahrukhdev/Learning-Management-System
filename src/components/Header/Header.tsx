@@ -276,7 +276,7 @@ const Header = () => {
                                         <AvatarContent
                                             src={avatarUrl}
                                             alt={user?.name ?? "User"}
-                                            fallback="AM"
+                                            fallback={user?.initials ?? ""}
                                             className="user-avatar-img"
                                         />
                                     </button>
@@ -293,7 +293,7 @@ const Header = () => {
                                                     <AvatarContent
                                                         src={avatarUrl}
                                                         alt={user?.name ?? "User"}
-                                                        fallback="AM"
+                                                        fallback={user?.initials ?? ""}
                                                         className="user-avatar-img"
                                                     />
                                                 </div>
