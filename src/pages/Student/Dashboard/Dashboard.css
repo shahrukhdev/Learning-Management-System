@@ -1,0 +1,242 @@
+.student-dashboard-section {
+    padding-bottom: 20px;
+}
+
+.student-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 20px;
+}
+
+.student-dashboard-card {
+    padding: 22px;
+    margin-bottom: 20px;
+    background: #fffdf6;
+    border: 1px solid #e5eee8;
+    border-radius: 23px;
+    box-shadow: 0 1px 2px rgba(15, 28, 23, 0.04);
+}
+
+.student-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.student-card-heading h2 {
+    margin: 0;
+    color: #0f1c17;
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.student-card-heading span {
+    color: #96a39d;
+    font-size: 1.15rem;
+}
+
+.hifz-progress-value {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 8px 0 10px;
+}
+
+.hifz-progress-value strong,
+.learning-number {
+    color: #0eae7a;
+    font-size: 2.4rem;
+}
+
+.hifz-progress-value span {
+    color: #96a39d;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.student-progress-track {
+    height: 8px;
+    overflow: hidden;
+    background: #e5eee8;
+    border-radius: 20px;
+}
+
+.student-progress-track span {
+    display: block;
+    height: 100%;
+    background: #0eae7a;
+    border-radius: inherit;
+}
+
+.student-dashboard-card p {
+    margin: 8px 0 0;
+    color: #96a39d;
+    font-size: 1.2rem;
+}
+
+.attendance-percent {
+    color: #d6444f !important;
+    font-size: 2rem !important;
+    font-weight: 800;
+}
+
+.attendance-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.attendance-mini {
+    min-height: 72px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 12px;
+}
+
+.attendance-mini strong,
+.attendance-mini span {
+    display: block;
+}
+
+.attendance-mini strong {
+    font-size: 2rem;
+}
+
+.attendance-mini span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    margin-top: 3px;
+    font-size: 1.05rem;
+}
+
+.attendance-mini.present {
+    color: #0eae7a;
+    background: #effaf4;
+    border-color: #bcebd7;
+}
+
+.attendance-mini.late {
+    color: #a88116;
+    background: #fff9e7;
+    border-color: #f1df99;
+}
+
+.attendance-mini.absent {
+    color: #d6444f;
+    background: #fff1f1;
+    border-color: #f0c5c5;
+}
+
+.learning-number {
+    display: block;
+    margin-top: 8px;
+}
+
+.learning-streak {
+    margin-top: 18px;
+    color: #535624;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.recent-progress-card {
+    padding-bottom: 10px;
+}
+
+.recent-progress-list {
+    display: grid;
+}
+
+.recent-progress-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid #e5eee8;
+}
+
+.recent-progress-item strong,
+.recent-progress-item span {
+    display: block;
+}
+
+.recent-progress-item strong {
+    color: #0f1c17;
+    font-size: 1.35rem;
+}
+
+.recent-progress-item span {
+    margin-top: 4px;
+    color: #96a39d;
+    font-size: 1.15rem;
+}
+
+.recent-progress-item b {
+    min-width: 34px;
+    padding: 5px 8px;
+    color: #0e8d67;
+    background: #eaf8f1;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+@media (max-width: 991px) {
+    .student-dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575px) {
+    .student-dashboard-grid {
+        display: block;
+    }
+
+    .student-dashboard-card {
+        padding: 18px;
+        border-radius: 18px;
+    }
+}
+
+/* =====================================
+   Responsive additions
+===================================== */
+
+@media (max-width: 991.98px) {
+
+    .student-dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .student-dashboard-card {
+        padding: 18px;
+    }
+
+    .recent-progress-item {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .student-dashboard-card {
+        padding: 16px 14px;
+    }
+
+    .attendance-mini-grid {
+        gap: 6px;
+    }
+
+    .attendance-mini {
+        padding: 8px 4px;
+    }
+}

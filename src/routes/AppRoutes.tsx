@@ -39,6 +39,9 @@ import TeacherStudentProgressDetails from "../pages/Teacher/StudentProgress/Stud
 // Student
 import StudentDashboard from "../pages/Student/Dashboard/Dashboard";
 import StudentAttendance from "../pages/Student/Attendance/Attendance";
+import StudentNotices from "../pages/Student/Notices/Notices";
+import MyProgress from "../pages/Student/MyProgress/MyProgress";
+import StudentHifz from "../pages/Student/Hifz/HIfz";
 
 const AppRoutes = () => {
 
@@ -213,6 +216,26 @@ const AppRoutes = () => {
                 <Route
                     path="attendance"
                     element={<StudentAttendance />}
+                />
+
+                <Route
+                    path="notices"
+                    element={<StudentNotices />}
+                />
+
+                <Route
+                    path="notices"
+                    element={<StudentNotices />}
+                />
+
+                <Route
+                    path="my-progress"
+                    element={<MyProgress />}
+                />
+
+                <Route
+                    path="my-hifz"
+                    element={<StudentHifz />}
                 />
 
             </Route>

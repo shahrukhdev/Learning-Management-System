@@ -138,3 +138,50 @@
   }
 
 }
+
+/* =========================================================
+   USERS PAGE - RESPONSIVE EXTRAS
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+  .user-management-tabs button {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 767.98px) {
+
+  .user-management-tabs {
+    max-width: 100%;
+    scrollbar-width: none;
+  }
+
+  .user-management-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .user-management-tabs button {
+    flex-shrink: 0;
+  }
+}
+
+/* Tabs fit on one row on small phones (no half-cut tab) */
+@media (max-width: 575.98px) {
+
+  .user-management-tabs {
+    display: flex;
+    width: 100%;
+    overflow: visible;
+    gap: 4px;
+  }
+
+  .user-management-tabs button {
+    flex: 1 1 auto;
+    flex-shrink: 1;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}

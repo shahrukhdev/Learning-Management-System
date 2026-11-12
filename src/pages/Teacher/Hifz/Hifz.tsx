@@ -35,11 +35,14 @@ const Hifz = () => {
         10: "present",
     };
 
-    const handleStudentSelect = (
-        studentId: number
-    ) => (
-        setSelectedStudentId(studentId)
-    )
+    const handleStudentSelect = (studentId: number) => {
+        setSelectedStudentId(studentId);
+        if (window.innerWidth < 992 && rightPanelRef.current) {
+            setTimeout(() => {
+                rightPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 60);
+        }
+    };
 
     const rightPanelRef = useRef<HTMLDivElement>(null);
     const [rightPanelHeight, setRightPanelHeight] =

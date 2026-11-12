@@ -43,3 +43,55 @@
     height: 2px;
     background-color: #33452F;
 }
+
+/* ================================
+   Tabs Responsive
+================================ */
+
+@media (max-width: 767.98px) {
+
+    .hifz-student-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .hifz-student-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hifz-student-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 12px 14px;
+        font-size: 1.45rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .hifz-student-tab {
+        flex: 1 0 auto;
+        padding: 10px 10px;
+        font-size: 1.35rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .hifz-student-tab {
+        padding: 10px 6px;
+        font-size: 1.25rem;
+    }
+}
+
+/* Tabs never break into two lines on laptops */
+@media (min-width: 992px) and (max-width: 1399.98px) {
+
+    .hifz-student-tab {
+        white-space: nowrap;
+        padding: 14px 10px;
+        font-size: 1.5rem;
+    }
+}

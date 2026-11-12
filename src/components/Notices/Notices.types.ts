@@ -4,4 +4,5 @@ export interface Notice {
     description: string;
     createdAt: Date;
     updatedAt: Date;
+    postedBy: string;
 }

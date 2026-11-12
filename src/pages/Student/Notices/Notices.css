@@ -1,0 +1,68 @@
+/* =========================================
+   Student Notice Item
+========================================= */
+
+.student-notice-box .notice-item {
+    align-items: flex-start;
+    padding: 16px 4px;
+}
+
+.student-notice-box .notice-content {
+    padding-right: 15px;
+}
+
+.notice-posted-by {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    line-height: 16px;
+    font-weight: 500;
+    color: #747870;
+}
+
+/* =========================================
+   Notice Date - Right Side
+========================================= */
+
+.notice-date {
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    line-height: 17px;
+    font-weight: 500;
+    color: #96A39D;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.student-notices-section .notice-dot {
+    margin-top: 5px;
+}
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 767px) {
+
+    .student-notice-box {
+        padding: 18px 16px;
+    }
+
+    .student-notice-box .notice-item {
+        padding: 14px 2px;
+    }
+
+    .notice-date {
+        font-size: 1rem;
+        padding-left: 8px;
+    }
+
+    .notice-posted-by {
+        font-size: 1rem;
+    }
+
+}

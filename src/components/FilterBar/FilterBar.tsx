@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./FilterBar.css";
 
-import { Search, SlidersHorizontal, Calendar } from "lucide-react";
+import { Search, Calendar } from "lucide-react";
 
 import { DayPicker } from "@daypicker/react";
 import "@daypicker/react/style.css";
@@ -39,7 +39,7 @@ const FilterBar = ({
     dateValue = "",
     onDateChange,
 
-    filterButtonLabel = "Filter",
+    filterButtonLabel = "Search",
     onFilterClick,
 
 }: FilterBarProps) => {
@@ -197,7 +197,8 @@ const FilterBar = ({
                     onClick={onFilterClick}
                 >
 
-                    <SlidersHorizontal size={16} />
+                    {/* <Search size={16} /> */}
+                    <Search size={16} />
 
                     <span>
                         {filterButtonLabel}

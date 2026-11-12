@@ -10,7 +10,7 @@ const Login = () => {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         console.log("Login role:", role);

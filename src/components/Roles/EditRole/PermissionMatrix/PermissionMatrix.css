@@ -308,7 +308,7 @@
 
     text-align: center;
 
-    background-color: #FFFFFF;
+    background-color: #fcfbf5;
 
 }
 
@@ -810,7 +810,12 @@
     .permission-pagination {
         width: 100%;
         margin-left: 0;
-        justify-content: space-between;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .permission-pagination span {
+        margin-right: auto;
     }
 
 }

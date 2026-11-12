@@ -245,7 +245,7 @@
     }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 390px) {
     .profile-identity {
         align-items: flex-start;
         flex-direction: column;
@@ -259,5 +259,70 @@
     .profile-cancel-button,
     .profile-save-button {
         width: 100%;
+    }
+}
+
+/* =========================================================
+   PROFILE RESPONSIVE (added)
+========================================================= */
+
+@media (max-width: 1199.98px) {
+
+    .profile-page-heading .notices-desc {
+        margin-top: 0 !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+
+    .profile-content {
+        min-height: 0;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .profile-identity {
+        align-items: center;
+    }
+
+    .profile-identity-info h2 {
+        font-size: 2rem;
+        line-height: 28px;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .profile-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .profile-cancel-button,
+    .profile-save-button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .profile-save-button {
+        white-space: nowrap;
+    }
+}
+
+/* Small avatar: scale initials and camera badge to fit */
+@media (max-width: 575.98px) {
+
+    .profile-avatar {
+        font-size: 1.8rem;
+    }
+
+    .profile-camera-button {
+        width: 22px;
+        height: 22px;
+        right: -4px;
+        bottom: -4px;
     }
 }

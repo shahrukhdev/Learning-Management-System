@@ -108,3 +108,27 @@
     }
 
 }
+
+/* =========================================================
+   EDIT ROLE - RESPONSIVE EXTRAS
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .edit-role-actions .form-btn {
+        height: auto;
+        min-height: 42px;
+        padding: 8px 14px;
+        line-height: 20px;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+/* Stacked sections get breathing space on tablet / mobile */
+@media (max-width: 991.98px) {
+
+    .edit-role-personnel {
+        margin-top: 20px;
+    }
+}

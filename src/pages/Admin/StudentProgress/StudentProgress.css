@@ -183,7 +183,7 @@
     min-width: 0;
     min-height: 76px;
     padding: 10px 4px;
-    border: 1px solid #e1e0d2;
+    border: 2px solid #e1e0d2;
     border-radius: 12px;
     background: #f2f0e4;
     box-sizing: border-box;
@@ -196,46 +196,46 @@
 }
 
 .student-progress-stat span {
-    color: #7d8272;
+    color: #333431;
     font-size: 1rem;
     text-align: center;
     overflow-wrap: anywhere;
 }
 
 .student-progress-stat.attendance-good {
-    border-color: #c8d7bb;
-    background: #edf2e5;
+    border-color: #b7d8a3;
+    background: transparent;
 }
 
 .student-progress-stat.attendance-good strong {
-    color: #4e682f;
+    color: #4D822C;
 }
 
 .student-progress-stat.attendance-low {
-    border-color: #e5d2bd;
-    background: #f5eee3;
+    border-color: #d28c8c;
+    background: transparent;
 }
 
 .student-progress-stat.attendance-low strong {
-    color: #a56c35;
+    color: #9c0202;
 }
 
 .student-progress-stat.late-stat {
-    border-color: #e3dcb8;
-    background: #f3f0dd;
+    border-color: #fee79b;
+    background: transparent;
 }
 
 .student-progress-stat.late-stat strong {
-    color: #a37b25;
+    color: #F5C72E;
 }
 
 .student-progress-stat.absent-stat {
-    border-color: #e4c9c3;
-    background: #f5eae6;
+    border-color: #ee7581;
+    background: transparent;
 }
 
 .student-progress-stat.absent-stat strong {
-    color: #b04e43;
+    color: #CF0015;
 }
 
 /* Card action buttons */
@@ -323,9 +323,24 @@
 
 /* Responsive layout */
 
-@media (max-width: 1100px) {
+@media (max-width: 1599.98px) {
+    .student-progress-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 1365.98px) {
+    .student-progress-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 1024.98px) {
     .student-progress-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
     }
 }
 
@@ -359,5 +374,33 @@
 
     .student-progress-stat strong {
         font-size: 19px;
+    }
+}
+
+/* =========================================================
+   STUDENT PROGRESS RESPONSIVE (added)
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .student-progress-heading {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .student-progress-card {
+        padding: 16px 14px;
+    }
+
+    .student-progress-stats {
+        gap: 7px;
+    }
+
+    .student-progress-log-button,
+    .student-progress-view-button {
+        padding: 9px 6px;
+        font-size: 1.05rem;
     }
 }

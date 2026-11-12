@@ -220,3 +220,52 @@
         font-size: 9px;
     }
 }
+
+/* ================================
+   Sessions Responsive (extends rules above)
+================================ */
+
+@media (max-width: 767.98px) {
+
+    .hifz-session-card {
+        gap: 16px;
+        padding: 18px 16px;
+    }
+
+    .hifz-session-left {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .hifz-session-card {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 16px 14px;
+    }
+
+    .hifz-session-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        width: 100%;
+    }
+
+    .hifz-session-content {
+        width: 100%;
+    }
+
+    .hifz-session-date,
+    .hifz-session-rating-label,
+    .hifz-session-rating-symbol {
+        font-size: 1.2rem;
+    }
+
+    .hifz-session-rating {
+        min-width: 0;
+        max-width: none;
+        padding: 4px 10px;
+    }
+}

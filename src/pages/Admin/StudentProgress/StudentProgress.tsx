@@ -230,174 +230,181 @@ const StudentProgress = () => {
             />
 
             <section className="student-progress-section">
-                {/* Page heading */}
-                <div className="student-progress-heading">
-                    <div>
-                        <h1 className="section-title mb-0">
-                            Students Progress
-                        </h1>
-                    </div>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
 
-                    <div className="student-progress-count">
-                        <UserRound size={16} />
-
-                        <span>
-                            {students.length} students
-                        </span>
-                    </div>
-                </div>
-
-                {/* Student cards */}
-                <div className="student-progress-grid">
-                    {students.map((student) => {
-                        const progressPercentage = Math.round(
-                            (student.memorisedSurahs /
-                                student.totalSurahs) *
-                                100
-                        );
-
-                        const hasImage = Boolean(student.image);
-
-                        return (
-                            <div
-                                className="student-progress-card"
-                                key={student.id}
-                            >
-                                {/* Student details */}
-                                <div className="student-progress-profile">
-                                    <div className="student-progress-avatar">
-                                        {hasImage ? (
-                                            <img
-                                                src={student.image}
-                                                alt={student.name}
-                                            />
-                                        ) : (
-                                            <span>
-                                                {getInitials(student.name)}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    <div className="student-progress-identity">
-                                        <h2>{student.name}</h2>
-
-                                        <p className="student-progress-email">
-                                            {student.email}
-                                        </p>
-
-                                        <p className="student-progress-class">
-                                            <BookOpen size={13} />
-
-                                            <span>
-                                                {student.className}
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Hifz progress */}
-                                <div className="student-hifz-progress">
-                                    <div className="student-hifz-progress-info">
-                                        <span>Hifz Progress</span>
-
-                                        <strong>
-                                            {student.memorisedSurahs}/
-                                            {student.totalSurahs}
-                                        </strong>
-                                    </div>
-
-                                    <div
-                                        className="student-hifz-progress-track"
-                                        role="progressbar"
-                                        aria-label={`${student.name} Hifz progress`}
-                                        aria-valuenow={progressPercentage}
-                                        aria-valuemin={0}
-                                        aria-valuemax={100}
-                                    >
-                                        <span
-                                            style={{
-                                                width: `${progressPercentage}%`,
-                                            }}
-                                        />
-                                    </div>
-
-                                    <span className="student-hifz-progress-caption">
-                                        {progressPercentage}% of Surahs memorised
-                                    </span>
-                                </div>
-
-                                {/* Attendance summary */}
-                                <div className="student-progress-stats">
-                                    <div
-                                        className={`student-progress-stat ${
-                                            student.attendance < 70
-                                                ? "attendance-low"
-                                                : "attendance-good"
-                                        }`}
-                                    >
-                                        <strong>
-                                            {student.attendance}%
-                                        </strong>
-
-                                        <span>Attendance</span>
-                                    </div>
-
-                                    <div className="student-progress-stat late-stat">
-                                        <strong>{student.late}</strong>
-
-                                        <span>Late</span>
-                                    </div>
-
-                                    <div className="student-progress-stat absent-stat">
-                                        <strong>{student.absent}</strong>
-
-                                        <span>Absent</span>
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="student-progress-actions">
-                                    <button
-                                        type="button"
-                                        className="student-progress-log-button"
-                                        onClick={() =>
-                                            handleLogProgress(student)
-                                        }
-                                    >
-                                        <Plus size={15} />
-
-                                        <span>Log Progress</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="student-progress-view-button"
-                                        onClick={() =>
-                                            handleViewProgress(student)
-                                        }
-                                    >
-                                        <Eye size={15} />
-
-                                        <span>View Progress</span>
-                                    </button>
-                                </div>
+                        {/* Page heading */}
+                        <div className="student-progress-heading">
+                            <div>
+                                <h1 className="section-title mb-0">
+                                    Students Progress
+                                </h1>
                             </div>
-                        );
-                    })}
-                </div>
 
-                {/* Empty state */}
-                {students.length === 0 && (
-                    <div className="student-progress-empty">
-                        <CheckCircle2 size={28} />
+                            <div className="student-progress-count">
+                                <UserRound size={16} />
 
-                        <h3>No students found</h3>
+                                <span>
+                                    {students.length} students
+                                </span>
+                            </div>
+                        </div>
 
-                        <p>
-                            Student progress will appear here.
-                        </p>
+                        {/* Student cards */}
+                        <div className="student-progress-grid">
+                            {students.map((student) => {
+                                const progressPercentage = Math.round(
+                                    (student.memorisedSurahs /
+                                        student.totalSurahs) *
+                                        100
+                                );
+
+                                const hasImage = Boolean(student.image);
+
+                                return (
+                                    <div
+                                        className="student-progress-card"
+                                        key={student.id}
+                                    >
+                                        {/* Student details */}
+                                        <div className="student-progress-profile">
+                                            <div className="student-progress-avatar">
+                                                {hasImage ? (
+                                                    <img
+                                                        src={student.image}
+                                                        alt={student.name}
+                                                    />
+                                                ) : (
+                                                    <span>
+                                                        {getInitials(student.name)}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <div className="student-progress-identity">
+                                                <h2>{student.name}</h2>
+
+                                                <p className="student-progress-email">
+                                                    {student.email}
+                                                </p>
+
+                                                <p className="student-progress-class">
+                                                    <BookOpen size={13} />
+
+                                                    <span>
+                                                        {student.className}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Hifz progress */}
+                                        <div className="student-hifz-progress">
+                                            <div className="student-hifz-progress-info">
+                                                <span>Hifz Progress</span>
+
+                                                <strong>
+                                                    {student.memorisedSurahs}/
+                                                    {student.totalSurahs}
+                                                </strong>
+                                            </div>
+
+                                            <div
+                                                className="student-hifz-progress-track"
+                                                role="progressbar"
+                                                aria-label={`${student.name} Hifz progress`}
+                                                aria-valuenow={progressPercentage}
+                                                aria-valuemin={0}
+                                                aria-valuemax={100}
+                                            >
+                                                <span
+                                                    style={{
+                                                        width: `${progressPercentage}%`,
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <span className="student-hifz-progress-caption">
+                                                {progressPercentage}% of Surahs memorised
+                                            </span>
+                                        </div>
+
+                                        {/* Attendance summary */}
+                                        <div className="student-progress-stats">
+                                            <div
+                                                className={`student-progress-stat ${
+                                                    student.attendance < 70
+                                                        ? "attendance-low"
+                                                        : "attendance-good"
+                                                }`}
+                                            >
+                                                <strong>
+                                                    {student.attendance}%
+                                                </strong>
+
+                                                <span>Attendance</span>
+                                            </div>
+
+                                            <div className="student-progress-stat late-stat">
+                                                <strong>{student.late}</strong>
+
+                                                <span>Late</span>
+                                            </div>
+
+                                            <div className="student-progress-stat absent-stat">
+                                                <strong>{student.absent}</strong>
+
+                                                <span>Absent</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="student-progress-actions">
+                                            <button
+                                                type="button"
+                                                className="student-progress-log-button"
+                                                onClick={() =>
+                                                    handleLogProgress(student)
+                                                }
+                                            >
+                                                <Plus size={15} />
+
+                                                <span>Log Progress</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="student-progress-view-button"
+                                                onClick={() =>
+                                                    handleViewProgress(student)
+                                                }
+                                            >
+                                                <Eye size={15} />
+
+                                                <span>View Progress</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Empty state */}
+                        {students.length === 0 && (
+                            <div className="student-progress-empty">
+                                <CheckCircle2 size={28} />
+
+                                <h3>No students found</h3>
+
+                                <p>
+                                    Student progress will appear here.
+                                </p>
+                            </div>
+                        )}
+                        </div>
                     </div>
-                )}
+                </div>
             </section>
 
             {/* Log Progress Popup */}

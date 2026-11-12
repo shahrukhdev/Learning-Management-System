@@ -1,30 +1,34 @@
 import "./Header.css";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Search, User, LogOut, Check } from "lucide-react";
+import { Bell, User, LogOut, Check, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+type HeaderProps = {
+    onMenuClick?: () => void;
+};
+
+const Header = ({ onMenuClick }: HeaderProps) => {
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-    const profileRef = useRef(null);
-    const notificationRef = useRef(null);
+    const profileRef = useRef<HTMLDivElement>(null);
+    const notificationRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
 
-        const handleClickOutside = (event) => {
+        const handleClickOutside = (event: MouseEvent) => {
 
             if (
                 profileRef.current &&
-                !profileRef.current.contains(event.target)
+                !profileRef.current.contains(event.target as Node)
             ) {
                 setIsProfileOpen(false);
             }
 
             if (
                 notificationRef.current &&
-                !notificationRef.current.contains(event.target)
+                !notificationRef.current.contains(event.target as Node)
             ) {
                 setIsNotificationOpen(false);
             }
@@ -48,19 +52,21 @@ const Header = () => {
                 <div className="row">
                     <div className="col-12">
                         <div className="header-flex">
-                            <div className="header-search">
-                                <Search
-                                    className="search-icon"
-                                    size={18}
-                                    strokeWidth={2.5}
-                                    color="#93AEA3"
-                                />
 
-                                <input
-                                    type="search"
-                                    className="search-input"
-                                    placeholder="Search"
-                                />
+                            <div className="d-flex justify-content-start align-items-center gap-3">
+                                <button
+                                    type="button"
+                                    className="header-menu-btn"
+                                    onClick={onMenuClick}
+                                    aria-label="Open menu"
+                                >
+                                    <Menu size={20} strokeWidth={2.2} />
+                                </button>
+
+                                <div className="head-user">
+                                    <span className="head-user-greeting">Welcome back</span>
+                                    <h2 className="m-0 head-user-name">Salman Asif</h2>
+                                </div>
                             </div>
 
                             <div className="header-actions">

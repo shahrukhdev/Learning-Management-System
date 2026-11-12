@@ -16,3 +16,21 @@
     max-width: 470px;
     margin: 0;
 }
+
+/* ================================
+   Hifz Empty State Responsive
+================================ */
+
+@media (max-width: 767.98px) {
+
+    .hifz-empty-title {
+        font-size: 2.2rem;
+        line-height: 30px;
+    }
+
+    .hifz-empty-para {
+        font-size: 1.45rem;
+        line-height: 21px;
+        max-width: 100%;
+    }
+}

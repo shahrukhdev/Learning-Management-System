@@ -43,7 +43,7 @@ const Dashboard = () => {
                                     <div className="col-12 col-lg-4">
 
                                         {/* Announcements */}
-                                        <Announcements />
+                                        <Announcements showAddButton={true} limit={3} />
 
                                         {/* Teachers Online */}
                                         <TeachersOnline />

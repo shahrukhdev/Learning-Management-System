@@ -42,7 +42,7 @@ const TeachersOnline = () => {
 
             <div className="dash-box-top">
                 <h2 className="dash-box-title">
-                    Teachers Online
+                    Teachers Available
                 </h2>
             </div>
 

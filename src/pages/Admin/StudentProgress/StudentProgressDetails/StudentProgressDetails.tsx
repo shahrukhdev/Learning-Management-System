@@ -127,17 +127,23 @@ const StudentProgressDetails = () => {
 
         return (
             <section className="student-progress-detail">
-                <div className="spd-empty-page">
-                    <UserRound size={38} />
-                    <h2>Student Not Found</h2>
-                    <p>
-                        Please return to the student list and select a
-                        student to view their progress.
-                    </p>
-                    <button type="button" onClick={handleBack}>
-                        <ArrowLeft size={17} />
-                        Back to Students
-                    </button>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="spd-empty-page">
+                                <UserRound size={38} />
+                                <h2>Student Not Found</h2>
+                                <p>
+                                    Please return to the student list and select a
+                                    student to view their progress.
+                                </p>
+                                <button type="button" onClick={handleBack}>
+                                    <ArrowLeft size={17} />
+                                    Back to Students
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         );
@@ -151,224 +157,232 @@ const StudentProgressDetails = () => {
             />
 
             <section className="student-progress-detail">
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
 
-                {/* Page heading */}
-                <div className="spd-page-heading">
-                    <div>
-                        <button
-                            type="button"
-                            className="spd-back-button"
-                            onClick={handleBack}
-                        >
-                            <ArrowLeft size={16} />
-                            Back to Students
-                        </button>
+                            {/* Page heading */}
+                            <div className="spd-page-heading">
+                                <div>
+                                    <button
+                                        type="button"
+                                        className="spd-back-button"
+                                        onClick={handleBack}
+                                    >
+                                        <ArrowLeft size={16} />
+                                        Back to Students
+                                    </button>
 
-                        <h1>Student Progress</h1>
-                        <p>Review lessons, results and teacher feedback.</p>
-                    </div>
+                                    <h1>Student Progress</h1>
+                                    <p>Review lessons, results and teacher feedback.</p>
+                                </div>
 
-                    <button
-                        type="button"
-                        className="spd-add-button"
-                        onClick={() => setShowPopup(true)}
-                    >
-                        <Plus size={18} />
-                        Add Progress
-                    </button>
-                </div>
-
-                {/* Student profile */}
-                <div className="spd-profile">
-                    <div className="spd-avatar">
-                        {student.image ? (
-                            <img src={student.image} alt={student.name} />
-                        ) : (
-                            <span>{getInitials(student.name)}</span>
-                        )}
-                    </div>
-
-                    <div className="spd-profile-content">
-
-                        <span className="spd-overline">STUDENT PROFILE</span>
-                        <h2>{student.name}</h2>
-                        <p className="spd-email">{student.email}</p>
-
-                        <div className="spd-profile-meta">
-                            <span>
-                                <GraduationCap size={15} />
-                                {student.className}
-                            </span>
-                            <span>
-                                <BookOpen size={15} />
-                                Madrassah Student
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Summary */}
-                <div className="spd-summary">
-
-                    <div className="spd-summary-card">
-                        <div className="spd-summary-icon icon-records">
-                            <ClipboardList size={21} />
-                        </div>
-                        <p>Total Records</p>
-                        <h3>{studentEntries.length}</h3>
-                        <span>Progress entries recorded</span>
-                    </div>
-
-                    <div className="spd-summary-card">
-                        <div className="spd-summary-icon icon-strong">
-                            <Award size={21} />
-                        </div>
-                        <p>Strong Results</p>
-                        <h3>{strongCount}</h3>
-                        <span>Grades A+ and A</span>
-                    </div>
-
-                    <div className="spd-summary-card">
-                        <div className="spd-summary-icon icon-attention">
-                            <BookOpen size={21} />
-                        </div>
-                        <p>Needs Attention</p>
-                        <h3>{attentionCount}</h3>
-                        <span>Grades needing improvement</span>
-                    </div>
-                    
-                </div>
-
-                {/* Progress history */}
-                <div className="spd-history">
-                    <div className="spd-history-heading">
-                        <div>
-                            <span className="spd-overline">
-                                LEARNING ACTIVITY
-                            </span>
-                            <h2>Progress History</h2>
-                            <p>
-                                The most recently added progress appears first.
-                            </p>
-                        </div>
-
-                        <span className="spd-record-count">
-                            {filteredEntries.length}{" "}
-                            {filteredEntries.length === 1
-                                ? "record"
-                                : "records"}
-                        </span>
-                    </div>
-
-                    {/* Subject filters — no search bar */}
-                    <div className="spd-filters">
-                        {SUBJECTS.map((subjectName) => (
-                            <button
-                                type="button"
-                                key={subjectName}
-                                className={
-                                    activeSubject === subjectName
-                                        ? "spd-filter active"
-                                        : "spd-filter"
-                                }
-                                onClick={() => setActiveSubject(subjectName)}
-                            >
-                                {subjectName}
-                            </button>
-                        ))}
-                    </div>
-
-                    {filteredEntries.length > 0 ? (
-                        <div className="spd-record-list">
-                            {filteredEntries.map((entry, index) => (
-                                <article
-                                    className={`spd-record ${
-                                        index === 0 &&
-                                        activeSubject === "All Subjects"
-                                            ? "spd-record-latest"
-                                            : ""
-                                    }`}
-                                    key={entry.id}
-                                >
-                                    <div className="spd-record-icon">
-                                        <BookOpen size={19} />
-                                    </div>
-
-                                    <div className="spd-record-content">
-                                        <div className="spd-record-heading">
-                                            <div className="spd-record-title">
-                                                <div className="spd-record-tags">
-                                                    <span className="spd-subject-tag">
-                                                        {entry.subject}
-                                                    </span>
-
-                                                    {index === 0 &&
-                                                        activeSubject ===
-                                                            "All Subjects" && (
-                                                            <span className="spd-latest-tag">
-                                                                Latest
-                                                            </span>
-                                                        )}
-                                                </div>
-
-                                                <h3>{entry.lesson}</h3>
-
-                                                <span className="spd-date">
-                                                    <CalendarDays size={14} />
-                                                    {formatDate(entry.date)}
-                                                </span>
-                                            </div>
-
-                                            <span
-                                                className={`spd-grade ${getGradeClass(
-                                                    entry.grade
-                                                )}`}
-                                            >
-                                                {entry.grade}
-                                            </span>
-                                        </div>
-
-                                        <div className="spd-feedback">
-                                            <span>Teacher Feedback</span>
-                                            <p>
-                                                {entry.notes ||
-                                                    "No feedback has been added for this lesson."}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="spd-empty">
-                            <div className="spd-empty-icon">
-                                <BookOpen size={25} />
-                            </div>
-
-                            <h3>
-                                {studentEntries.length === 0
-                                    ? "No Progress Yet"
-                                    : "No Records for This Subject"}
-                            </h3>
-
-                            <p>
-                                {studentEntries.length === 0
-                                    ? "Add the first lesson record to start tracking this student's learning."
-                                    : "Try selecting another subject to view its records."}
-                            </p>
-
-                            {studentEntries.length === 0 && (
                                 <button
                                     type="button"
+                                    className="spd-add-button"
                                     onClick={() => setShowPopup(true)}
                                 >
-                                    <Plus size={17} />
-                                    Add First Progress
+                                    <Plus size={18} />
+                                    Add Progress
                                 </button>
-                            )}
+                            </div>
+
+                            {/* Student profile */}
+                            <div className="spd-profile">
+                                <div className="spd-avatar">
+                                    {student.image ? (
+                                        <img src={student.image} alt={student.name} />
+                                    ) : (
+                                        <span>{getInitials(student.name)}</span>
+                                    )}
+                                </div>
+
+                                <div className="spd-profile-content">
+
+                                    <span className="spd-overline">STUDENT PROFILE</span>
+                                    <h2>{student.name}</h2>
+                                    <p className="spd-email">{student.email}</p>
+
+                                    <div className="spd-profile-meta">
+                                        <span>
+                                            <GraduationCap size={15} />
+                                            {student.className}
+                                        </span>
+                                        <span>
+                                            <BookOpen size={15} />
+                                            Madrassah Student
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Summary */}
+                            <div className="spd-summary">
+
+                                <div className="spd-summary-card">
+                                    <div className="spd-summary-icon icon-records">
+                                        <ClipboardList size={21} />
+                                    </div>
+                                    <p>Total Records</p>
+                                    <h3>{studentEntries.length}</h3>
+                                    <span>Progress entries recorded</span>
+                                </div>
+
+                                <div className="spd-summary-card">
+                                    <div className="spd-summary-icon icon-strong">
+                                        <Award size={21} />
+                                    </div>
+                                    <p>Strong Results</p>
+                                    <h3>{strongCount}</h3>
+                                    <span>Grades A+ and A</span>
+                                </div>
+
+                                <div className="spd-summary-card">
+                                    <div className="spd-summary-icon icon-attention">
+                                        <BookOpen size={21} />
+                                    </div>
+                                    <p>Needs Attention</p>
+                                    <h3>{attentionCount}</h3>
+                                    <span>Grades needing improvement</span>
+                                </div>
+                                
+                            </div>
+
+                            {/* Progress history */}
+                            <div className="spd-history">
+                                <div className="spd-history-heading">
+                                    <div>
+                                        <span className="spd-overline">
+                                            LEARNING ACTIVITY
+                                        </span>
+                                        <h2>Progress History</h2>
+                                        <p>
+                                            The most recently added progress appears first.
+                                        </p>
+                                    </div>
+
+                                    <span className="spd-record-count">
+                                        {filteredEntries.length}{" "}
+                                        {filteredEntries.length === 1
+                                            ? "record"
+                                            : "records"}
+                                    </span>
+                                </div>
+
+                                {/* Subject filters — no search bar */}
+                                <div className="spd-filters">
+                                    {SUBJECTS.map((subjectName) => (
+                                        <button
+                                            type="button"
+                                            key={subjectName}
+                                            className={
+                                                activeSubject === subjectName
+                                                    ? "spd-filter active"
+                                                    : "spd-filter"
+                                            }
+                                            onClick={() => setActiveSubject(subjectName)}
+                                        >
+                                            {subjectName}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {filteredEntries.length > 0 ? (
+                                    <div className="spd-record-list">
+                                        {filteredEntries.map((entry, index) => (
+                                            <article
+                                                className={`spd-record ${
+                                                    index === 0 &&
+                                                    activeSubject === "All Subjects"
+                                                        ? "spd-record-latest"
+                                                        : ""
+                                                }`}
+                                                key={entry.id}
+                                            >
+                                                <div className="spd-record-icon">
+                                                    <BookOpen size={19} />
+                                                </div>
+
+                                                <div className="spd-record-content">
+                                                    <div className="spd-record-heading">
+                                                        <div className="spd-record-title">
+                                                            <div className="spd-record-tags">
+                                                                <span className="spd-subject-tag">
+                                                                    {entry.subject}
+                                                                </span>
+
+                                                                {index === 0 &&
+                                                                    activeSubject ===
+                                                                        "All Subjects" && (
+                                                                        <span className="spd-latest-tag">
+                                                                            Latest
+                                                                        </span>
+                                                                    )}
+                                                            </div>
+
+                                                            <h3>{entry.lesson}</h3>
+
+                                                            <span className="spd-date">
+                                                                <CalendarDays size={14} />
+                                                                {formatDate(entry.date)}
+                                                            </span>
+                                                        </div>
+
+                                                        <span
+                                                            className={`spd-grade ${getGradeClass(
+                                                                entry.grade
+                                                            )}`}
+                                                        >
+                                                            {entry.grade}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="spd-feedback">
+                                                        <span>Teacher Feedback</span>
+                                                        <p>
+                                                            {entry.notes ||
+                                                                "No feedback has been added for this lesson."}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="spd-empty">
+                                        <div className="spd-empty-icon">
+                                            <BookOpen size={25} />
+                                        </div>
+
+                                        <h3>
+                                            {studentEntries.length === 0
+                                                ? "No Progress Yet"
+                                                : "No Records for This Subject"}
+                                        </h3>
+
+                                        <p>
+                                            {studentEntries.length === 0
+                                                ? "Add the first lesson record to start tracking this student's learning."
+                                                : "Try selecting another subject to view its records."}
+                                        </p>
+
+                                        {studentEntries.length === 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPopup(true)}
+                                            >
+                                                <Plus size={17} />
+                                                Add First Progress
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
                         </div>
-                    )}
+                    </div>
                 </div>
+
             </section>
 
             {showPopup && (

@@ -1,0 +1,106 @@
+
+/* =========================================
+   Student Attendance Statistics
+========================================= */
+
+.student-attendance-stats {
+    margin-bottom: 25px;
+}
+
+.student-attendance-stats .row {
+    row-gap: 20px;
+}
+
+
+/* =========================================
+   Existing Dashboard Statistics Design
+========================================= */
+
+.student-attendance-stats .dash-stat-card {
+    min-height: 142px;
+    background: #FFFDF6;
+    border: 1px solid #E5EEE8;
+    box-shadow: 0px 1.0336px 2.0672px rgba(15, 28, 23, 0.04);
+    border-radius: 22px;
+    padding: 20px;
+}
+
+.student-attendance-stats .stat-value {
+    font-size: 2.6rem;
+    line-height: 34px;
+}
+
+.student-attendance-stats .stat-title {
+    font-size: 1.35rem;
+}
+
+.student-attendance-stats .stat-change {
+    font-size: 1.2rem;
+}
+
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 767px) {
+    .student-attendance-stats .dash-stat-card {
+        min-height: 130px;
+    }
+}
+
+/* =====================================
+   Responsive - 2 column stat cards
+===================================== */
+
+@media (max-width: 575.98px) {
+
+    .student-attendance-stats .row {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 12px;
+        row-gap: 12px;
+    }
+
+    .student-attendance-stats .row > .col-12 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .student-attendance-stats .dash-stat-card {
+        min-height: 0;
+        padding: 16px 14px;
+        border-radius: 18px;
+    }
+
+    .student-attendance-stats .stat-content {
+        margin-top: 10px;
+    }
+
+    .student-attendance-stats .stat-value {
+        font-size: 2.2rem;
+        line-height: 30px;
+        overflow-wrap: anywhere;
+    }
+
+    .student-attendance-stats .stat-bottom {
+        flex-wrap: wrap;
+        gap: 2px 8px !important;
+    }
+
+    .student-attendance-stats .stat-title,
+    .student-attendance-stats .stat-change {
+        font-size: 1.15rem;
+        line-height: 16px;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .student-attendance-stats .dash-stat-card {
+        padding: 14px 12px;
+    }
+
+    .student-attendance-stats .stat-value {
+        font-size: 1.9rem;
+    }
+}

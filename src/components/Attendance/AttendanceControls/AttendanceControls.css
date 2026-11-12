@@ -176,3 +176,145 @@
     background-color: #747474;
 }
     
+
+/* ================================
+   Attendance Controls Responsive
+================================ */
+
+@media (max-width: 1199.98px) {
+
+    .attendance-summary {
+        flex-wrap: wrap;
+        gap: 12px 20px;
+    }
+
+    .attendance-bulk-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 991.98px) {
+
+    .attendance-controlS {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .attendance-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .attendance-bulk-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .attendance-buttons {
+        flex: 1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .attendance-summary {
+        padding: 10px 14px;
+        gap: 12px 10px;
+    }
+
+    .attendance-stat {
+        flex: 1 1 calc(33.333% - 10px);
+        min-width: 0;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .attendance-btn {
+        width: auto;
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 6px 8px;
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .attendance-summary {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .attendance-bulk-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .input-check-wrapper {
+        order: 2;
+    }
+
+    .attendance-buttons {
+        order: 1;
+        width: 100%;
+        justify-content: stretch;
+        gap: 6px;
+    }
+
+    .attendance-stat {
+        flex: 0 0 calc(50% - 5px);
+        gap: 8px;
+    }
+
+    .attendance-stat-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .attendance-stat-content .count {
+        font-size: 1.35rem;
+        line-height: 18px;
+    }
+
+    .attendance-stat-content .label {
+        font-size: 1.05rem;
+    }
+}
+
+/* Small mobile (390px, 375px, 360px): strictly 2 per line, no 1-per-line stretching */
+@media (max-width: 390px) {
+
+    .attendance-summary {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+
+    .attendance-stat {
+        flex: 0 0 calc(50% - 4px);
+        gap: 6px;
+    }
+
+    .attendance-stat-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+    }
+
+    .attendance-stat-content .count {
+        font-size: 1.25rem;
+        line-height: 16px;
+    }
+
+    .attendance-stat-content .label {
+        font-size: 1rem;
+        line-height: 12px;
+    }
+
+    .attendance-btn {
+        font-size: 1.2rem;
+        padding: 6px 4px;
+    }
+}

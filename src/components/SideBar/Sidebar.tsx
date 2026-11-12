@@ -17,7 +17,7 @@ import NavIcon10 from "../../assets/images/nav-icon-10.svg";
 import NavIcon11 from "../../assets/images/nav-icon-11.svg";
 
 
-import { LogOut, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // --------------------------------------------------
@@ -96,7 +96,12 @@ const academicItems = [
 // Sidebar Component
 // --------------------------------------------------
 
-const Sidebar = () => {
+type SidebarProps = {
+    isOpen?: boolean;
+    onClose?: () => void;
+};
+
+const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
 
     const location = useLocation();
 
@@ -146,7 +151,26 @@ const Sidebar = () => {
 
     return (
 
-        <aside className="dashboard-sidebar">
+        <aside
+            className={`dashboard-sidebar ${isOpen ? "sidebar-open" : ""}`}
+            onClick={(event) => {
+                // Close the mobile drawer when any menu link is clicked
+                if ((event.target as HTMLElement).closest("a")) {
+                    onClose?.();
+                }
+            }}
+        >
+
+            {/* Close button (visible only on mobile / tablet drawer) */}
+            <button
+                type="button"
+                className="sidebar-close-btn"
+                onClick={onClose}
+                aria-label="Close menu"
+            >
+                <X size={20} strokeWidth={2.2} />
+            </button>
+
 
             {/* Sidebar Logo */}
 
