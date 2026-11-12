@@ -1,45 +1,70 @@
 import SEO from "../../../components/Seo/SEO";
 import HifzEmptyState from "../../../components/Hifz/HifzEmptyState/HifzEmptyState";
 import HifzStudentList from "../../../components/Hifz/HifzStudentList/HifzStudentList";
-import { students } from "../../../components/Attendance/Attendance.data";
-import type { AttendanceStatus } from "../../../components/Attendance/Attendance.types";
 import "./Hifz.css";
 import { useEffect, useRef, useState } from "react";
 import HifzStudentDetails from "../../../components/Hifz/HifzStudentDetails/HifzStudentDetails";
-
-const classOptions = [
-    "Class A · Morning",
-    "Class B · Evening",
-    "Class C · Morning",
-    "Class D · Evening",
-];
+import { useAcademicClassOptions } from "../../../hooks/useAcademicClassOptions";
+import { useClassAttendance } from "../../../hooks/useClassAttendance";
+import { todayYmd } from "../../../components/Attendance/attendanceDates";
 
 
 const Hifz = () => {
 
-    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+    /* --------------------------------
+       Classes (Academic Classes API, same as Attendance)
+    -------------------------------- */
 
-    const attendance: Record<
-        number,
-        AttendanceStatus
-    > = {
-        1: "present",
-        2: "present",
-        3: "late",
-        4: "absent",
-        5: "present",
-        6: "not-marked",
-        7: "present",
-        8: "present",
-        9: "late",
-        10: "present",
+    const {
+        classes,
+        isLoading: classesLoading,
+        error: classesError,
+        retry: retryClasses,
+    } = useAcademicClassOptions();
+
+    // Picked class (null = the first class once they load)
+    const [chosenClassId, setChosenClassId] = useState<number | null>(null);
+
+    const selectedClassId =
+        chosenClassId !== null && classes.some((item) => item.id === chosenClassId)
+            ? chosenClassId
+            : classes[0]?.id ?? null;
+
+    /* --------------------------------
+       Students of the selected class (same request as Attendance; older
+       responses are discarded by the hook)
+    -------------------------------- */
+
+    const [date] = useState(todayYmd);
+
+    const {
+        records: students,
+        isLoading: studentsLoading,
+        error: studentsError,
+        reload: reloadStudents,
+    } = useClassAttendance(selectedClassId, date);
+
+    // Selected student, tied to the class it was picked from
+    const [selection, setSelection] = useState<{ classId: number; studentId: number } | null>(null);
+
+    // Only a student of the currently loaded class counts as selected
+    const selectedStudentId =
+        selection !== null &&
+        selection.classId === selectedClassId &&
+        students.some((student) => student.student_id === selection.studentId)
+            ? selection.studentId
+            : null;
+
+    const handleClassChange = (classId: number) => {
+        setChosenClassId(classId);
+        setSelection(null);
     };
 
-    const handleStudentSelect = (
-        studentId: number
-    ) => (
-        setSelectedStudentId(studentId)
-    )
+    const handleStudentSelect = (studentId: number) => {
+        if (selectedClassId === null) return;
+
+        setSelection({ classId: selectedClassId, studentId });
+    };
 
     const rightPanelRef = useRef<HTMLDivElement>(null);
     const [rightPanelHeight, setRightPanelHeight] =
@@ -72,10 +97,21 @@ const Hifz = () => {
                         <div className="col-12">
                             <div className="hifz-sec-header d-flex align-items-center justify-content-between">
                                 <h1 className="section-title m-0">Hifz</h1>
-                                <select className="form-select attendance-class-select" aria-label="Default select example" >
-                                    {classOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
+                                <select
+                                    className="form-select attendance-class-select"
+                                    aria-label="Select class"
+                                    value={selectedClassId ?? ""}
+                                    onChange={(e) => handleClassChange(Number(e.target.value))}
+                                    disabled={classesLoading || classes.length === 0}
+                                >
+                                    {classes.length === 0 && (
+                                        <option value="">
+                                            {classesLoading ? "Loading" : "No classes"}
+                                        </option>
+                                    )}
+                                    {classes.map((option) => (
+                                        <option key={option.id} value={option.id}>
+                                            {option.name}
                                         </option>
                                     ))}
                                 </select>
@@ -96,9 +132,15 @@ const Hifz = () => {
                             >
                                 <HifzStudentList
                                     students={students}
-                                    attendance={attendance}
                                     selectedStudentId={selectedStudentId}
                                     onStudentSelect={handleStudentSelect}
+                                    hasClass={selectedClassId !== null}
+                                    classesLoading={classesLoading}
+                                    classesError={classesError}
+                                    onRetryClasses={retryClasses}
+                                    isLoading={studentsLoading}
+                                    error={studentsError}
+                                    onRetry={reloadStudents}
                                 />
                             </div>
                         </div>
