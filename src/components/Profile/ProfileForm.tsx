@@ -15,6 +15,8 @@ import type {
     ProfileUser,
     UpdateProfileRequest,
 } from "../../types/profile.types";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 // Mirrors the backend rules
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -114,6 +116,11 @@ const ProfileForm = () => {
 
     const { user, setUser } = useAuth();
 
+    // Without "Edit Profile" the profile is shown read-only
+    const { hasPermission } = usePermissions();
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_PROFILE);
+
     // Last profile saved on the server
     const [profile, setProfile] = useState<ProfileUser | null>(null);
 
@@ -194,6 +201,8 @@ const ProfileForm = () => {
     };
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (!canEdit) return;
+
         const field = event.target.name as keyof ProfileFormValues;
         const { value } = event.target;
 
@@ -209,6 +218,8 @@ const ProfileForm = () => {
     };
 
     const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (!canEdit) return;
+
         const file = event.target.files?.[0];
 
         if (!file) return;
@@ -228,6 +239,8 @@ const ProfileForm = () => {
     };
 
     const handleRemovePhoto = () => {
+        if (!canEdit) return;
+
         clearSelectedImage();
         setErrors((previous) => ({ ...previous, image: undefined }));
 
@@ -240,7 +253,7 @@ const ProfileForm = () => {
     const handleSave = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (isSavingRef.current || !profile) return;
+        if (isSavingRef.current || !profile || !canEdit) return;
 
         const clientErrors = validateForm(form, imageFile);
 
@@ -317,7 +330,7 @@ const ProfileForm = () => {
     };
 
     const handleCancel = () => {
-        if (!profile) return;
+        if (!profile || !canEdit) return;
 
         setForm(toFormValues(profile));
         setErrors({});
@@ -371,23 +384,27 @@ const ProfileForm = () => {
                         />
                     </div>
 
-                    <button
-                        type="button"
-                        className="profile-camera-button"
-                        aria-label="Change profile picture"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isSaving}
-                    >
-                        <Camera size={14} color="white" strokeWidth={2.2} />
-                    </button>
+                    {canEdit && (
+                        <>
+                            <button
+                                type="button"
+                                className="profile-camera-button"
+                                aria-label="Change profile picture"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isSaving}
+                            >
+                                <Camera size={14} color="white" strokeWidth={2.2} />
+                            </button>
 
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                        className="profile-file-input"
-                        onChange={handlePhotoChange}
-                    />
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                className="profile-file-input"
+                                onChange={handlePhotoChange}
+                            />
+                        </>
+                    )}
                 </div>
 
                 <div className="profile-identity-info">
@@ -400,7 +417,7 @@ const ProfileForm = () => {
 
                     <p>{profile.email}</p>
 
-                    {displayedAvatar && (
+                    {canEdit && displayedAvatar && (
                         <button
                             type="button"
                             className="profile-remove-photo"
@@ -430,6 +447,7 @@ const ProfileForm = () => {
                             <input
                                 id="profile-name"
                                 name="name"
+                                readOnly={!canEdit}
                                 value={form.name}
                                 onChange={handleChange}
                                 placeholder="Enter full name"
@@ -455,6 +473,7 @@ const ProfileForm = () => {
                             <input
                                 id="profile-phone"
                                 name="phone_no"
+                                readOnly={!canEdit}
                                 type="tel"
                                 value={form.phone_no}
                                 onChange={handleChange}
@@ -479,6 +498,7 @@ const ProfileForm = () => {
                             <input
                                 id="profile-email"
                                 name="email"
+                                readOnly={!canEdit}
                                 type="email"
                                 value={form.email}
                                 onChange={handleChange}
@@ -503,6 +523,7 @@ const ProfileForm = () => {
                             <input
                                 id="profile-newPassword"
                                 name="new_password"
+                                readOnly={!canEdit}
                                 type={showNewPassword ? "text" : "password"}
                                 value={form.new_password}
                                 onChange={handleChange}
@@ -534,6 +555,7 @@ const ProfileForm = () => {
                             <input
                                 id="profile-confirmPassword"
                                 name="confirm_password"
+                                readOnly={!canEdit}
                                 type={showConfirmPassword ? "text" : "password"}
                                 value={form.confirm_password}
                                 onChange={handleChange}
@@ -555,6 +577,7 @@ const ProfileForm = () => {
                     </div>
                 </div>
 
+                {canEdit && (
                 <div className="col-12">
                     <div className="form-actions">
                         <button
@@ -576,6 +599,7 @@ const ProfileForm = () => {
                         </button>
                     </div>
                 </div>
+                )}
 
             </div>
         </form>

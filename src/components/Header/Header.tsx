@@ -15,12 +15,19 @@ import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
 import { resolveImageUrl } from "../../utils/imageUrl";
 import AvatarContent from "../Avatar/AvatarContent";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 const Header = () => {
 
     const { signOut, isLoggingOut } = useLogout();
 
     const { user } = useAuth();
+
+    // Profile link only with "View Profile"
+    const { hasPermission } = usePermissions();
+
+    const canViewProfile = hasPermission(PERMISSIONS.VIEW_PROFILE);
 
     const avatarUrl = resolveImageUrl(user?.image);
 
@@ -314,17 +321,21 @@ const Header = () => {
 
                                             <div className="profile-dropdown-divider"></div>
 
-                                            {/* Profile Link */}
-                                            <Link
-                                                to="/profile"
-                                                className="profile-dropdown-item text-decoration-none"
-                                                onClick={() => setIsProfileOpen(false)}
-                                            >
-                                                <User size={18} />
-                                                <span>Profile</span>
-                                            </Link>
+                                            {/* Profile Link ("View Profile") */}
+                                            {canViewProfile && (
+                                                <>
+                                                    <Link
+                                                        to="/profile"
+                                                        className="profile-dropdown-item text-decoration-none"
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                    >
+                                                        <User size={18} />
+                                                        <span>Profile</span>
+                                                    </Link>
 
-                                            <div className="profile-dropdown-divider"></div>
+                                                    <div className="profile-dropdown-divider"></div>
+                                                </>
+                                            )}
 
                                             {/* Logout */}
                                             <button

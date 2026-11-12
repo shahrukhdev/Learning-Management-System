@@ -138,7 +138,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/profile"
-                    element={<RoleBasedRoute admin={<Profile />} teacher={<TeacherProfile />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_PROFILE]}>
+                            <RoleBasedRoute admin={<Profile />} teacher={<TeacherProfile />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 {/* System (admin pages only) */}

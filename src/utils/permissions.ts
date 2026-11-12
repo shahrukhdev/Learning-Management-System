@@ -3,6 +3,9 @@
 export const PERMISSIONS = {
     VIEW_DASHBOARD: "View Dashboard",
 
+    VIEW_PROFILE: "View Profile",
+    EDIT_PROFILE: "Edit Profile",
+
     VIEW_NOTICES: "View Notices",
     CREATE_NOTICE: "Create Notice",
     EDIT_NOTICE: "Edit Notice",
