@@ -370,7 +370,7 @@ const LogProgressPopup = ({
                                     className="log-progress-label"
                                     htmlFor="progress-subject"
                                 >
-                                    Subject
+                                    Course
                                 </label>
 
                                 <div className="log-progress-select-wrap">

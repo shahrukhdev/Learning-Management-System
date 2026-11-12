@@ -444,7 +444,7 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                             className={activeCourseId === null ? "spd-filter active" : "spd-filter"}
                             onClick={() => selectCourse(null)}
                         >
-                            All Subjects
+                            All Courses
                         </button>
 
                         {courses.map((course) => (
