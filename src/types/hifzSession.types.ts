@@ -33,8 +33,17 @@ export interface NewSabaqEntry {
     to_ayah: number;
 }
 
+// User who recorded a session (Teacher, Admin or Super Admin)
+export interface HifzSessionRecorder {
+    id: number;
+    name: string;
+}
+
 export interface HifzSession {
     id: number;
+    // Set by the backend from the authenticated user (never sent)
+    recorded_by: number | null;
+    recorded_by_user: HifzSessionRecorder | null;
     session_date: string; // Y-m-d
     notes: string | null;
     old_sabaq: RevisionEntry[];
@@ -42,7 +51,8 @@ export interface HifzSession {
     new_sabaq: NewSabaqEntry[];
 }
 
-// Request bodies (no student_id / teacher_id: the backend sets them)
+// Request bodies (no student_id / recorded_by: the backend sets them; the
+// recorder is the authenticated user and never changes on update)
 export interface RevisionEntryPayload {
     from_surah_id: number;
     to_surah_id: number;

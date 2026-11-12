@@ -347,7 +347,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                 return { outcome: "invalid", validationErrors };
             }
 
-            // 403 = not a teacher (backend message), 404 = session gone, etc.
+            // 403 = not allowed (backend message), 404 = session gone, etc.
             if (status !== 401) toast.error(message);
 
             if (status === 404 && editingSession) {

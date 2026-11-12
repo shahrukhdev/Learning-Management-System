@@ -240,6 +240,14 @@ const HifzStudentSessions = ({
                                 </p>
                             )}
 
+                            {/* Recorded by (any role; hidden when unknown) */}
+
+                            {session.recorded_by_user?.name && (
+                                <p className="hifz-session-description m-0">
+                                    Recorded by {session.recorded_by_user.name}
+                                </p>
+                            )}
+
                         </div>
 
                         {/* Actions */}

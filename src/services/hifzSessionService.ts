@@ -2,6 +2,7 @@ import api from "../api/api";
 import type { Surah } from "../types/quran.types";
 import type {
     HifzSession,
+    HifzSessionRecorder,
     HifzSessionResponse,
     NewSabaqEntry,
     RevisionEntry,
@@ -86,6 +87,17 @@ const toNewSabaqEntry = (value: unknown): NewSabaqEntry | null => {
     };
 };
 
+// `recorded_by_user` is nullable (e.g. the recorder was deleted)
+const toRecorder = (value: unknown): HifzSessionRecorder | null => {
+    if (!isObject(value)) return null;
+
+    const id = toNumber(value.id);
+
+    if (id === null) return null;
+
+    return { id, name: typeof value.name === "string" ? value.name : "" };
+};
+
 const toList = <T,>(value: unknown, map: (item: unknown) => T | null): T[] =>
     (Array.isArray(value) ? value : []).map(map).filter((item): item is T => item !== null);
 
@@ -101,6 +113,8 @@ const toSession = (value: unknown): HifzSession | null => {
 
     return {
         id: value.id,
+        recorded_by: toNumber(value.recorded_by),
+        recorded_by_user: toRecorder(value.recorded_by_user),
         session_date: typeof value.session_date === "string" ? value.session_date.slice(0, 10) : "",
         notes: typeof value.notes === "string" ? value.notes : null,
         old_sabaq: toList(pick("old_sabaq"), toRevisionEntry),
@@ -135,7 +149,8 @@ export const getHifzSession = async (
     return toSession(response.data.data);
 };
 
-// POST /v1/students/{studentId}/hifz-sessions (teachers only; 403 otherwise)
+// POST /v1/students/{studentId}/hifz-sessions. The backend sets recorded_by
+// from the authenticated user (Teacher, Admin or Super Admin).
 export const createHifzSession = async (
     studentId: number,
     payload: SaveHifzSessionRequest
@@ -144,7 +159,8 @@ export const createHifzSession = async (
     return { message: response.data.message };
 };
 
-// PUT /v1/students/{studentId}/hifz-sessions/{id} (all three arrays required)
+// PUT /v1/students/{studentId}/hifz-sessions/{id} (all three arrays required;
+// the original recorder is kept)
 export const updateHifzSession = async (
     studentId: number,
     id: number,
