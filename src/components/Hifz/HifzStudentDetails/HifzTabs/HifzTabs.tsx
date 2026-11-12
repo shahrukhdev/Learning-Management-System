@@ -9,6 +9,8 @@ export type HifzStudentTab =
 interface HifzStudentTabsProps {
     activeTab: HifzStudentTab;
     onTabChange: (tab: HifzStudentTab) => void;
+    // Tabs the user may open (by permission); all tabs when omitted
+    visibleTabs?: HifzStudentTab[];
 }
 
 const tabs: {
@@ -36,12 +38,15 @@ const tabs: {
 const HifzStudentTabs = ({
     activeTab,
     onTabChange,
+    visibleTabs,
 }: HifzStudentTabsProps) => {
+
+    const shownTabs = visibleTabs ? tabs.filter((tab) => visibleTabs.includes(tab.id)) : tabs;
 
     return (
         <div className="hifz-student-tabs">
 
-            {tabs.map((tab) => (
+            {shownTabs.map((tab) => (
                 <button
                     key={tab.id}
                     type="button"

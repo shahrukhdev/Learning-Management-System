@@ -33,6 +33,12 @@ export const PERMISSIONS = {
     EDIT_PERMISSION: "Edit Permission",
     DELETE_PERMISSION: "Delete Permission",
 
+    VIEW_HIFZ: "View Hifz",
+    VIEW_HIFZ_SESSIONS: "View Hifz Sessions",
+    CREATE_HIFZ_SESSION: "Create Hifz Session",
+    EDIT_HIFZ_SESSION: "Edit Hifz Session",
+    DELETE_HIFZ_SESSION: "Delete Hifz Session",
+
     VIEW_ATTENDANCE: "View Attendance",
     MARK_ATTENDANCE: "Mark Attendance",
     ATTENDANCE_OVERVIEW: "Attendance Overview",

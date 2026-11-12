@@ -76,8 +76,10 @@ interface HifzStudentSessionsProps {
     // Surah lookup for entries returned without nested Surah objects
     surahs: Surah[];
 
-    onEdit: (session: HifzSession) => void;
-    onDelete: (session: HifzSession) => void;
+    // Each action is shown only when passed ("Edit Hifz Session" /
+    // "Delete Hifz Session")
+    onEdit?: (session: HifzSession) => void;
+    onDelete?: (session: HifzSession) => void;
     // Session whose edit data is being fetched (its Edit button spins)
     loadingSessionId: number | null;
 
@@ -306,27 +308,33 @@ const HifzStudentSessions = ({
                             </div>
 
                             {/* Edit / Delete do not select the card */}
-                            <div className="table-actions hifz-session-actions" onClick={(event) => event.stopPropagation()}>
-                                <button
-                                    type="button"
-                                    onClick={() => onEdit(session)}
-                                    disabled={loadingSessionId !== null}
-                                    aria-label={`Edit session of ${formatSessionDate(session.session_date)}`}
-                                >
-                                    {isLoadingEdit ? (
-                                        <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                    ) : (
-                                        <Pencil size={16} strokeWidth={2.4} />
+                            {(onEdit || onDelete) && (
+                                <div className="table-actions hifz-session-actions" onClick={(event) => event.stopPropagation()}>
+                                    {onEdit && (
+                                        <button
+                                            type="button"
+                                            onClick={() => onEdit(session)}
+                                            disabled={loadingSessionId !== null}
+                                            aria-label={`Edit session of ${formatSessionDate(session.session_date)}`}
+                                        >
+                                            {isLoadingEdit ? (
+                                                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                            ) : (
+                                                <Pencil size={16} strokeWidth={2.4} />
+                                            )}
+                                        </button>
                                     )}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => onDelete(session)}
-                                    aria-label={`Delete session of ${formatSessionDate(session.session_date)}`}
-                                >
-                                    <Trash2 size={16} strokeWidth={2.4} />
-                                </button>
-                            </div>
+                                    {onDelete && (
+                                        <button
+                                            type="button"
+                                            onClick={() => onDelete(session)}
+                                            aria-label={`Delete session of ${formatSessionDate(session.session_date)}`}
+                                        >
+                                            <Trash2 size={16} strokeWidth={2.4} />
+                                        </button>
+                                    )}
+                                </div>
+                            )}
 
                         </header>
 

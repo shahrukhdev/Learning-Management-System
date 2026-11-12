@@ -119,7 +119,11 @@ const AppRoutes = () => {
 
                 <Route
                     path="/hifz"
-                    element={<RoleBasedRoute admin={<Hifz />} teacher={<TeacherHifz />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_HIFZ]}>
+                            <RoleBasedRoute admin={<Hifz />} teacher={<TeacherHifz />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route

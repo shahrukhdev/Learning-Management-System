@@ -52,6 +52,7 @@ const navItems: NavItem[] = [
         title: "Hifz",
         path: "/hifz",
         icon: NavIcon3,
+        permission: PERMISSIONS.VIEW_HIFZ,
     },
     {
         title: "Notices",

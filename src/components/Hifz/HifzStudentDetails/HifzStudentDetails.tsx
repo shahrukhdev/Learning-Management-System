@@ -37,6 +37,8 @@ import { parseApiError } from "../../../utils/apiError";
 import { todayYmd } from "../../Attendance/attendanceDates";
 import type { SurahProgressRecord } from "../../../types/surahProgress.types";
 import type { HifzSession, SaveHifzSessionRequest } from "../../../types/hifzSession.types";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 interface HifzStudentDetailsProps {
     // The student selected in the tracker's student list
@@ -59,6 +61,20 @@ const getValidationMessage = (
 
 const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
     const [activeTab, setActiveTab] = useState<HifzStudentTab>("student-log");
+
+    /* --------------------------------
+       Permissions ("View Hifz" is checked by the /hifz route)
+    -------------------------------- */
+
+    const { hasPermission } = usePermissions();
+
+    const canViewSessions = hasPermission(PERMISSIONS.VIEW_HIFZ_SESSIONS);
+
+    const canCreateSession = hasPermission(PERMISSIONS.CREATE_HIFZ_SESSION);
+
+    const canEditSession = hasPermission(PERMISSIONS.EDIT_HIFZ_SESSION);
+
+    const canDeleteSession = hasPermission(PERMISSIONS.DELETE_HIFZ_SESSION);
 
     // The tracker's date (header date picker): filters the Sessions tab and
     // is the date of a new session. Cleared = all sessions.
@@ -270,7 +286,8 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
        Hifz sessions (selected student + date)
     -------------------------------- */
 
-    const sessions = useHifzSessions(studentId, date);
+    // Requested only with "View Hifz Sessions"
+    const sessions = useHifzSessions(canViewSessions ? studentId : null, date);
 
     const { reload: reloadSessions, removeSession } = sessions;
 
@@ -326,7 +343,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
     // Session being edited in the Student Log (only for its own student)
     const [editing, setEditing] = useState<{ studentId: number; session: HifzSession } | null>(null);
 
-    const activeEditing = editing?.studentId === studentId ? editing : null;
+    const activeEditing = editing?.studentId === studentId && canEditSession ? editing : null;
 
     // Remounts the create form after a successful save (clears it)
     const [formVersion, setFormVersion] = useState(0);
@@ -337,7 +354,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
 
     // Edit: fetch the session, then open it in the Student Log
     const handleEditSession = async (session: HifzSession) => {
-        if (loadingSession) return;
+        if (loadingSession || !canEditSession) return;
 
         const forStudentId = studentId;
 
@@ -360,6 +377,21 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
         }
     };
 
+    /* --------------------------------
+       Tabs allowed for this user. Student Log is the session form: shown
+       with "Create Hifz Session", or while editing ("Edit Hifz Session").
+    -------------------------------- */
+
+    const visibleTabs: HifzStudentTab[] = [
+        ...(canCreateSession || activeEditing ? (["student-log"] as const) : []),
+        "quran-map",
+        "surah-list",
+        ...(canViewSessions ? (["sessions"] as const) : []),
+    ];
+
+    // Never stay on a hidden tab: fall back to the first allowed one
+    const currentTab = visibleTabs.includes(activeTab) ? activeTab : visibleTabs[0];
+
     const handleCancelEdit = () => {
         setEditing(null);
         setActiveTab("sessions");
@@ -371,6 +403,9 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
         const forStudentId = studentId;
 
         const editingSession = activeEditing?.session ?? null;
+
+        // Saving needs the matching permission (edit or create)
+        if (editingSession ? !canEditSession : !canCreateSession) return { outcome: "error" };
 
         try {
             let message: string;
@@ -434,7 +469,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
     const activeDeleteSession = deleteSessionTarget?.studentId === studentId ? deleteSessionTarget : null;
 
     const handleConfirmDeleteSession = async () => {
-        if (!activeDeleteSession || isDeletingSessionRef.current) return;
+        if (!activeDeleteSession || isDeletingSessionRef.current || !canDeleteSession) return;
 
         const { studentId: forStudentId, session } = activeDeleteSession;
 
@@ -569,12 +604,13 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
             />
 
             <HifzStudentTabs
-                activeTab={activeTab}
+                activeTab={currentTab}
                 onTabChange={setActiveTab}
+                visibleTabs={visibleTabs}
             />
 
             <div className="hifz-student-tab-content">
-                {activeTab === "student-log" && (
+                {currentTab === "student-log" && (
                     <>
                         {activeEditing && (
                             <div className="hifz-edit-banner">
@@ -605,7 +641,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                     </>
                 )}
 
-                {activeTab === "quran-map" && (
+                {currentTab === "quran-map" && (
                     renderQuranMapStatus("No Surahs found.") ?? (
                         <>
                             {renderProgressNote()}
@@ -620,7 +656,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                     )
                 )}
 
-                {activeTab === "surah-list" && (
+                {currentTab === "surah-list" && (
                     renderQuranMapStatus("No Surahs found.") ?? (
                         <SurahList
                             surahs={mapSurahs}
@@ -630,7 +666,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                     )
                 )}
 
-                {activeTab === "sessions" && (
+                {currentTab === "sessions" && (
                     <HifzStudentSessions
                         sessions={sessions.sessions}
                         isLoading={sessions.isLoading}
@@ -639,8 +675,12 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                         date={date}
                         onShowAllDates={() => setDate(null)}
                         surahs={quran.surahs}
-                        onEdit={handleEditSession}
-                        onDelete={(session) => setDeleteSessionTarget({ studentId, session })}
+                        onEdit={canEditSession ? handleEditSession : undefined}
+                        onDelete={
+                            canDeleteSession
+                                ? (session) => setDeleteSessionTarget({ studentId, session })
+                                : undefined
+                        }
                         loadingSessionId={loadingSessionId}
                         selectedSessionId={selectedSession?.id ?? null}
                         onSelect={handleSelectSession}
@@ -668,7 +708,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
             />
 
             <ConfirmPopup
-                isOpen={activeDeleteSession !== null}
+                isOpen={activeDeleteSession !== null && canDeleteSession}
                 title="Delete Session"
                 message={
                     <>
