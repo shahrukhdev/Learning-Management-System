@@ -351,7 +351,9 @@ const ProfileForm = () => {
         );
     }
 
-    const savedImageUrl = removeImage ? null : resolveImageUrl(profile.image);
+    // Same image as the Header/Sidebar (AuthContext, updated from every
+    // profile response); a picked file previews until it is saved
+    const savedImageUrl = removeImage ? null : resolveImageUrl(user ? user.image : profile.image);
     const displayedAvatar = previewUrl ?? savedImageUrl;
 
     return (

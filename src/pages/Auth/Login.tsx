@@ -21,7 +21,7 @@ import {
     LockKeyholeOpen,
     Eye,
     EyeOff,
-    Check,
+    // Check, // used by "Remember me" (commented out below)
     ArrowRight,
     ArrowLeft
 } from "lucide-react";
@@ -282,7 +282,8 @@ const Login = () => {
 
                         </div>
 
-                        {/* Remember Me */}
+                        {/* Remember Me (hidden for now; uncomment to restore,
+                            together with the `Check` icon import)
                         <div className="remember-box">
 
                             <input
@@ -311,6 +312,7 @@ const Login = () => {
                             </label>
 
                         </div>
+                        */}
 
                         {/* Submit */}
                         <button

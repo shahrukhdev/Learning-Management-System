@@ -31,7 +31,7 @@ const HifzOverview = ({ students, isLoading, error, onRetry }: HifzOverviewProps
                 <h2 className="dash-box-title">
                     Hifz Overview
                 </h2>
-                <Link className="view-details-btn" to="/hifz-overview">
+                <Link className="view-details-btn" to="/hifz">
                     View all
                     <MoveRight color="#0F7A47" size={12} strokeWidth={2.5} />
                 </Link>

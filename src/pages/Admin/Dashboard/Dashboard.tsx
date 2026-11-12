@@ -5,7 +5,8 @@ import HifzOverview from "../../../components/HifzOverView/HifzOverview";
 import WelcomeBanner from "../../../components/WelcomeBanner/WelcomeBanner";
 import StudentAttendanceOverview from "../../../components/StudentsAttendanceOverview/StudentsAttendanceOverviewChart";
 import Announcements from "../../../components/Announcements/Announcements";
-import TeachersOnline from "../../../components/TeachersOnline/TeachersOnline";
+// Teachers Online is hidden for now (uncomment here and below to restore)
+// import TeachersOnline from "../../../components/TeachersOnline/TeachersOnline";
 import QuranProgressOverview from "../../../components/QuranProgressOverview/QuranProgressOverview";
 import { useDashboardSummary } from "../../../hooks/useDashboardSummary";
 import type { AttendancePeriod } from "../../../types/dashboard.types";
@@ -64,7 +65,7 @@ const Dashboard = () => {
                                         <Announcements announcements={summary?.announcements ?? []} {...sectionProps} />
 
                                         {/* Teachers Online */}
-                                        <TeachersOnline />
+                                        {/* <TeachersOnline /> */}
 
                                         {/* Quran Progress */}
                                         <QuranProgressOverview items={summary?.quran_progress_overview ?? []} {...sectionProps} />

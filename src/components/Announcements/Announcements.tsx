@@ -1,5 +1,8 @@
 import "./Announcements.css";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
 import type { DashboardAnnouncement } from "../../types/dashboard.types";
@@ -16,15 +19,30 @@ interface AnnouncementsProps {
 }
 
 const Announcements = ({ announcements, isLoading, error, onRetry }: AnnouncementsProps) => {
+
+    const navigate = useNavigate();
+
+    // The Notices page needs "View Notices" (same rule as its Sidebar item)
+    const { hasPermission } = usePermissions();
+
+    const canViewNotices = hasPermission(PERMISSIONS.VIEW_NOTICES);
+
     return (
         <div className="announcement dashboard-box">
             <div className="dash-box-top">
                 <h2 className="dash-box-title">
                     Announcements
                 </h2>
-                <button type="button" className="add-btn">
-                    <Plus color="#33423C" size={18} strokeWidth={2.5} />
-                </button>
+                {canViewNotices && (
+                    <button
+                        type="button"
+                        className="add-btn"
+                        onClick={() => navigate("/notices")}
+                        aria-label="Go to Notices"
+                    >
+                        <Plus color="#33423C" size={18} strokeWidth={2.5} />
+                    </button>
+                )}
             </div>
 
             {/* Announcement List */}
