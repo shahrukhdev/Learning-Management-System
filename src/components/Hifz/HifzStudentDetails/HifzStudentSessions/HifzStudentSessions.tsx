@@ -1,6 +1,6 @@
 import "./HifzStudentSessions.css";
 import { formatSessionDate } from "./formatSessionDate";
-import { CalendarDays, Pencil, Trash2 } from "lucide-react";
+import { CalendarDays, Pencil, Trash2, UserRound } from "lucide-react";
 
 import type { Surah } from "../../../../types/quran.types";
 import type {
@@ -9,6 +9,7 @@ import type {
     RevisionEntry,
     SabaqStatus,
     SabaqStrength,
+    SessionSection,
 } from "../../../../types/hifzSession.types";
 
 /* ================================
@@ -43,6 +44,12 @@ const STATUS_LABELS: Record<SabaqStatus, string> = {
     mistakes: "Mistakes",
     repeat: "Repeat",
     "needs-revision": "Needs Revision",
+};
+
+const SECTION_LABELS: Record<SessionSection, string> = {
+    old_sabaq: "Old Sabaq",
+    manzil: "Manzil",
+    new_sabaq: "New Sabaq",
 };
 
 // Weakest first: the card shows the weakest strength recorded in the session
@@ -99,20 +106,64 @@ const HifzStudentSessions = ({
         return item ? `${item.number}. ${item.name}` : "Unknown Surah";
     };
 
-    const describeRevision = (entry: RevisionEntry) => {
-        const portion = `${getSurahName(entry.from_surah, entry.from_surah_id)} → ${getSurahName(entry.to_surah, entry.to_surah_id)}`;
-
-        const details = [
-            entry.status ? STATUS_LABELS[entry.status] : null,
-            entry.strength ? ratingData[entry.strength].label : null,
-            entry.mistakes !== null ? `✗ ${entry.mistakes} mistakes` : null,
-        ].filter(Boolean);
-
-        return details.length > 0 ? `${portion} · ${details.join(" · ")}` : portion;
-    };
+    // Same Surah on both sides: show it once
+    const describeRange = (from: string, to: string) => (from === to ? from : `${from} → ${to}`);
 
     const describeNewSabaq = (entry: NewSabaqEntry) =>
-        `${getSurahName(entry.from_surah, entry.from_surah_id)}:${entry.from_ayah} → ${getSurahName(entry.to_surah, entry.to_surah_id)}:${entry.to_ayah}`;
+        describeRange(
+            `${getSurahName(entry.from_surah, entry.from_surah_id)}:${entry.from_ayah}`,
+            `${getSurahName(entry.to_surah, entry.to_surah_id)}:${entry.to_ayah}`
+        );
+
+    // Old Sabaq / Manzil entry: portion + status, strength and mistakes
+    const renderRevisionEntry = (section: SessionSection, entry: RevisionEntry, index: number) => (
+        <li className="hifz-session-entry" key={`${section}-${entry.id ?? index}`}>
+
+            <span className={`hifz-session-entry-label ${section}`}>
+                {SECTION_LABELS[section]}
+            </span>
+
+            <div className="hifz-session-entry-body">
+
+                <h3 className="hifz-session-portion m-0">
+                    {describeRange(
+                        getSurahName(entry.from_surah, entry.from_surah_id),
+                        getSurahName(entry.to_surah, entry.to_surah_id)
+                    )}
+                </h3>
+
+                <div className="hifz-session-entry-meta">
+
+                    {entry.status && (
+                        <span className={`hifz-session-chip status-${entry.status}`}>
+                            {STATUS_LABELS[entry.status]}
+                        </span>
+                    )}
+
+                    {entry.strength && (
+                        <span className={`hifz-session-chip strength-${entry.strength}`}>
+                            {ratingData[entry.strength].label} {ratingData[entry.strength].stars}
+                        </span>
+                    )}
+
+                    {entry.mistakes !== null && entry.mistakes > 0 && (
+                        <span className="hifz-session-mistakes">
+                            ✗ {entry.mistakes} {entry.mistakes === 1 ? "mistake" : "mistakes"}
+                        </span>
+                    )}
+
+                    {entry.mistakes === 0 && (
+                        <span className="hifz-session-no-mistakes">
+                            ✓ No mistakes
+                        </span>
+                    )}
+
+                </div>
+
+            </div>
+
+        </li>
+    );
 
     const dateFilter = date && (
         <div className="hifz-sessions-filter">
@@ -176,105 +227,129 @@ const HifzStudentSessions = ({
 
                 const rating = ratingKey ? ratingData[ratingKey] : null;
 
-                const lines = [
-                    ...session.old_sabaq.map((entry) => ({ label: "Old Sabaq", text: describeRevision(entry) })),
-                    ...session.manzil.map((entry) => ({ label: "Manzil", text: describeRevision(entry) })),
-                    ...session.new_sabaq.map((entry) => ({ label: "New Sabaq", text: describeNewSabaq(entry) })),
-                ];
+                const totalMistakes = [...session.old_sabaq, ...session.manzil]
+                    .reduce((sum, entry) => sum + (entry.mistakes ?? 0), 0);
+
+                const hasEntries =
+                    session.old_sabaq.length + session.manzil.length + session.new_sabaq.length > 0;
 
                 const isLoadingEdit = loadingSessionId === session.id;
 
+                const recorderName = session.recorded_by_user?.name;
+
                 return (
 
-                    <div className={`hifz-session-card ${ratingKey ? `hifz-session-${ratingKey}` : ""}`} key={session.id} >
+                    <article className={`hifz-session-card ${ratingKey ? `hifz-session-${ratingKey}` : ""}`} key={session.id} >
 
                         {/* =========================
-                            Left Side
+                            Header: date, rating, total mistakes, actions
                         ========================= */}
 
-                        <div className="hifz-session-left">
+                        <header className="hifz-session-header">
 
-                            {/* Date */}
+                            <div className="hifz-session-left">
 
-                            <span className="hifz-session-date">
-                                {formatSessionDate(session.session_date)}
-                            </span>
+                                <span className="hifz-session-date">
+                                    <CalendarDays size={15} strokeWidth={2} aria-hidden="true" />
+                                    {formatSessionDate(session.session_date)}
+                                </span>
 
-                            {/* Rating */}
+                                {rating && (
+                                    <div className="hifz-session-rating">
 
-                            {rating && (
-                                <div className="hifz-session-rating">
+                                        <span className="hifz-session-rating-label">
+                                            {rating.label}
+                                        </span>
 
-                                    <span className="hifz-session-rating-label">
-                                        {rating.label}
-                                    </span>
+                                        <span className="hifz-session-rating-symbol">
+                                            {rating.stars}
+                                        </span>
 
-                                    <span className="hifz-session-rating-symbol">
-                                        {rating.stars}
-                                    </span>
-
-                                </div>
-                            )}
-
-                        </div>
-
-                        {/* =========================
-                            Right Side
-                        ========================= */}
-
-                        <div className="hifz-session-content">
-
-                            {/* Entries */}
-
-                            {lines.map((line, index) => (
-                                <h3 className="hifz-session-portion m-0" key={`${line.label}-${index}`}>
-                                    <span className="hifz-session-entry-label">{line.label}:</span> {line.text}
-                                </h3>
-                            ))}
-
-                            {/* Notes */}
-
-                            {session.notes && (
-                                <p className="hifz-session-description m-0">
-                                    {session.notes}
-                                </p>
-                            )}
-
-                            {/* Recorded by (any role; hidden when unknown) */}
-
-                            {session.recorded_by_user?.name && (
-                                <p className="hifz-session-description m-0">
-                                    Recorded by {session.recorded_by_user.name}
-                                </p>
-                            )}
-
-                        </div>
-
-                        {/* Actions */}
-
-                        <div className="table-actions hifz-session-actions">
-                            <button
-                                type="button"
-                                onClick={() => onEdit(session)}
-                                disabled={loadingSessionId !== null}
-                                aria-label={`Edit session of ${formatSessionDate(session.session_date)}`}
-                            >
-                                {isLoadingEdit ? (
-                                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                ) : (
-                                    <Pencil size={16} strokeWidth={2.4} />
+                                    </div>
                                 )}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => onDelete(session)}
-                                aria-label={`Delete session of ${formatSessionDate(session.session_date)}`}
-                            >
-                                <Trash2 size={16} strokeWidth={2.4} />
-                            </button>
-                        </div>
 
-                    </div>
+                                {totalMistakes > 0 && (
+                                    <span className="hifz-session-mistakes total">
+                                        ✗ {totalMistakes} {totalMistakes === 1 ? "mistake" : "mistakes"}
+                                    </span>
+                                )}
+
+                            </div>
+
+                            <div className="table-actions hifz-session-actions">
+                                <button
+                                    type="button"
+                                    onClick={() => onEdit(session)}
+                                    disabled={loadingSessionId !== null}
+                                    aria-label={`Edit session of ${formatSessionDate(session.session_date)}`}
+                                >
+                                    {isLoadingEdit ? (
+                                        <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    ) : (
+                                        <Pencil size={16} strokeWidth={2.4} />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onDelete(session)}
+                                    aria-label={`Delete session of ${formatSessionDate(session.session_date)}`}
+                                >
+                                    <Trash2 size={16} strokeWidth={2.4} />
+                                </button>
+                            </div>
+
+                        </header>
+
+                        {/* =========================
+                            Entries
+                        ========================= */}
+
+                        {hasEntries && (
+                            <ul className="hifz-session-entries">
+
+                                {session.old_sabaq.map((entry, index) => renderRevisionEntry("old_sabaq", entry, index))}
+
+                                {session.manzil.map((entry, index) => renderRevisionEntry("manzil", entry, index))}
+
+                                {session.new_sabaq.map((entry, index) => (
+                                    <li className="hifz-session-entry" key={`new_sabaq-${entry.id ?? index}`}>
+
+                                        <span className="hifz-session-entry-label new_sabaq">
+                                            {SECTION_LABELS.new_sabaq}
+                                        </span>
+
+                                        <div className="hifz-session-entry-body">
+                                            <h3 className="hifz-session-portion m-0">
+                                                {describeNewSabaq(entry)}
+                                            </h3>
+                                        </div>
+
+                                    </li>
+                                ))}
+
+                            </ul>
+                        )}
+
+                        {/* =========================
+                            Notes + recorder
+                        ========================= */}
+
+                        {session.notes && (
+                            <p className="hifz-session-description m-0">
+                                {session.notes}
+                            </p>
+                        )}
+
+                        {recorderName && (
+                            <div className="hifz-session-footer">
+                                <UserRound size={14} strokeWidth={2} aria-hidden="true" />
+                                <span>
+                                    Recorded by <strong>{recorderName}</strong>
+                                </span>
+                            </div>
+                        )}
+
+                    </article>
 
                 );
 
