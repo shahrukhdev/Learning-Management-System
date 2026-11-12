@@ -193,7 +193,7 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
 
                         const totalSurahs = student.total_surahs ?? 0;
 
-                        const progressPercentage = Math.round(student.hifz_percentage ?? 0);
+                        const progressPercentage = student.hifz_percentage ?? 0;
 
                         const attendance = student.attendance ?? 0;
 
