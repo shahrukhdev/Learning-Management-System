@@ -55,7 +55,6 @@ const Notices = () => {
     const firstResult = totalResults === 0 ? 0 : (currentPage - 1) * resultsPerPage + 1;
     const lastResult = Math.min(currentPage * resultsPerPage, totalResults);
 
-
     /* =========================
        Permissions (View is checked by the route; actions here)
     ========================= */
