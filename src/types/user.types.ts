@@ -13,6 +13,7 @@ export interface UserRoleSummary {
 export interface ManagedUser {
     id: number;
     name: string;
+    initials: string;
     email: string;
     phone_no: string | null;
     image: string | null;

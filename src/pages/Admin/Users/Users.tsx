@@ -134,6 +134,7 @@ const Users = () => {
             setAuthUser(toAuthUser({
                 id: updatedUser.id,
                 name: updatedUser.name,
+                initials: updatedUser.initials,
                 email: updatedUser.email,
                 phone_no: updatedUser.phone_no,
                 image: updatedUser.image,

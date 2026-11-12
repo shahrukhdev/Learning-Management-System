@@ -4,6 +4,7 @@ import type { AuthUserInput } from "../types/auth.types";
 interface UserSource {
     id: number;
     name: string;
+    initials?: string | null;
     email: string;
     role: string;
     phone_no?: string | null;
@@ -25,6 +26,7 @@ export const toAuthUser = (user: UserSource): AuthUserInput => {
     return {
         id: user.id,
         name: user.name,
+        initials: user.initials ?? "",
         email: user.email,
         phone_no: user.phone_no ?? null,
         role: user.role,

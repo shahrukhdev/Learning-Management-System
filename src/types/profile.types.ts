@@ -3,6 +3,7 @@
 export interface ProfileUser {
     id: number;
     name: string;
+    initials: string;
     email: string;
     phone_no: string | null;
     is_active: boolean | number;

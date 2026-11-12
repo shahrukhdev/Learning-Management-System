@@ -8,6 +8,7 @@ export interface LoginRequest {
 export interface AuthenticatedUser {
     id: number;
     name: string;
+    initials: string;
     email: string;
     phone_no: string | null;
     is_active: number;
@@ -19,7 +20,7 @@ export interface AuthenticatedUser {
 
 // The subset of user info kept in AuthContext (and persisted for refresh).
 // `permissions` = the user's permission names exactly as the API returns them.
-export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "email" | "phone_no" | "role" | "image"> & {
+export type AuthUser = Pick<AuthenticatedUser, "id" | "name" | "initials" | "email" | "phone_no" | "role" | "image"> & {
     permissions: string[];
 };
 

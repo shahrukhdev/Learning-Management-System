@@ -377,7 +377,7 @@ const ProfileForm = () => {
                         <AvatarContent
                             src={displayedAvatar}
                             alt={profile.name}
-                            fallback={<span>{getInitials(profile.name)}</span>}
+                            fallback={<span>{profile.initials}</span>}
                         />
                     </div>
 
