@@ -98,9 +98,19 @@ const HifzStudentLog = ({
 
     const isEditing = editingSession !== null;
 
-    const [formData, setFormData] = useState<HifzSessionFormData>(() =>
-        editingSession ? toSessionFormData(editingSession) : createEmptySessionForm()
-    );
+    // Old Sabaq / Manzil always show at least one entry (there is no Add
+    // Entry); a blank entry is ignored on submit, so the payload is unchanged
+    const [formData, setFormData] = useState<HifzSessionFormData>(() => {
+        if (!editingSession) return createEmptySessionForm();
+
+        const data = toSessionFormData(editingSession);
+
+        return {
+            ...data,
+            old_sabaq: data.old_sabaq.length > 0 ? data.old_sabaq : [emptyRevisionEntry()],
+            manzil: data.manzil.length > 0 ? data.manzil : [emptyRevisionEntry()],
+        };
+    });
 
     const [errors, setErrors] = useState<HifzSessionFormErrors>({});
 
@@ -231,30 +241,25 @@ const HifzStudentLog = ({
     };
 
     /* --------------------------------
-       Add / remove entries
+       Add / remove entries (New Sabaq only)
     -------------------------------- */
 
-    const addEntry = (section: SessionSection) => {
-        setFormData((current) =>
-            section === "new_sabaq"
-                ? { ...current, new_sabaq: [...current.new_sabaq, emptyNewSabaqEntry()] }
-                : { ...current, [section]: [...current[section], emptyRevisionEntry()] }
-        );
+    const addNewSabaqEntry = () => {
+        setFormData((current) => ({ ...current, new_sabaq: [...current.new_sabaq, emptyNewSabaqEntry()] }));
 
         clearErrors([]);
     };
 
-    const removeEntry = (section: SessionSection, entryKey: string) => {
-        setFormData((current) =>
-            section === "new_sabaq"
-                ? { ...current, new_sabaq: current.new_sabaq.filter((entry) => entry.key !== entryKey) }
-                : { ...current, [section]: current[section].filter((entry) => entry.key !== entryKey) }
-        );
+    const removeNewSabaqEntry = (entryKey: string) => {
+        setFormData((current) => ({
+            ...current,
+            new_sabaq: current.new_sabaq.filter((entry) => entry.key !== entryKey),
+        }));
 
         setErrors((current) => {
             const next = { ...current };
             Object.keys(next).forEach((key) => {
-                if (key.startsWith(`${section}.${entryKey}.`)) delete next[key];
+                if (key.startsWith(`new_sabaq.${entryKey}.`)) delete next[key];
             });
             return next;
         });
@@ -308,17 +313,18 @@ const HifzStudentLog = ({
        Render helpers
     -------------------------------- */
 
-    const renderSectionHeader = (section: SessionSection) => (
+    // New Sabaq header (keeps Add Entry)
+    const renderNewSabaqHeader = () => (
         <div className="hifz-log-section-header">
 
             <h3 className="tab-content-title">
-                {SECTION_TITLES[section]}
+                {SECTION_TITLES.new_sabaq}
             </h3>
 
             <button
                 type="button"
                 className="hifz-log-add-btn"
-                onClick={() => addEntry(section)}
+                onClick={addNewSabaqEntry}
                 disabled={isSubmitting}
             >
                 <Plus size={14} strokeWidth={2.5} />
@@ -328,30 +334,73 @@ const HifzStudentLog = ({
         </div>
     );
 
-    const renderRemoveButton = (section: SessionSection, entryKey: string, index: number) => (
+    const renderNewSabaqRemoveButton = (entryKey: string, index: number) => (
         <button
             type="button"
             className="hifz-log-remove-btn"
-            onClick={() => removeEntry(section, entryKey)}
+            onClick={() => removeNewSabaqEntry(entryKey)}
             disabled={isSubmitting}
-            aria-label={`Remove ${SECTION_TITLES[section]} entry ${index + 1}`}
+            aria-label={`Remove ${SECTION_TITLES.new_sabaq} entry ${index + 1}`}
         >
             <Trash2 size={15} strokeWidth={2.2} />
         </button>
     );
 
-    const renderEmptySection = (section: SessionSection) => (
+    const renderEmptyNewSabaq = () => (
         <p className="hifz-log-empty">
-            No {SECTION_TITLES[section]} entries. Use Add Entry to add one.
+            No {SECTION_TITLES.new_sabaq} entries. Use Add Entry to add one.
         </p>
     );
 
+    // Status tabs (Fluent / Mistakes / Repeat / Needs Revision) of one entry
+    const renderStatusGroup = (section: RevisionSection, entry: RevisionEntryForm) => {
+
+        const fieldId = (name: string) => `${section}-${entry.key}-${name}`;
+
+        return (
+            <div className="hifz-log-status-group" role="radiogroup" aria-label={`${SECTION_TITLES[section]} status`}>
+
+                {statusOptions.map((status) => (
+                    <label
+                        className="hifz-log-radio"
+                        key={status.value}
+                    >
+
+                        <input
+                            type="radio"
+                            id={fieldId(`status-${status.value}`)}
+                            name={fieldId("status")}
+                            value={status.value}
+                            checked={entry.status === status.value}
+                            onChange={() => updateRevision(section, entry.key, "status", status.value)}
+                            disabled={isSubmitting}
+                        />
+
+                        <span className="hifz-log-radio-label">
+                            {status.label}
+                        </span>
+
+                    </label>
+                ))}
+
+            </div>
+        );
+    };
+
+    // Old Sabaq / Manzil: status tabs beside the section heading (status of
+    // the first entry). Extra entries of a loaded session keep their own tabs.
     const renderRevisionSection = (section: RevisionSection) => (
         <div className="hifz-log-section">
 
-            {renderSectionHeader(section)}
+            <div className="hifz-log-section-header">
 
-            {formData[section].length === 0 && renderEmptySection(section)}
+                <h3 className="tab-content-title">
+                    {SECTION_TITLES[section]}
+                </h3>
+
+                {formData[section][0] && renderStatusGroup(section, formData[section][0])}
+
+            </div>
 
             {formData[section].map((entry, index) => {
 
@@ -362,39 +411,11 @@ const HifzStudentLog = ({
                 return (
                     <div className="hifz-log-entry" key={entry.key}>
 
-                        {/* Status + remove */}
-                        <div className="hifz-log-entry-header">
-
-                            <div className="hifz-log-status-group" role="radiogroup" aria-label={`${SECTION_TITLES[section]} status`}>
-
-                                {statusOptions.map((status) => (
-                                    <label
-                                        className="hifz-log-radio"
-                                        key={status.value}
-                                    >
-
-                                        <input
-                                            type="radio"
-                                            id={fieldId(`status-${status.value}`)}
-                                            name={fieldId("status")}
-                                            value={status.value}
-                                            checked={entry.status === status.value}
-                                            onChange={() => updateRevision(section, entry.key, "status", status.value)}
-                                            disabled={isSubmitting}
-                                        />
-
-                                        <span className="hifz-log-radio-label">
-                                            {status.label}
-                                        </span>
-
-                                    </label>
-                                ))}
-
+                        {index > 0 && (
+                            <div className="hifz-log-entry-header">
+                                {renderStatusGroup(section, entry)}
                             </div>
-
-                            {renderRemoveButton(section, entry.key, index)}
-
-                        </div>
+                        )}
 
                         {renderError(getError(section, entry.key, "status"))}
 
@@ -628,16 +649,16 @@ const HifzStudentLog = ({
 
             <div className="hifz-log-section">
 
-                {renderSectionHeader("new_sabaq")}
+                {renderNewSabaqHeader()}
 
-                {formData.new_sabaq.length === 0 && renderEmptySection("new_sabaq")}
+                {formData.new_sabaq.length === 0 && renderEmptyNewSabaq()}
 
                 {formData.new_sabaq.map((entry, index) => (
                     <div className="hifz-log-entry" key={entry.key}>
 
                         {formData.new_sabaq.length > 0 && (
                             <div className="hifz-log-entry-header justify-content-end">
-                                {renderRemoveButton("new_sabaq", entry.key, index)}
+                                {renderNewSabaqRemoveButton(entry.key, index)}
                             </div>
                         )}
 

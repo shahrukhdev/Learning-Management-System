@@ -166,3 +166,14 @@
     font-size: 1.3rem;
     color: #96A39D;
 }
+
+
+/* Old Sabaq / Manzil: heading + status tabs wrap on narrow screens */
+.hifz-log-section-header {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hifz-log-section-header .hifz-log-status-group {
+    flex-wrap: wrap;
+}
