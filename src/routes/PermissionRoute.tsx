@@ -4,7 +4,9 @@ import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { usePermissions } from "../hooks/usePermissions";
-import { getHomePath } from "./paths";
+import { useAuth } from "../hooks/useAuth";
+import { getHomePath, LOGIN_PATH } from "./paths";
+import { getToken } from "../utils/tokenStorage";
 
 interface PermissionRouteProps {
     // Allowed if the user has at least one of these permission names
@@ -27,7 +29,15 @@ const AccessDeniedRedirect = ({ to }: { to: string }) => {
 // Protects a page by permission, also when the URL is opened directly
 const PermissionRoute = ({ permissions, children }: PermissionRouteProps) => {
 
+    const { user } = useAuth();
+
     const { permissions: userPermissions, hasAnyPermission, isSyncingUser } = usePermissions();
+
+    // Not signed in (e.g. during logout): this is not a permission problem,
+    // so go to the login page without the "no permission" message
+    if (!getToken() || user === null) {
+        return <Navigate to={LOGIN_PATH} replace />;
+    }
 
     if (hasAnyPermission(permissions)) return <>{children}</>;
 

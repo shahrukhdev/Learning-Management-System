@@ -30,31 +30,36 @@ export const useLogout = () => {
         isLogoutInFlight = true;
         setIsLoggingOut(true);
 
+        // Ends the local session and goes straight to /login. The token is
+        // removed first so the login page's guest guard lets the user in;
+        // clearing the user (and its permissions) also removes the stored copy.
+        const endLocalSession = () => {
+            removeToken();
+            navigate(loginPath, { replace: true });
+            clearUser();
+        };
+
         try {
             const response = await logoutRequest();
 
-            removeToken();
-            clearUser();
+            endLocalSession();
             toast.success(response.message || "Logged out successfully.");
-            navigate(loginPath, { replace: true });
 
         } catch (error) {
 
             const { status, message } = parseApiError(error);
 
+            // Always signed out locally, even if the request failed
+            endLocalSession();
+
             if (status === 401) {
-                // Session is already invalid server-side. The api.ts interceptor
-                // normally clears the token and redirects already; repeating it
-                // here is harmless and covers the case where no token was sent.
-                // The shared toastId stops a second "session expired" toast.
-                removeToken();
-                clearUser();
+                // Session was already invalid server-side. The shared toastId
+                // stops a second "session expired" toast from the interceptor.
                 toast.info(SESSION_EXPIRED_MESSAGE, { toastId: SESSION_EXPIRED_TOAST_ID });
-                navigate(loginPath, { replace: true });
             } else {
-                // Server/network failure: session may still be valid, so stay
-                // signed in (token kept) and let the user retry.
-                toast.error(message);
+                // Server/network failure: the server session could not be ended,
+                // but this device is signed out
+                toast.info(message ? `Logged out. ${message}` : "Logged out.");
             }
 
         } finally {
