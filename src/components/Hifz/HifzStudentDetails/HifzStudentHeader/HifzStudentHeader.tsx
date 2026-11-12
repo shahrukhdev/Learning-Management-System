@@ -11,6 +11,8 @@ interface HifzStudentHeaderProps {
     // The tracker's date (Y-m-d); null = no date selected
     date: string | null;
     onDateChange: (date: string | null) => void;
+    // The student's number on the left student list (its card number)
+    studentNumber: number | null;
 }
 
 const toYmd = (date: Date) =>
@@ -20,7 +22,7 @@ const toYmd = (date: Date) =>
         String(date.getDate()).padStart(2, "0"),
     ].join("-");
 
-const HifzStudentHeader = ({ date, onDateChange }: HifzStudentHeaderProps) => {
+const HifzStudentHeader = ({ date, onDateChange, studentNumber }: HifzStudentHeaderProps) => {
 
     const selectedDate = date ? new Date(`${date}T00:00:00`) : undefined;
 
@@ -44,9 +46,11 @@ const HifzStudentHeader = ({ date, onDateChange }: HifzStudentHeaderProps) => {
                     Muhammad Ali
                 </h2>
 
-                <span className="hifz-student-count">
-                    2
-                </span>
+                {studentNumber !== null && (
+                    <span className="hifz-student-count">
+                        {studentNumber}
+                    </span>
+                )}
 
             </div>
 

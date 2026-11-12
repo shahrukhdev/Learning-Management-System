@@ -55,6 +55,12 @@ const Hifz = () => {
             ? selection.studentId
             : null;
 
+    // The selected student's card number (position in the class list)
+    const selectedStudentNumber =
+        selectedStudentId === null
+            ? null
+            : students.findIndex((student) => student.student_id === selectedStudentId) + 1;
+
     const handleClassChange = (classId: number) => {
         setChosenClassId(classId);
         setSelection(null);
@@ -150,7 +156,7 @@ const Hifz = () => {
                                 {selectedStudentId === null ? (
                                     <HifzEmptyState />
                                 ) : (
-                                    <HifzStudentDetails studentId={selectedStudentId} />
+                                    <HifzStudentDetails studentId={selectedStudentId} studentNumber={selectedStudentNumber} />
                                 )}
                             </div>
                         </div>

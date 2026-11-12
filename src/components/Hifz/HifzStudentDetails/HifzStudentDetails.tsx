@@ -43,6 +43,8 @@ import { PERMISSIONS } from "../../../utils/permissions";
 interface HifzStudentDetailsProps {
     // The student selected in the tracker's student list
     studentId: number;
+    // Same number as the student's card in the list
+    studentNumber?: number | null;
 }
 
 // First 422 message for the given fields, else the general message
@@ -59,7 +61,7 @@ const getValidationMessage = (
     return fallback;
 };
 
-const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
+const HifzStudentDetails = ({ studentId, studentNumber = null }: HifzStudentDetailsProps) => {
     const [activeTab, setActiveTab] = useState<HifzStudentTab>("student-log");
 
     /* --------------------------------
@@ -593,7 +595,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
 
     return (
         <div className="hifz-student-details hifz-box">
-            <HifzStudentHeader date={date} onDateChange={setDate} />
+            <HifzStudentHeader date={date} onDateChange={setDate} studentNumber={studentNumber} />
 
             <HifzStudentStates
                 statistics={statistics.statistics}
