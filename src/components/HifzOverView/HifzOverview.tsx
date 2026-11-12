@@ -68,9 +68,7 @@ const HifzOverview = ({ students, isLoading, error, onRetry }: HifzOverviewProps
                                     <div className="student-details">
                                         <h4 className="sm-title">{student.name}</h4>
                                         <span className="sm-para">
-                                            {student.last_session_date
-                                                ? `Last session: ${student.last_session_date}`
-                                                : "No sessions yet"}
+                                            Hifz progress
                                         </span>
                                     </div>
 
