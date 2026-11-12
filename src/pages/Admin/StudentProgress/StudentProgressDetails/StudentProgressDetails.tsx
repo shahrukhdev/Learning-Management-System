@@ -1,8 +1,9 @@
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { ArrowLeft, Award, BookOpen, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, GraduationCap, Plus, UserRound } from "lucide-react";
+import { ArrowLeft, Award, BookOpen, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, GraduationCap, Pencil, Plus, Trash2, UserRound, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 import SEO from "../../../../components/Seo/SEO";
 
@@ -11,10 +12,13 @@ import AvatarContent from "../../../../components/Avatar/AvatarContent";
 import TablePageNumbers from "../../../../components/Table/TablePageNumbers";
 
 import { useStudentProgressDetails, useStudentProgressRecords } from "../../../../hooks/useStudentProgress";
-import type { ProgressStudentItem } from "../../../../types/studentProgress.types";
+import { deleteStudentProgressRecord } from "../../../../services/studentProgressService";
+import { parseApiError } from "../../../../utils/apiError";
+import type { ProgressStudentItem, StudentProgressRecord } from "../../../../types/studentProgress.types";
 import { formatProgressDate, getGradeClass, toPopupStudent } from "../../../../utils/studentProgress";
 
 import "../../../../components/Table/Table.css";
+import "../../../../components/Popups/LogProgressPopup/LogProgressPopup.css";
 import "./StudentProgressDetails.css";
 
 const LIST_PATH = "/students-progress";
@@ -30,6 +34,78 @@ const getInitials = (name: string) => {
 
     return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase();
 };
+
+interface DeleteProgressDialogProps {
+    lesson: string;
+    isDeleting: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
+}
+
+// Delete confirmation in the Log Progress popup style
+const DeleteProgressDialog = ({ lesson, isDeleting, onCancel, onConfirm }: DeleteProgressDialogProps) => (
+    <div
+        className="log-progress-overlay"
+        onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !isDeleting) onCancel();
+        }}
+    >
+        <div
+            className="log-progress-popup spd-confirm-popup"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="spd-delete-title"
+            aria-describedby="spd-delete-text"
+        >
+            <div className="log-progress-header">
+                <div className="log-progress-heading">
+                    <span className="log-progress-heading-icon spd-confirm-icon">
+                        <Trash2 size={20} />
+                    </span>
+
+                    <div>
+                        <h2 id="spd-delete-title">Delete Progress Record</h2>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    className="log-progress-close"
+                    onClick={onCancel}
+                    disabled={isDeleting}
+                    aria-label="Close popup"
+                >
+                    <X size={20} />
+                </button>
+            </div>
+
+            <p id="spd-delete-text" className="spd-confirm-text">
+                Are you sure you want to delete &ldquo;{lesson}&rdquo;? This cannot be undone.
+            </p>
+
+            <div className="log-progress-actions">
+                <button
+                    type="button"
+                    className="log-progress-cancel"
+                    onClick={onCancel}
+                    disabled={isDeleting}
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="log-progress-save spd-confirm-delete"
+                    onClick={onConfirm}
+                    disabled={isDeleting}
+                    aria-busy={isDeleting}
+                >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+            </div>
+        </div>
+    </div>
+);
 
 interface StudentProgressDetailsProps {
     // Extra section class (the Teacher page adds "teacher")
@@ -115,14 +191,81 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
 
     const [showPopup, setShowPopup] = useState(false);
 
+    // Record being edited (same popup in edit mode)
+    const [editRecord, setEditRecord] = useState<StudentProgressRecord | null>(null);
+
+    // Summary cards and the current history page both change
+    const refreshAll = () => {
+        retryDetails();
+        retryRecords();
+    };
+
     const handleSaveProgress = () => {
         setShowPopup(false);
+        setEditRecord(null);
+        refreshAll();
+    };
 
-        // Summary cards and history (latest first) both change
-        retryDetails();
+    // Edit target was deleted meanwhile
+    const handleRecordMissing = () => {
+        setEditRecord(null);
+        refreshAll();
+    };
 
-        if (page === 1) retryRecords();
-        else goToPage(1);
+    /* Delete (confirm first; the API is called only on confirm) */
+
+    const [deleteRecord, setDeleteRecord] = useState<StudentProgressRecord | null>(null);
+
+    // Record whose request is running (its buttons are disabled)
+    const [busyRecordId, setBusyRecordId] = useState<number | null>(null);
+
+    const isDeletingRef = useRef(false);
+
+    const handleCancelDelete = () => {
+        if (!isDeletingRef.current) setDeleteRecord(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deleteRecord || studentId === null || isDeletingRef.current) return;
+
+        const target = deleteRecord;
+
+        isDeletingRef.current = true;
+        setBusyRecordId(target.id);
+
+        // The last record of a page above 1: show the previous page
+        const leavesPageEmpty = records.length === 1 && page > 1;
+
+        const finish = () => {
+            setDeleteRecord(null);
+
+            retryDetails();
+
+            if (leavesPageEmpty) goToPage(page - 1);
+            else retryRecords();
+        };
+
+        try {
+            const response = await deleteStudentProgressRecord(studentId, target.id);
+
+            toast.success(response.message || "Progress record deleted successfully.");
+
+            finish();
+        } catch (error) {
+            const { status, message } = parseApiError(error);
+
+            if (status === 404) {
+                toast.error("This record no longer exists.");
+                finish();
+            } else if (status === 403) {
+                toast.error("You are not allowed to manage student progress.");
+            } else if (status !== 401) {
+                toast.error(message || "Something went wrong.");
+            }
+        } finally {
+            isDeletingRef.current = false;
+            setBusyRecordId(null);
+        }
     };
 
     const handleBack = () => {
@@ -392,13 +535,40 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                                                 )}
                                             </div>
 
-                                            <span
-                                                className={`spd-grade ${getGradeClass(
-                                                    entry.grade
-                                                )}`}
-                                            >
-                                                {entry.grade}
-                                            </span>
+                                            {/* Grade + record actions */}
+                                            <div className="spd-record-side">
+                                                <span
+                                                    className={`spd-grade ${getGradeClass(
+                                                        entry.grade
+                                                    )}`}
+                                                >
+                                                    {entry.grade}
+                                                </span>
+
+                                                <div className="spd-record-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="spd-icon-button"
+                                                        onClick={() => setEditRecord(entry)}
+                                                        disabled={busyRecordId === entry.id}
+                                                        aria-label="Edit progress"
+                                                        title="Edit progress"
+                                                    >
+                                                        <Pencil size={15} />
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="spd-icon-button spd-icon-button-danger"
+                                                        onClick={() => setDeleteRecord(entry)}
+                                                        disabled={busyRecordId === entry.id}
+                                                        aria-label="Delete progress"
+                                                        title="Delete progress"
+                                                    >
+                                                        <Trash2 size={15} />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div className="spd-feedback">
@@ -493,6 +663,38 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                     options={details ? { courses: details.courses, grades: details.grades } : null}
                     onClose={() => setShowPopup(false)}
                     onSaved={handleSaveProgress}
+                />
+            )}
+
+            {/* Edit: the same popup, pre-filled from the record */}
+            {editRecord && (
+                <LogProgressPopup
+                    key={editRecord.id}
+                    mode="edit"
+                    recordId={editRecord.id}
+                    initialValues={{
+                        course_id: editRecord.course_id ?? 0,
+                        lesson: editRecord.lesson,
+                        grade: editRecord.grade,
+                        notes: editRecord.notes ?? "",
+                        progress_date: editRecord.progress_date ?? "",
+                        subject: editRecord.course_name,
+                    }}
+                    student={toPopupStudent(student)}
+                    options={details ? { courses: details.courses, grades: details.grades } : null}
+                    onClose={() => setEditRecord(null)}
+                    onSaved={handleSaveProgress}
+                    onRecordMissing={handleRecordMissing}
+                />
+            )}
+
+            {/* Delete confirmation */}
+            {deleteRecord && (
+                <DeleteProgressDialog
+                    lesson={deleteRecord.lesson}
+                    isDeleting={busyRecordId === deleteRecord.id}
+                    onCancel={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
                 />
             )}
         </>

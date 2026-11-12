@@ -9,6 +9,7 @@ import type {
     ProgressSummary,
     StoreProgressRecordRequest,
     StoreProgressRecordResponse,
+    UpdateProgressRecordRequest,
     StudentProgressDetails,
     StudentProgressRecord,
 } from "../types/studentProgress.types";
@@ -91,7 +92,8 @@ const toRecord = (item: RawObject): StudentProgressRecord | null => {
         lesson: toText(item.lesson) ?? "",
         grade: toText(item.grade) ?? "",
         notes: toText(item.notes) || null,
-        progress_date: toText(item.progress_date),
+        // The records API sends `date`; `progress_date` is accepted too
+        progress_date: toText(item.date) ?? toText(item.progress_date),
         recorded_by_name: toText(recordedBy?.name) ?? toText(item.recorded_by_name) ?? "",
     };
 };
@@ -191,4 +193,27 @@ export const storeStudentProgressRecord = async (
         message: toText(response.data?.message) ?? "",
         record: isObject(response.data?.data) ? toRecord(response.data.data) : null,
     };
+};
+
+// PUT /v1/student-progress/{studentId}/records/{recordId} (only the fields sent change)
+export const updateStudentProgressRecord = async (
+    studentId: number,
+    recordId: number,
+    payload: UpdateProgressRecordRequest
+): Promise<StoreProgressRecordResponse> => {
+
+    const response = await api.put<RawObject>(`/v1/student-progress/${studentId}/records/${recordId}`, payload);
+
+    return {
+        message: toText(response.data?.message) ?? "",
+        record: isObject(response.data?.data) ? toRecord(response.data.data) : null,
+    };
+};
+
+// DELETE /v1/student-progress/{studentId}/records/{recordId}
+export const deleteStudentProgressRecord = async (studentId: number, recordId: number): Promise<{ message: string }> => {
+
+    const response = await api.delete<RawObject>(`/v1/student-progress/${studentId}/records/${recordId}`);
+
+    return { message: toText(response.data?.message) ?? "" };
 };

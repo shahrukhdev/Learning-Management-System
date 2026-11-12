@@ -89,6 +89,9 @@ export interface StoreProgressRecordRequest {
     progress_date?: string; // Y-m-d, backend defaults to today
 }
 
+// PUT: any subset of the fields; notes null/"" clears them
+export type UpdateProgressRecordRequest = Partial<StoreProgressRecordRequest>;
+
 export interface StoreProgressRecordResponse {
     message: string;
     record: StudentProgressRecord | null;

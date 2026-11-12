@@ -675,3 +675,89 @@
     }
 }
     
+
+/* Record actions (edit / delete), next to the grade badge */
+
+.spd-record-side {
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.spd-record-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.spd-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--spd-muted);
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.spd-icon-button:hover:not(:disabled) {
+    border-color: var(--spd-border);
+    background: #eeecdf;
+    color: var(--spd-olive);
+}
+
+.spd-icon-button-danger:hover:not(:disabled) {
+    border-color: #e4c9c3;
+    background: #f5eae6;
+    color: #b04e43;
+}
+
+.spd-icon-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Delete confirmation (Log Progress popup style) */
+
+.spd-confirm-popup {
+    max-width: 440px;
+}
+
+.spd-confirm-icon {
+    background: #f5eae6;
+    color: #b04e43;
+}
+
+.spd-confirm-text {
+    margin: 0;
+    color: #56604f;
+    font-size: 1.25rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.log-progress-save.spd-confirm-delete {
+    border-color: #b04e43;
+    background: #b04e43;
+}
+
+.log-progress-save.spd-confirm-delete:hover:not(:disabled) {
+    border-color: #933d33;
+    background: #933d33;
+}
+
+@media (max-width: 400px) {
+    .spd-record-side {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

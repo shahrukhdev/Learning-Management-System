@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import AvatarContent from "../../Avatar/AvatarContent";
 import { useStudentProgressDetails } from "../../../hooks/useStudentProgress";
-import { storeStudentProgressRecord } from "../../../services/studentProgressService";
+import { storeStudentProgressRecord, updateStudentProgressRecord } from "../../../services/studentProgressService";
 import { getFirstFieldErrors, parseApiError } from "../../../utils/apiError";
 import type {
     ProgressCourse,
@@ -34,15 +34,35 @@ export interface ProgressOptions {
     grades: string[];
 }
 
+// Edit mode: the record's current values
+export interface ProgressInitialValues {
+    course_id: number;
+    lesson: string;
+    grade: string;
+    notes: string;
+    progress_date: string; // Y-m-d
+    // Shown if the record's subject is no longer one of the class subjects
+    subject?: string;
+}
+
 interface LogProgressPopupProps {
     student: ProgressStudent;
     options?: ProgressOptions | null;
+    // "create" (POST, default) or "edit" (PUT of `recordId`)
+    mode?: "create" | "edit";
+    recordId?: number;
+    initialValues?: ProgressInitialValues;
     onClose: () => void;
-    // Called after POST /v1/student-progress/{id}/records succeeds
+    // Called after the POST / PUT succeeds
     onSaved: (record: StudentProgressRecord | null) => void;
+    // Edit mode: the record was not found (deleted meanwhile)
+    onRecordMissing?: () => void;
 }
 
 const DEFAULT_GRADE = "A";
+
+// Today in local time (Y-m-d): the Date field's default and max
+const todayYmd = () => new Date().toLocaleDateString("en-CA");
 
 const MAX_LESSON_LENGTH = 255;
 
@@ -65,8 +85,21 @@ const getInitials = (name: string) => {
 };
 
 // Client-side rules (same wording as the backend)
-const validate = (courseId: string, lesson: string, grade: string, notes: string): ProgressRecordFormErrors => {
+const validate = (
+    courseId: string,
+    lesson: string,
+    grade: string,
+    notes: string,
+    progressDate: string,
+    today: string
+): ProgressRecordFormErrors => {
     const errors: ProgressRecordFormErrors = {};
+
+    if (!progressDate) {
+        errors.progress_date = "The progress date field is required.";
+    } else if (progressDate > today) {
+        errors.progress_date = "The progress date field must be a date before or equal to today.";
+    }
 
     if (!courseId) errors.course_id = "The subject field is required.";
 
@@ -85,7 +118,20 @@ const validate = (courseId: string, lesson: string, grade: string, notes: string
     return errors;
 };
 
-const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPopupProps) => {
+const LogProgressPopup = ({
+    student,
+    options,
+    mode = "create",
+    recordId,
+    initialValues,
+    onClose,
+    onSaved,
+    onRecordMissing,
+}: LogProgressPopupProps) => {
+
+    const isEdit = mode === "edit" && recordId !== undefined;
+
+    const [today] = useState(todayYmd);
 
     // Subjects/grades: from the caller, otherwise loaded here
     const fetched = useStudentProgressDetails(options ? null : student.id);
@@ -100,18 +146,35 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
 
     // Empty = "use the default" (first subject / grade A), so the defaults
     // apply as soon as the options arrive
-    const [courseValue, setCourseValue] = useState("");
-    const [lesson, setLesson] = useState("");
-    const [gradeValue, setGradeValue] = useState("");
-    const [notes, setNotes] = useState("");
+    // apply as soon as the options arrive. Edit mode starts from the record.
+    const [courseValue, setCourseValue] = useState(() => (initialValues ? String(initialValues.course_id) : ""));
+    const [lesson, setLesson] = useState(() => initialValues?.lesson ?? "");
+    const [gradeValue, setGradeValue] = useState(() => initialValues?.grade ?? "");
+    const [notes, setNotes] = useState(() => initialValues?.notes ?? "");
+    const [progressDate, setProgressDate] = useState(() => initialValues?.progress_date || today);
 
-    const courseId = courses.some((course) => String(course.id) === courseValue)
+    // The record's subject when it is not (or no longer) a class subject, so
+    // editing never silently switches it to another subject
+    const legacyCourse =
+        initialValues && !courses.some((course) => course.id === initialValues.course_id)
+            ? { id: initialValues.course_id, name: initialValues.subject || "Current subject" }
+            : null;
+
+    const courseOptions = legacyCourse && !isLoadingOptions ? [legacyCourse, ...courses] : courses;
+
+    const courseId = courseOptions.some((course) => String(course.id) === courseValue)
         ? courseValue
-        : courses[0] ? String(courses[0].id) : "";
+        : courseOptions[0] ? String(courseOptions[0].id) : "";
 
-    const grade = grades.includes(gradeValue)
+    // Keep the record's grade even if it is missing from the list
+    const gradeOptions =
+        initialValues?.grade && grades.length > 0 && !grades.includes(initialValues.grade)
+            ? [initialValues.grade, ...grades]
+            : grades;
+
+    const grade = gradeOptions.includes(gradeValue)
         ? gradeValue
-        : grades.includes(DEFAULT_GRADE) ? DEFAULT_GRADE : grades[0] ?? "";
+        : gradeOptions.includes(DEFAULT_GRADE) ? DEFAULT_GRADE : gradeOptions[0] ?? "";
 
     const [errors, setErrors] = useState<ProgressRecordFormErrors>({});
 
@@ -133,7 +196,7 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
 
         if (isSavingRef.current) return;
 
-        const clientErrors = validate(courseId, lesson, grade, notes);
+        const clientErrors = validate(courseId, lesson, grade, notes, progressDate, today);
 
         if (Object.values(clientErrors).some(Boolean)) {
             setErrors(clientErrors);
@@ -144,22 +207,41 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
         setIsSaving(true);
         setErrors({});
 
-        try {
-            // progress_date is left to the backend (defaults to today)
-            const response = await storeStudentProgressRecord(student.id, {
-                course_id: Number(courseId),
-                lesson: lesson.trim(),
-                grade,
-                notes: notes.trim() || null,
-            });
+        const payload = {
+            course_id: Number(courseId),
+            lesson: lesson.trim(),
+            grade,
+            // null clears the notes when editing
+            notes: notes.trim() || null,
+            progress_date: progressDate,
+        };
 
-            toast.success(response.message || "Progress logged successfully.");
+        try {
+            const response = isEdit
+                ? await updateStudentProgressRecord(student.id, recordId, payload)
+                : await storeStudentProgressRecord(student.id, payload);
+
+            toast.success(
+                response.message || (isEdit ? "Progress updated successfully." : "Progress logged successfully.")
+            );
 
             isSavingRef.current = false;
 
             onSaved(response.record);
         } catch (error) {
             const { status, message, validationErrors } = parseApiError(error);
+
+            if (status === 403) {
+                toast.error("You are not allowed to manage student progress.");
+            } else if (status === 404 && isEdit) {
+                toast.error("This record no longer exists.");
+
+                isSavingRef.current = false;
+                setIsSaving(false);
+
+                onRecordMissing?.();
+                return;
+            }
 
             if (status === 422 && validationErrors) {
                 const fieldErrors = getFirstFieldErrors<string>(validationErrors);
@@ -175,8 +257,9 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                 setErrors(inlineErrors);
 
                 if (!Object.values(inlineErrors).some(Boolean)) toast.error(message);
-            } else if (status !== 401) {
-                toast.error(message);
+            } else if (status !== 401 && status !== 403) {
+                // 500 / network: the API's message, else the generic one
+                toast.error(message || "Something went wrong.");
             }
 
             isSavingRef.current = false;
@@ -184,7 +267,7 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
         }
     };
 
-    const canSave = !isSaving && !isLoadingOptions && courses.length > 0 && grades.length > 0;
+    const canSave = !isSaving && !isLoadingOptions && courseOptions.length > 0 && gradeOptions.length > 0;
 
     return (
 
@@ -210,11 +293,11 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
 
                         <div>
                             <h2 id="log-progress-title">
-                                Log Student Progress
+                                {isEdit ? "Edit Student Progress" : "Log Student Progress"}
                             </h2>
 
                             <p>
-                                Record a student's learning progress
+                                {isEdit ? "Update this progress record" : "Record a student's learning progress"}
                             </p>
                         </div>
                     </div>
@@ -299,10 +382,10 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                                             setCourseValue(event.target.value);
                                             clearError("course_id");
                                         }}
-                                        disabled={isSaving || courses.length === 0}
+                                        disabled={isSaving || courseOptions.length === 0}
                                         aria-invalid={Boolean(errors.course_id)}
                                     >
-                                        {courses.length === 0 && (
+                                        {courseOptions.length === 0 && (
                                             <option value="">
                                                 {isLoadingOptions
                                                     ? "Loading..."
@@ -311,7 +394,7 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                                                         : "No subjects assigned"}
                                             </option>
                                         )}
-                                        {courses.map((course) => (
+                                        {courseOptions.map((course) => (
                                             <option
                                                 key={course.id}
                                                 value={course.id}
@@ -331,7 +414,7 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                                     <span className="error-text">{errors.course_id}</span>
                                 )}
 
-                                {!isLoadingOptions && !optionsError && courses.length === 0 && (
+                                {!isLoadingOptions && !optionsError && courseOptions.length === 0 && (
                                     <span className="error-text">
                                         No subjects are assigned to this student's class.
                                     </span>
@@ -399,15 +482,15 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                                             setGradeValue(event.target.value);
                                             clearError("grade");
                                         }}
-                                        disabled={isSaving || grades.length === 0}
+                                        disabled={isSaving || gradeOptions.length === 0}
                                         aria-invalid={Boolean(errors.grade)}
                                     >
-                                        {grades.length === 0 && (
+                                        {gradeOptions.length === 0 && (
                                             <option value="">
                                                 {isLoadingOptions ? "Loading..." : "No grades available"}
                                             </option>
                                         )}
-                                        {grades.map((item) => (
+                                        {gradeOptions.map((item) => (
                                             <option
                                                 key={item}
                                                 value={item}
@@ -425,6 +508,35 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
 
                                 {errors.grade && (
                                     <span className="error-text">{errors.grade}</span>
+                                )}
+                            </div>
+
+                            {/* Date (today by default, never in the future) */}
+                            <div className="log-progress-field full-width">
+                                <label
+                                    className="log-progress-label"
+                                    htmlFor="progress-date"
+                                >
+                                    Date
+                                </label>
+
+                                <input
+                                    id="progress-date"
+                                    className="log-progress-input"
+                                    type="date"
+                                    value={progressDate}
+                                    max={today}
+                                    onChange={(event) => {
+                                        setProgressDate(event.target.value);
+                                        clearError("progress_date");
+                                    }}
+                                    disabled={isSaving}
+                                    aria-invalid={Boolean(errors.progress_date)}
+                                    required
+                                />
+
+                                {errors.progress_date && (
+                                    <span className="error-text">{errors.progress_date}</span>
                                 )}
                             </div>
 
@@ -456,9 +568,6 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                                     <span className="error-text">{errors.notes}</span>
                                 )}
 
-                                {errors.progress_date && (
-                                    <span className="error-text">{errors.progress_date}</span>
-                                )}
                             </div>
                         </div>
                     </div>
@@ -480,7 +589,7 @@ const LogProgressPopup = ({ student, options, onClose, onSaved }: LogProgressPop
                             disabled={!canSave}
                             aria-busy={isSaving}
                         >
-                            {isSaving ? "Saving..." : "Save Progress"}
+                            {isSaving ? "Saving..." : isEdit ? "Update Progress" : "Save Progress"}
                         </button>
                     </div>
                 </form>
