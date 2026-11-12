@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import "./HifzStudentLog.css";
-import { ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { Surah } from "../../../../types/quran.types";
 import type { ValidationErrors } from "../../../../types/api.types";
 import type {
@@ -98,8 +98,8 @@ const HifzStudentLog = ({
 
     const isEditing = editingSession !== null;
 
-    // Old Sabaq / Manzil always show at least one entry (there is no Add
-    // Entry); a blank entry is ignored on submit, so the payload is unchanged
+    // Every section always shows at least one entry (there is no Add Entry);
+    // a blank entry is ignored on submit, so the payload is unchanged
     const [formData, setFormData] = useState<HifzSessionFormData>(() => {
         if (!editingSession) return createEmptySessionForm();
 
@@ -109,6 +109,7 @@ const HifzStudentLog = ({
             ...data,
             old_sabaq: data.old_sabaq.length > 0 ? data.old_sabaq : [emptyRevisionEntry()],
             manzil: data.manzil.length > 0 ? data.manzil : [emptyRevisionEntry()],
+            new_sabaq: data.new_sabaq.length > 0 ? data.new_sabaq : [emptyNewSabaqEntry()],
         };
     });
 
@@ -241,31 +242,6 @@ const HifzStudentLog = ({
     };
 
     /* --------------------------------
-       Add / remove entries (New Sabaq only)
-    -------------------------------- */
-
-    const addNewSabaqEntry = () => {
-        setFormData((current) => ({ ...current, new_sabaq: [...current.new_sabaq, emptyNewSabaqEntry()] }));
-
-        clearErrors([]);
-    };
-
-    const removeNewSabaqEntry = (entryKey: string) => {
-        setFormData((current) => ({
-            ...current,
-            new_sabaq: current.new_sabaq.filter((entry) => entry.key !== entryKey),
-        }));
-
-        setErrors((current) => {
-            const next = { ...current };
-            Object.keys(next).forEach((key) => {
-                if (key.startsWith(`new_sabaq.${entryKey}.`)) delete next[key];
-            });
-            return next;
-        });
-    };
-
-    /* --------------------------------
        Submit
     -------------------------------- */
 
@@ -312,45 +288,6 @@ const HifzStudentLog = ({
     /* --------------------------------
        Render helpers
     -------------------------------- */
-
-    // New Sabaq header (keeps Add Entry)
-    const renderNewSabaqHeader = () => (
-        <div className="hifz-log-section-header">
-
-            <h3 className="tab-content-title">
-                {SECTION_TITLES.new_sabaq}
-            </h3>
-
-            <button
-                type="button"
-                className="hifz-log-add-btn"
-                onClick={addNewSabaqEntry}
-                disabled={isSubmitting}
-            >
-                <Plus size={14} strokeWidth={2.5} />
-                Add Entry
-            </button>
-
-        </div>
-    );
-
-    const renderNewSabaqRemoveButton = (entryKey: string, index: number) => (
-        <button
-            type="button"
-            className="hifz-log-remove-btn"
-            onClick={() => removeNewSabaqEntry(entryKey)}
-            disabled={isSubmitting}
-            aria-label={`Remove ${SECTION_TITLES.new_sabaq} entry ${index + 1}`}
-        >
-            <Trash2 size={15} strokeWidth={2.2} />
-        </button>
-    );
-
-    const renderEmptyNewSabaq = () => (
-        <p className="hifz-log-empty">
-            No {SECTION_TITLES.new_sabaq} entries. Use Add Entry to add one.
-        </p>
-    );
 
     // Status tabs (Fluent / Mistakes / Repeat / Needs Revision) of one entry
     const renderStatusGroup = (section: RevisionSection, entry: RevisionEntryForm) => {
@@ -649,18 +586,16 @@ const HifzStudentLog = ({
 
             <div className="hifz-log-section">
 
-                {renderNewSabaqHeader()}
+                <div className="hifz-log-section-header">
 
-                {formData.new_sabaq.length === 0 && renderEmptyNewSabaq()}
+                    <h3 className="tab-content-title">
+                        {SECTION_TITLES.new_sabaq}
+                    </h3>
 
-                {formData.new_sabaq.map((entry, index) => (
+                </div>
+
+                {formData.new_sabaq.map((entry) => (
                     <div className="hifz-log-entry" key={entry.key}>
-
-                        {formData.new_sabaq.length > 0 && (
-                            <div className="hifz-log-entry-header justify-content-end">
-                                {renderNewSabaqRemoveButton(entry.key, index)}
-                            </div>
-                        )}
 
                         <div className="hifz-log-form">
 

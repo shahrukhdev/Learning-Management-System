@@ -121,51 +121,6 @@
     flex-wrap: wrap;
 }
 
-.hifz-log-add-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    border: 1px solid #535624;
-    border-radius: 100px;
-    background: transparent;
-    color: #535624;
-    font-size: 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.hifz-log-add-btn:hover:not(:disabled) {
-    background: #535624;
-    color: #fff;
-}
-
-.hifz-log-remove-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border: 0;
-    background: transparent;
-    color: #777c72;
-    cursor: pointer;
-}
-
-.hifz-log-remove-btn:hover:not(:disabled) {
-    color: #BA1A1A;
-}
-
-.hifz-log-add-btn:disabled,
-.hifz-log-remove-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.hifz-log-empty {
-    margin: 0 0 16px;
-    font-size: 1.3rem;
-    color: #96A39D;
-}
 
 
 /* Old Sabaq / Manzil: heading + status tabs wrap on narrow screens */
