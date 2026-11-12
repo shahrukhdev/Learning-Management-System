@@ -274,6 +274,55 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
 
     const { reload: reloadSessions, removeSession } = sessions;
 
+    /* --------------------------------
+       Selected session (page progress)
+    -------------------------------- */
+
+    // Picked session, tied to its student (null = the latest session)
+    const [pickedSession, setPickedSession] = useState<{ studentId: number; sessionId: number } | null>(null);
+
+    // Latest loaded session: newest date, then highest ID
+    const latestSession = useMemo(
+        () =>
+            sessions.sessions.reduce<HifzSession | null>((latest, session) => {
+                if (!latest) return session;
+                if (session.session_date !== latest.session_date) {
+                    return session.session_date > latest.session_date ? session : latest;
+                }
+                return session.id > latest.id ? session : latest;
+            }, null),
+        [sessions.sessions]
+    );
+
+    // The picked session while it is still listed, else the latest one
+    const selectedSession =
+        (pickedSession?.studentId === studentId
+            ? sessions.sessions.find((session) => session.id === pickedSession.sessionId)
+            : undefined) ?? latestSession;
+
+    // Pages: completed = page of the selected session's last Old Sabaq entry,
+    // total from the statistics API. With no session listed (e.g. none on the
+    // filtered date) the API's own figure (latest session overall) is used.
+    const pageProgress = useMemo(() => {
+        const pages = statistics.statistics?.pages;
+
+        if (!pages) return null;
+
+        if (!selectedSession) return pages;
+
+        const lastOldSabaq = selectedSession.old_sabaq[selectedSession.old_sabaq.length - 1];
+
+        const completed = lastOldSabaq?.page ?? 0;
+
+        const percentage = pages.total > 0 ? Math.round((completed / pages.total) * 10000) / 100 : 0;
+
+        return { completed, total: pages.total, percentage };
+    }, [statistics.statistics, selectedSession]);
+
+    const handleSelectSession = (session: HifzSession) => {
+        setPickedSession({ studentId, sessionId: session.id });
+    };
+
     // Session being edited in the Student Log (only for its own student)
     const [editing, setEditing] = useState<{ studentId: number; session: HifzSession } | null>(null);
 
@@ -324,13 +373,29 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
         const editingSession = activeEditing?.session ?? null;
 
         try {
-            const response = editingSession
-                ? await updateHifzSession(forStudentId, editingSession.id, payload)
-                : await createHifzSession(forStudentId, payload);
+            let message: string;
 
-            toast.success(response.message || (editingSession ? "Session updated successfully." : "Session created successfully."));
+            if (editingSession) {
+                // An updated session stays selected
+                ({ message } = await updateHifzSession(forStudentId, editingSession.id, payload));
+            } else {
+                const created = await createHifzSession(forStudentId, payload);
+
+                message = created.message;
+
+                // A new session becomes the selected one (the latest when
+                // the response does not include it)
+                setPickedSession(
+                    created.session ? { studentId: forStudentId, sessionId: created.session.id } : null
+                );
+            }
+
+            toast.success(message || (editingSession ? "Session updated successfully." : "Session created successfully."));
 
             reloadSessions();
+
+            // Page figures in the statistics come from the latest session
+            reloadStatistics();
 
             if (editingSession) {
                 setEditing(null);
@@ -382,6 +447,13 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
             toast.success(response.message || "Session deleted successfully.");
 
             removeSession(forStudentId, session.id);
+
+            // Deleting the selected session selects the latest remaining one
+            setPickedSession((current) =>
+                current && current.studentId === forStudentId && current.sessionId === session.id ? null : current
+            );
+
+            reloadStatistics();
 
             // Stop editing a session that no longer exists
             setEditing((current) =>
@@ -490,6 +562,7 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
 
             <HifzStudentStates
                 statistics={statistics.statistics}
+                pageProgress={pageProgress}
                 isLoading={statistics.isLoading}
                 error={statistics.error}
                 onRetry={reloadStatistics}
@@ -569,6 +642,8 @@ const HifzStudentDetails = ({ studentId }: HifzStudentDetailsProps) => {
                         onEdit={handleEditSession}
                         onDelete={(session) => setDeleteSessionTarget({ studentId, session })}
                         loadingSessionId={loadingSessionId}
+                        selectedSessionId={selectedSession?.id ?? null}
+                        onSelect={handleSelectSession}
                     />
                 )}
             </div>

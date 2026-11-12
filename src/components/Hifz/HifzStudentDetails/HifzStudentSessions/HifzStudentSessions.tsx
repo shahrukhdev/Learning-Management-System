@@ -80,6 +80,10 @@ interface HifzStudentSessionsProps {
     onDelete: (session: HifzSession) => void;
     // Session whose edit data is being fetched (its Edit button spins)
     loadingSessionId: number | null;
+
+    // Session whose page is shown in the statistics (latest by default)
+    selectedSessionId: number | null;
+    onSelect: (session: HifzSession) => void;
 }
 
 /* ================================
@@ -97,6 +101,8 @@ const HifzStudentSessions = ({
     onEdit,
     onDelete,
     loadingSessionId,
+    selectedSessionId,
+    onSelect,
 }: HifzStudentSessionsProps) => {
 
     // Nested Surah from the API, else the Surah list
@@ -143,6 +149,12 @@ const HifzStudentSessions = ({
                     {entry.strength && (
                         <span className={`hifz-session-chip strength-${entry.strength}`}>
                             {ratingData[entry.strength].label} {ratingData[entry.strength].stars}
+                        </span>
+                    )}
+
+                    {section === "old_sabaq" && (
+                        <span className="hifz-session-chip page">
+                            Page {entry.page ?? 0}
                         </span>
                     )}
 
@@ -237,9 +249,17 @@ const HifzStudentSessions = ({
 
                 const recorderName = session.recorded_by_user?.name;
 
+                const isSelected = selectedSessionId === session.id;
+
                 return (
 
-                    <article className={`hifz-session-card ${ratingKey ? `hifz-session-${ratingKey}` : ""}`} key={session.id} >
+                    <article
+                        className={`hifz-session-card ${ratingKey ? `hifz-session-${ratingKey}` : ""} ${isSelected ? "selected" : ""}`}
+                        key={session.id}
+                        // Clicking anywhere on the card selects it (the date
+                        // button is the keyboard-accessible control)
+                        onClick={() => onSelect(session)}
+                    >
 
                         {/* =========================
                             Header: date, rating, total mistakes, actions
@@ -249,10 +269,19 @@ const HifzStudentSessions = ({
 
                             <div className="hifz-session-left">
 
-                                <span className="hifz-session-date">
+                                <button
+                                    type="button"
+                                    className="hifz-session-date"
+                                    aria-pressed={isSelected}
+                                    aria-label={`Show page progress of the session of ${formatSessionDate(session.session_date)}`}
+                                >
                                     <CalendarDays size={15} strokeWidth={2} aria-hidden="true" />
                                     {formatSessionDate(session.session_date)}
-                                </span>
+                                </button>
+
+                                {isSelected && (
+                                    <span className="hifz-session-selected-tag">Selected</span>
+                                )}
 
                                 {rating && (
                                     <div className="hifz-session-rating">
@@ -276,7 +305,8 @@ const HifzStudentSessions = ({
 
                             </div>
 
-                            <div className="table-actions hifz-session-actions">
+                            {/* Edit / Delete do not select the card */}
+                            <div className="table-actions hifz-session-actions" onClick={(event) => event.stopPropagation()}>
                                 <button
                                     type="button"
                                     onClick={() => onEdit(session)}

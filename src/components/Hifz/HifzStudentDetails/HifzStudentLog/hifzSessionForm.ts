@@ -21,6 +21,7 @@ export interface RevisionEntryForm {
     status: SabaqStatus | "";
     strength: SabaqStrength | "";
     mistakes: string;
+    page: string; // Old Sabaq only ("" or missing is sent as 0)
 }
 
 export interface NewSabaqEntryForm {
@@ -60,6 +61,7 @@ export const emptyRevisionEntry = (): RevisionEntryForm => ({
     status: "",
     strength: "",
     mistakes: "0",
+    page: "0",
 });
 
 export const emptyNewSabaqEntry = (): NewSabaqEntryForm => ({
@@ -88,6 +90,7 @@ export const toSessionFormData = (session: HifzSession): HifzSessionFormData => 
         status: entry.status ?? "",
         strength: entry.strength ?? "",
         mistakes: entry.mistakes !== null ? String(entry.mistakes) : "",
+        page: String(entry.page ?? 0),
     })),
     manzil: session.manzil.map((entry) => ({
         key: newKey(),
@@ -96,6 +99,7 @@ export const toSessionFormData = (session: HifzSession): HifzSessionFormData => 
         status: entry.status ?? "",
         strength: entry.strength ?? "",
         mistakes: entry.mistakes !== null ? String(entry.mistakes) : "",
+        page: "0", // not used for Manzil
     })),
     new_sabaq: session.new_sabaq.map((entry) => ({
         key: newKey(),
@@ -106,10 +110,13 @@ export const toSessionFormData = (session: HifzSession): HifzSessionFormData => 
     })),
 });
 
+const isZeroOrEmpty = (value: string) => value.trim() === "" || value.trim() === "0";
+
 // An entry the user has not touched is ignored (not sent, not validated)
-const isBlankRevision = (entry: RevisionEntryForm) =>
+const isBlankRevision = (section: RevisionSection, entry: RevisionEntryForm) =>
     !entry.from_surah_id && !entry.to_surah_id && !entry.status && !entry.strength &&
-    (entry.mistakes.trim() === "" || entry.mistakes.trim() === "0");
+    isZeroOrEmpty(entry.mistakes) &&
+    (section !== "old_sabaq" || isZeroOrEmpty(entry.page));
 
 const isBlankNewSabaq = (entry: NewSabaqEntryForm) =>
     !entry.from_surah_id && !entry.from_ayah && !entry.to_surah_id && !entry.to_ayah;
@@ -138,7 +145,7 @@ export const validateSessionForm = (
         const result: RevisionEntryPayload[] = [];
 
         data[section].forEach((entry) => {
-            if (isBlankRevision(entry)) return;
+            if (isBlankRevision(section, entry)) return;
 
             const err = (field: string, message: string) => {
                 errors[entryErrorKey(section, entry.key, field)] = message;
@@ -162,6 +169,14 @@ export const validateSessionForm = (
                 err("mistakes", "Mistakes must be a whole number of 0 or more.");
             }
 
+            // Old Sabaq page: optional, empty = 0
+            const pageText = entry.page.trim();
+            const page = pageText === "" ? 0 : Number(pageText);
+
+            if (section === "old_sabaq" && (!Number.isInteger(page) || page < 0)) {
+                err("page", "Page must be a whole number of 0 or more.");
+            }
+
             if (from && to && entry.status && entry.strength) {
                 result.push({
                     from_surah_id: from.id,
@@ -169,6 +184,9 @@ export const validateSessionForm = (
                     status: entry.status,
                     strength: entry.strength,
                     mistakes: mistakes !== null && Number.isInteger(mistakes) ? mistakes : null,
+                    ...(section === "old_sabaq"
+                        ? { page: Number.isInteger(page) && page >= 0 ? page : 0 }
+                        : {}),
                 });
                 entryKeys[section].push(entry.key);
             }

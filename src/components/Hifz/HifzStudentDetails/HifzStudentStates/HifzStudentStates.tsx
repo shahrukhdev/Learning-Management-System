@@ -5,6 +5,8 @@ interface HifzStudentStatesProps {
     // GET /v1/students/{id}/hifz-statistics, shown exactly as returned.
     // null while loading or after an error (never shown as zeros).
     statistics: HifzStatistics | null;
+    // Selected session's page / API total (null = not loaded yet)
+    pageProgress: HifzStatistics["pages"] | null;
     isLoading: boolean;
     error: string | null;
     onRetry: () => void;
@@ -14,6 +16,7 @@ const PLACEHOLDER = "—";
 
 const HifzStudentStates = ({
     statistics,
+    pageProgress,
     isLoading,
     error,
     onRetry,
@@ -22,7 +25,8 @@ const HifzStudentStates = ({
     const show = (value: number | undefined) =>
         value === undefined ? PLACEHOLDER : String(value);
 
-    // Page figures are unchanged (no API provides page data)
+    const pagesText = pageProgress ? `${pageProgress.completed}/${pageProgress.total}` : PLACEHOLDER;
+
     const states = [
         {
             value: show(statistics?.memorised),
@@ -37,7 +41,7 @@ const HifzStudentStates = ({
             label: "REMAINING",
         },
         {
-            value: "25/604",
+            value: pagesText,
             label: "PAGES",
         },
     ];
@@ -55,8 +59,8 @@ const HifzStudentStates = ({
         },
         {
             label: "Pages",
-            text: `25/604 (${Math.round((25 / 604) * 100)}%)`,
-            percentage: Math.round((25 / 604) * 100),
+            text: pageProgress ? `${pagesText} (${pageProgress.percentage}%)` : PLACEHOLDER,
+            percentage: pageProgress ? pageProgress.percentage : 0,
         },
     ];
 

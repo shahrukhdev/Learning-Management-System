@@ -9,6 +9,12 @@ export interface HifzStatistics {
         total: number;
         percentage: number;
     };
+    // Page of the latest session's last Old Sabaq entry / total Quran pages
+    pages: {
+        completed: number;
+        total: number;
+        percentage: number;
+    };
 }
 
 export interface HifzStatisticsResponse {

@@ -345,6 +345,8 @@ const HifzStudentLog = ({
 
                 const fromSurah = findSurah(entry.from_surah_id);
 
+                const isOldSabaq = section === "old_sabaq";
+
                 return (
                     <div className="hifz-log-entry" key={entry.key}>
 
@@ -449,9 +451,9 @@ const HifzStudentLog = ({
                                 </div>
 
 
-                                {/* Mistakes */}
+                                {/* Mistakes (shares its half with Page in Old Sabaq) */}
 
-                                <div className="col-12 col-md-6">
+                                <div className={isOldSabaq ? "col-6 col-md-3" : "col-12 col-md-6"}>
 
                                     <div className="primary-field">
 
@@ -477,6 +479,39 @@ const HifzStudentLog = ({
                                     </div>
 
                                 </div>
+
+
+                                {/* Page Number (Old Sabaq only; optional, 0 by default) */}
+
+                                {isOldSabaq && (
+                                    <div className="col-6 col-md-3">
+
+                                        <div className="primary-field">
+
+                                            <label className="primary-label" htmlFor={fieldId("page")}>
+                                                PAGE NO.
+                                            </label>
+
+                                            <input
+                                                id={fieldId("page")}
+                                                type="number"
+                                                className="primary-control"
+                                                value={entry.page}
+                                                onChange={(event) => updateRevision(section, entry.key, "page", event.target.value)}
+                                                min={0}
+                                                step={1}
+                                                inputMode="numeric"
+                                                placeholder="0"
+                                                disabled={isSubmitting}
+                                                aria-invalid={Boolean(getError(section, entry.key, "page"))}
+                                            />
+
+                                            {renderError(getError(section, entry.key, "page"))}
+
+                                        </div>
+
+                                    </div>
+                                )}
 
                             </div>
 

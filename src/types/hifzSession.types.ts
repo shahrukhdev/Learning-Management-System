@@ -21,6 +21,8 @@ export interface RevisionEntry {
     status: SabaqStatus | null;
     strength: SabaqStrength | null;
     mistakes: number | null;
+    // Quran page reached (Old Sabaq only; null for Manzil / when missing)
+    page: number | null;
 }
 
 export interface NewSabaqEntry {
@@ -59,6 +61,8 @@ export interface RevisionEntryPayload {
     status: SabaqStatus;
     strength: SabaqStrength;
     mistakes: number | null;
+    // Old Sabaq only (integer >= 0; the backend defaults a missing page to 0)
+    page?: number;
 }
 
 export interface NewSabaqEntryPayload {

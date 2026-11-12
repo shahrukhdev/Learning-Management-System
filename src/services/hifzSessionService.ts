@@ -63,6 +63,7 @@ const toRevisionEntry = (value: unknown): RevisionEntry | null => {
         status: STATUSES.includes(value.status as SabaqStatus) ? (value.status as SabaqStatus) : null,
         strength: STRENGTHS.includes(value.strength as SabaqStrength) ? (value.strength as SabaqStrength) : null,
         mistakes: toNumber(value.mistakes),
+        page: toNumber(value.page),
     };
 };
 
@@ -154,9 +155,10 @@ export const getHifzSession = async (
 export const createHifzSession = async (
     studentId: number,
     payload: SaveHifzSessionRequest
-): Promise<{ message: string }> => {
+): Promise<{ message: string; session: HifzSession | null }> => {
     const response = await api.post<HifzSessionResponse>(sessionsPath(studentId), payload);
-    return { message: response.data.message };
+    // The created session, when the response includes it (it gets selected)
+    return { message: response.data.message, session: toSession(response.data.data) };
 };
 
 // PUT /v1/students/{studentId}/hifz-sessions/{id} (all three arrays required;

@@ -21,6 +21,8 @@ export const getHifzStatistics = async (studentId: number, signal?: AbortSignal)
 
     const surahs = isObject(data.surahs) ? data.surahs : {};
 
+    const pages = isObject(data.pages) ? data.pages : {};
+
     return {
         memorised: toNumber(data.memorised),
         in_progress: toNumber(data.in_progress),
@@ -29,6 +31,11 @@ export const getHifzStatistics = async (studentId: number, signal?: AbortSignal)
             completed: toNumber(surahs.completed),
             total: toNumber(surahs.total),
             percentage: toNumber(surahs.percentage),
+        },
+        pages: {
+            completed: toNumber(pages.completed),
+            total: toNumber(pages.total),
+            percentage: toNumber(pages.percentage),
         },
     };
 };

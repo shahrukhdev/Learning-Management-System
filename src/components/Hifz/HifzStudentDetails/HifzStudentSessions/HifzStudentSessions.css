@@ -41,6 +41,35 @@
     box-shadow: 0 4px 14px rgba(25, 29, 24, 0.08);
 }
 
+.hifz-session-card {
+    cursor: pointer;
+}
+
+/* Selected session (its page is shown in the statistics) */
+.hifz-session-card.selected {
+    border-color: #535624;
+    box-shadow: 0 0 0 1px #535624, 0 4px 14px rgba(25, 29, 24, 0.08);
+}
+
+.hifz-session-selected-tag {
+    padding: 2px 8px;
+    border-radius: 100px;
+    background: #535624;
+    font-family: var(--font-inter);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.hifz-session-chip.page {
+    border-color: #D6D9C8;
+    background: #F4F4EA;
+    color: #535624;
+}
+
 .hifz-session-strong { --session-accent: #6E8F5E; }
 .hifz-session-good { --session-accent: #C9A227; }
 .hifz-session-needs-work { --session-accent: #D08A3C; }
@@ -80,6 +109,20 @@
 
 .hifz-session-date svg {
     color: #535624;
+}
+
+/* The date is the session's select button */
+button.hifz-session-date {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+button.hifz-session-date:focus-visible {
+    outline: 2px solid #535624;
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 .hifz-session-actions {
