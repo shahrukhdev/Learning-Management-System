@@ -127,11 +127,11 @@ export const getUserManagementColumns = ({
                         {roleNames.length > 0 ? roleNames.join(", ") : "—"}
                     </span>
 
-                    {/* The API does not provide a year yet, so it is shown
-                        as unavailable rather than invented */}
+                    {/* Student tab: the API's `year` ("—" when not set,
+                        e.g. students created before the field existed) */}
                     {showYear && (
-                        <small title="Year is not provided by the API yet">
-                            Year: —
+                        <small>
+                            Year: {row.original.year ?? "—"}
                         </small>
                     )}
 
