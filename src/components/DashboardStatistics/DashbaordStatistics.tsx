@@ -81,7 +81,7 @@ const DashboardStats = ({ statistics, assignedClasses, isTeacher, isLoading }: D
                     const Icon = stat.icon;
 
                     return (
-                        <div className="col-12 col-md-6 col-lg-3" key={stat.id}>
+                        <div className="col-12 col-sm-6 col-lg-3" key={stat.id}>
                             <div className={`dash-stat-card ${isFirstLoad ? "is-loading" : ""}`}>
                                 <div className={`stat-icon ${stat.iconClass}`}>
                                     <Icon

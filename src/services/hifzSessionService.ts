@@ -103,8 +103,8 @@ const toList = <T,>(value: unknown, map: (item: unknown) => T | null): T[] =>
     (Array.isArray(value) ? value : []).map(map).filter((item): item is T => item !== null);
 
 // Entries are read from `old_sabaq` / `manzil` / `new_sabaq` arrays, or from
-// a single `entries` array with a `type` per entry
-const toSession = (value: unknown): HifzSession | null => {
+// a single `entries` array with a `type` per entry. Also used by My Hifz.
+export const toSession = (value: unknown): HifzSession | null => {
     if (!isObject(value) || typeof value.id !== "number") return null;
 
     const entries = Array.isArray(value.entries) ? value.entries.filter(isObject) : null;

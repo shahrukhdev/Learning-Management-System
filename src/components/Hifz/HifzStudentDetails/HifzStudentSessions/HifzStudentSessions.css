@@ -402,3 +402,104 @@ button.hifz-session-date:focus-visible {
         font-size: 1.6rem;
     }
 }
+
+/* ================================
+   Sessions Responsive (same design, sized per screen)
+================================ */
+
+/* Laptops (992px - 1399px): the details panel is half the page */
+@media (min-width: 992px) and (max-width: 1399.98px) {
+
+    .hifz-session-card {
+        padding: 16px 18px;
+    }
+
+    .hifz-session-entry {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .hifz-session-portion {
+        font-size: 1.7rem;
+    }
+}
+
+/* Tablets and large phones */
+@media (max-width: 767.98px) {
+
+    .hifz-session-card {
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .hifz-session-entry {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 10px;
+    }
+}
+
+/* Phones (extends the 575px rules above) */
+@media (max-width: 575px) {
+
+    /* Date, Selected tag and rating wrap under each other; actions stay
+       top-right */
+    .hifz-session-header {
+        gap: 10px;
+    }
+
+    .hifz-session-left {
+        flex: 1 1 auto;
+    }
+
+    .hifz-session-entry-meta {
+        gap: 5px;
+    }
+
+    .hifz-session-description {
+        padding: 9px 10px;
+        font-size: 1.25rem;
+        line-height: 20px;
+    }
+
+    .hifz-session-footer {
+        flex-wrap: wrap;
+    }
+}
+
+/* Small phones (390px, 375px, 360px) */
+@media (max-width: 390px) {
+
+    .hifz-session-card {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .hifz-session-date {
+        font-size: 1.3rem;
+    }
+
+    .hifz-session-rating {
+        padding: 3px 8px;
+    }
+
+    .hifz-session-portion {
+        font-size: 1.5rem;
+        line-height: 22px;
+    }
+
+    .hifz-session-chip,
+    .hifz-session-mistakes,
+    .hifz-session-no-mistakes {
+        font-size: 1.05rem;
+    }
+
+    .hifz-session-chip,
+    .hifz-session-mistakes {
+        padding: 2px 8px;
+    }
+
+    .hifz-session-actions button {
+        width: 28px;
+        height: 28px;
+    }
+}

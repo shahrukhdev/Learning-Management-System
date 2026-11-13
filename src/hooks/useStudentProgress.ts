@@ -2,9 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
+    getMyProgressDetails,
+    getMyProgressRecords,
     getProgressStudents,
     getStudentProgressDetails,
     getStudentProgressRecords,
+    type MyProgressDetails,
 } from "../services/studentProgressService";
 import { parseApiError } from "../utils/apiError";
 import type {
@@ -159,6 +162,52 @@ export const useStudentProgressRecords = ({
         error: request.error,
         isLoading: request.isLoading,
         hasLoaded: data !== null,
+        retry: request.retry,
+    };
+};
+
+/* ================================
+   My Progress (signed-in student, read only)
+================================ */
+
+// GET /v1/student-progress/my
+export const useMyProgressDetails = () => {
+    const request = useKeyedRequest<MyProgressDetails>(
+        "my-progress",
+        (signal) => getMyProgressDetails(signal),
+        "my-progress-error"
+    );
+
+    return {
+        details: request.data,
+        error: request.error,
+        isLoading: request.isLoading,
+        retry: request.retry,
+    };
+};
+
+// GET /v1/student-progress/my/records
+export const useMyProgressRecords = ({
+    courseId,
+    page,
+    perPage,
+}: {
+    courseId: number | null;
+    page: number;
+    perPage: number;
+}) => {
+    const request = useKeyedRequest<PaginatedResult<StudentProgressRecord>>(
+        { courseId, page, perPage },
+        (signal) => getMyProgressRecords({ course_id: courseId ?? undefined, page, per_page: perPage }, signal),
+        "my-progress-records-error"
+    );
+
+    return {
+        records: request.data?.data ?? [],
+        pagination: request.data?.pagination ?? null,
+        error: request.error,
+        isLoading: request.isLoading,
+        hasLoaded: request.hasLoaded,
         retry: request.retry,
     };
 };

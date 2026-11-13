@@ -47,6 +47,8 @@ export const PERMISSIONS = {
     VIEW_STUDENT_PROGRESS: "View Student Progress",
     EDIT_STUDENT_PROGRESS: "Edit Student Progress",
     DELETE_STUDENT_PROGRESS: "Delete Student Progress",
+    // Student's own progress page (/my-progress); Students only
+    VIEW_MY_PROGRESS: "View My Progress",
 
     VIEW_ATTENDANCE: "View Attendance",
     MARK_ATTENDANCE: "Mark Attendance",

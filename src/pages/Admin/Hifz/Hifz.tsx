@@ -70,6 +70,13 @@ const Hifz = () => {
         if (selectedClassId === null) return;
 
         setSelection({ classId: selectedClassId, studentId });
+
+        // Small screens: bring the details panel into view
+        if (window.innerWidth < 992 && rightPanelRef.current) {
+            setTimeout(() => {
+                rightPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 60);
+        }
     };
 
     const rightPanelRef = useRef<HTMLDivElement>(null);

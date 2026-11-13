@@ -120,3 +120,110 @@
     font-size: 1.3rem;
     color: #CF0015;
 }
+
+/* =========================================================
+   Student States Responsive
+   Ensures all 4 cards have 100% equal size on all screens
+========================================================= */
+
+/* 992px - 1440px (MacBook Air / Laptops inside 50% column: 2x2 equal cards) */
+@media (max-width: 1440px) and (min-width: 992px) {
+    .hifz-student-states {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .hifz-student-state {
+        min-height: 84px;
+        padding: 12px;
+    }
+
+    .hifz-student-state-value {
+        font-size: 26px;
+        line-height: 32px;
+    }
+
+    .hifz-student-state-label {
+        font-size: 1.25rem;
+    }
+}
+
+/* 768px - 991.98px (Tablet full width stacked: 4 equal cards in 1 row) */
+@media (max-width: 991.98px) and (min-width: 768px) {
+    .hifz-student-states {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .hifz-student-state {
+        min-height: 84px;
+        padding: 10px 8px;
+    }
+
+    .hifz-student-state-value {
+        font-size: 24px;
+        line-height: 30px;
+    }
+
+    .hifz-student-state-label {
+        font-size: 1.15rem;
+    }
+}
+
+/* Mobile & Small Tablets: strictly 2x2 equal cards */
+@media (max-width: 767.98px) {
+
+    .hifz-student-states {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .hifz-student-state {
+        min-height: 80px;
+        padding: 10px 8px;
+        min-width: 0;
+    }
+
+    .hifz-student-state-value {
+        font-size: 24px;
+        line-height: 30px;
+    }
+
+    .hifz-student-state-label {
+        font-size: 1.15rem;
+        letter-spacing: 0.4px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .hifz-student-progress {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hifz-student-progress-item {
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .hifz-student-states {
+        gap: 8px;
+    }
+
+    .hifz-student-state {
+        min-height: 74px;
+        padding: 8px 6px;
+    }
+
+    .hifz-student-state-value {
+        font-size: 22px;
+        line-height: 26px;
+    }
+
+    .hifz-student-state-label {
+        font-size: 1.05rem;
+    }
+}

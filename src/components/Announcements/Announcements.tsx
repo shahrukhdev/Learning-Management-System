@@ -16,9 +16,11 @@ interface AnnouncementsProps {
     isLoading: boolean;
     error: string | null;
     onRetry: () => void;
+    // The "+" (go to Notices) button; hidden on the Student dashboard
+    showAddButton?: boolean;
 }
 
-const Announcements = ({ announcements, isLoading, error, onRetry }: AnnouncementsProps) => {
+const Announcements = ({ announcements, isLoading, error, onRetry, showAddButton = true }: AnnouncementsProps) => {
 
     const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ const Announcements = ({ announcements, isLoading, error, onRetry }: Announcemen
                 <h2 className="dash-box-title">
                     Announcements
                 </h2>
-                {canViewNotices && (
+                {showAddButton && canViewNotices && (
                     <button
                         type="button"
                         className="add-btn"

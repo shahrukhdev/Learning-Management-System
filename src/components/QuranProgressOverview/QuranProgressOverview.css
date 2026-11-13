@@ -108,3 +108,35 @@
     border-radius: 100px 0 0 100px;
     background: #004532;
 }
+
+/* =========================================================
+   QURAN PROGRESS OVERVIEW RESPONSIVE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .quran-progress-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .quran-progress-legend {
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .progress-legend-item {
+        white-space: nowrap;
+    }
+}
+
+/* Title and legend wrap neatly in narrow dashboard columns */
+@media (min-width: 992px) and (max-width: 1699.98px) {
+
+    .quran-progress-header {
+        flex-wrap: wrap;
+        gap: 10px 16px;
+    }
+}

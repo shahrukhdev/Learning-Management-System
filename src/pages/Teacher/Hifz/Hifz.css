@@ -45,3 +45,64 @@
     text-align: inherit;
 }
 
+/* =========================================================
+   HIFZ PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    /* Panels stack: the list is no longer matched to the right
+       panel height (that height is set inline by the page) */
+    .hifz-list-wrapper {
+        height: auto !important;
+        margin-bottom: 16px;
+    }
+
+    .hifz-box.hifz-student-list {
+        height: auto;
+        max-height: 520px;
+    }
+
+    .hifz-box.hifz-empty-state {
+        height: auto;
+        min-height: 360px;
+        padding: 30px 20px;
+    }
+
+    .hifz-student-details.hifz-box {
+        min-height: 0;
+    }
+
+    .hifz-student-tab-content {
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .hifz-sec-header {
+        gap: 12px;
+    }
+
+    .hifz-section .attendance-class-select {
+        width: auto;
+        flex: 1 1 auto;
+        max-width: 220px;
+    }
+
+    .hifz-box {
+        padding: 16px 14px;
+        border-radius: 18px;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .hifz-box {
+        padding: 14px 10px;
+    }
+
+    .hifz-box.hifz-student-list {
+        max-height: 460px;
+    }
+}

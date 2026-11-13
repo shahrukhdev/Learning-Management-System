@@ -7,7 +7,8 @@ import {
     // Search, // header search is commented out below
     User,
     LogOut,
-    Check
+    Check,
+    Menu,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -18,7 +19,12 @@ import AvatarContent from "../Avatar/AvatarContent";
 import { usePermissions } from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../utils/permissions";
 
-const Header = () => {
+type HeaderProps = {
+    // Opens the mobile / tablet sidebar drawer
+    onMenuClick?: () => void;
+};
+
+const Header = ({ onMenuClick }: HeaderProps) => {
 
     const { signOut, isLoggingOut } = useLogout();
 
@@ -79,6 +85,22 @@ const Header = () => {
                     <div className="col-12">
 
                         <div className="header-flex">
+
+                            <div className="d-flex justify-content-start align-items-center gap-3">
+                                <button
+                                    type="button"
+                                    className="header-menu-btn"
+                                    onClick={onMenuClick}
+                                    aria-label="Open menu"
+                                >
+                                    <Menu size={20} strokeWidth={2.2} />
+                                </button>
+
+                                <div className="head-user">
+                                    <span className="head-user-greeting">Welcome back</span>
+                                    <h2 className="m-0 head-user-name">{user?.name ?? ""}</h2>
+                                </div>
+                            </div>
 
                             {/* Search (hidden for now; uncomment to bring it back,
                                 together with the `Search` icon import)

@@ -11,7 +11,7 @@ import { deletePermission } from "../../../services/permissionService";
 import { parseApiError } from "../../../utils/apiError";
 import { useAuth } from "../../../hooks/useAuth";
 import type { PermissionListItem } from "../../../types/permission.types";
-import "./Permissions.css";
+import "../AdminList.css";
 import "../Roles/Roles.css";
 import { usePermissions } from "../../../hooks/usePermissions";
 import { PERMISSIONS } from "../../../utils/permissions";
@@ -127,7 +127,7 @@ const Permissions = () => {
             title="Permissions Management - Noor Ul Imaan Masjid"
             description="Define and control permissions across the Madrasah portal."
         />
-        <section className="admin permissions-section">
+        <section className="admin-list-section">
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-12">

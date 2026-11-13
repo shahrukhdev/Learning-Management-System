@@ -7,7 +7,7 @@ import Copyright from "../Copyright";
 
 import TopImg1 from "../../assets/images/auth-top-img-1.png";
 import TopImg2 from "../../assets/images/auth-top-img-2.png";
-import AuthLogo from "../../assets/images/auth-logo.png";
+import AuthLogo from "../../assets/images/auth-logo.svg";
 import CenterBr from "../../assets/images/center-br-img.png";
 
 interface AuthLayoutProps {

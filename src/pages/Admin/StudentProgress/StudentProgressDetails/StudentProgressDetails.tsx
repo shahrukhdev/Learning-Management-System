@@ -309,6 +309,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
 
         return (
             <section className={sectionClassName}>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
                 <div className="spd-empty-page">
                     <UserRound size={38} />
                     <h2>Student Not Found</h2>
@@ -321,6 +324,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                         Back to Students
                     </button>
                 </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         );
     }
@@ -329,6 +335,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
 
         return (
             <section className={sectionClassName}>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
                 <div className="spd-empty-page">
                     <UserRound size={38} />
                     <h2>{isLoadingDetails ? "Loading student..." : "Student progress could not be loaded"}</h2>
@@ -343,6 +352,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                             Back to Students
                         </button>
                     )}
+                </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         );
@@ -359,6 +371,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
             />
 
             <section className={sectionClassName}>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
 
                 {/* Page heading */}
                 <div className="spd-page-heading">
@@ -693,6 +708,9 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                             </div>
                         </div>
                     )}
+                </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

@@ -14,7 +14,7 @@
 
 .student-card-wrapper {
     height: 148px;
-    width: calc((100% - 30px) / 7);
+    width: calc((100% - 60px) / 7);
 }
 
 .attendance-student-card {
@@ -114,7 +114,12 @@
 }
 
 .student-attendance-status.not-marked {
-    background-color: #7F7F7F;
+    background-color: rgba(63, 66, 26, 0.12);
+    color: #3F4944;
+}
+
+.student-attendance-status.not-marked .dot {
+    background-color: #3F4944;
 }
 
 .student-attendance-status .dot {
@@ -130,10 +135,10 @@
 
 .attendance-student-grid {
     display: flex;
-    justify-content: start;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
     flex-wrap: wrap;
-    gap: 10px 5px;
+    gap: 10px;
 }
 
 .selected-icon {
@@ -243,4 +248,150 @@
     color: #000000;
     opacity: 0.75;
     cursor: not-allowed;
+}
+
+/* =========================================================
+   Attendance Student List Responsive
+   MacBook Air, Laptops & All Breakpoints (1600 down to 360)
+========================================================= */
+
+/* 1400px - 1599px (MacBook Air 15" / 1440px): 6 cards per row */
+@media (max-width: 1599.98px) {
+    .student-card-wrapper {
+        width: calc((100% - 50px) / 6);
+    }
+}
+
+/* 1200px - 1399px (MacBook Air 13" / 1366px / 1280px): 5 cards per row */
+@media (max-width: 1399.98px) {
+    .student-card-wrapper {
+        width: calc((100% - 40px) / 5);
+    }
+}
+
+/* 992px - 1199px (1024px, 1199px): 4 cards per row */
+@media (max-width: 1199.98px) {
+    .student-card-wrapper {
+        width: calc((100% - 30px) / 4);
+    }
+}
+
+/* 768px - 991px (Tablet): 4 cards per row */
+@media (max-width: 991.98px) {
+    .attendance-student-list {
+        padding: 12px 16px 18px;
+    }
+
+    .student-card-wrapper {
+        width: calc((100% - 30px) / 4);
+        height: 144px;
+    }
+}
+
+/* 576px - 767px: 3 cards per row */
+@media (max-width: 767.98px) {
+    .attendance-student-list {
+        padding: 12px 14px 16px;
+        border-radius: 18px;
+    }
+
+    .student-card-wrapper {
+        width: calc((100% - 20px) / 3);
+        height: 140px;
+    }
+
+    .attendance-student-card {
+        padding: 10px 8px;
+    }
+
+    .student-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .student-name {
+        font-size: 1.2rem;
+    }
+
+    .student-attendance-status {
+        min-width: 0;
+        max-width: 100%;
+        padding: 3px 6px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile (<= 575px): strictly 2 cards per row */
+@media (max-width: 575.98px) {
+    .attendance-class-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .attendance-class-header-left {
+        flex: 1 1 100%;
+    }
+
+    .attendance-class-header-left .attendance-class-select {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .attendance-class-header-right {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .student-card-wrapper {
+        width: calc((100% - 10px) / 2);
+        height: 136px;
+    }
+
+    .attendance-student-card {
+        padding: 10px 6px;
+        gap: 6px;
+    }
+
+    .student-img {
+        width: 46px;
+        height: 46px;
+    }
+}
+
+/* Small mobile (390px, 375px, 360px): strictly 2 cards per row */
+@media (max-width: 390px) {
+    .attendance-student-list {
+        padding: 10px 8px 14px;
+    }
+
+    .attendance-student-grid {
+        gap: 8px;
+    }
+
+    .student-card-wrapper {
+        width: calc((100% - 8px) / 2);
+        height: 132px;
+    }
+
+    .student-card-number {
+        width: 22px;
+        height: 22px;
+        font-size: 1rem;
+        top: 6px;
+        left: 6px;
+    }
+
+    .student-img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .student-name {
+        font-size: 1.15rem;
+    }
+
+    .student-attendance-status {
+        padding: 3px 4px;
+        font-size: 0.9rem;
+    }
 }

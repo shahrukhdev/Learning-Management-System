@@ -990,3 +990,48 @@
 .add-user-status .spinner-border {
     color: #535624;
 }
+
+/* =========================================================
+   POPUP RESPONSIVE EXTRAS
+   (mobile browsers: keep popup inside the visible viewport)
+========================================================= */
+
+@supports (height: 100dvh) {
+
+    .app-popup-box {
+        max-height: calc(100dvh - 40px);
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .app-popup-wrapper {
+        overflow: hidden;
+    }
+
+    .app-popup-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    @supports (height: 100dvh) {
+
+        .app-popup-box {
+            max-height: calc(100dvh - 20px);
+        }
+    }
+}
+
+@media (max-height: 500px) {
+
+    .app-popup-wrapper {
+        padding: 8px;
+    }
+
+    .app-popup-box {
+        max-height: calc(100vh - 16px);
+        padding: 14px 18px;
+    }
+}

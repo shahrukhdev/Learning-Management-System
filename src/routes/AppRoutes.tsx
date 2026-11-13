@@ -44,6 +44,13 @@ import TeacherProfile from "../pages/Teacher/Profile/Profile";
 import TeacherStudentProgress from "../pages/Teacher/StudentProgress/StudentProgress";
 import TeacherStudentProgressDetails from "../pages/Teacher/StudentProgress/StudentProgressDetails/StudentProgressDetails";
 
+// Student
+import StudentDashboard from "../pages/Student/Dashboard/Dashboard";
+import StudentAttendance from "../pages/Student/Attendance/Attendance";
+import StudentHifz from "../pages/Student/Hifz/HIfz";
+import MyProgress from "../pages/Student/MyProgress/MyProgress";
+import StudentNotices from "../pages/Student/Notices/Notices";
+
 const AppRoutes = () => {
 
     return (
@@ -94,7 +101,7 @@ const AppRoutes = () => {
                     path="/dashboard"
                     element={
                         <PermissionRoute permissions={[PERMISSIONS.VIEW_DASHBOARD]}>
-                            <RoleBasedRoute admin={<Dashboard />} teacher={<TeacherDashboard />} />
+                            <RoleBasedRoute admin={<Dashboard />} teacher={<TeacherDashboard />} student={<StudentDashboard />} />
                         </PermissionRoute>
                     }
                 />
@@ -103,7 +110,7 @@ const AppRoutes = () => {
                     path="/attendance"
                     element={
                         <PermissionRoute permissions={[PERMISSIONS.VIEW_ATTENDANCE]}>
-                            <RoleBasedRoute admin={<Attendance />} teacher={<TeacherAttendance />} />
+                            <RoleBasedRoute admin={<Attendance />} teacher={<TeacherAttendance />} student={<StudentAttendance />} />
                         </PermissionRoute>
                     }
                 />
@@ -112,7 +119,7 @@ const AppRoutes = () => {
                     path="/notices"
                     element={
                         <PermissionRoute permissions={[PERMISSIONS.VIEW_NOTICES]}>
-                            <RoleBasedRoute admin={<Notices />} teacher={<TeacherNotices />} />
+                            <RoleBasedRoute admin={<Notices />} teacher={<TeacherNotices />} student={<StudentNotices />} />
                         </PermissionRoute>
                     }
                 />
@@ -121,7 +128,7 @@ const AppRoutes = () => {
                     path="/hifz"
                     element={
                         <PermissionRoute permissions={[PERMISSIONS.VIEW_HIFZ]}>
-                            <RoleBasedRoute admin={<Hifz />} teacher={<TeacherHifz />} />
+                            <RoleBasedRoute admin={<Hifz />} teacher={<TeacherHifz />} student={<StudentHifz />} />
                         </PermissionRoute>
                     }
                 />
@@ -144,11 +151,21 @@ const AppRoutes = () => {
                     }
                 />
 
+                {/* Student's own progress (separate from Students Progress) */}
+                <Route
+                    path="/my-progress"
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_MY_PROGRESS]}>
+                            <MyProgress />
+                        </PermissionRoute>
+                    }
+                />
+
                 <Route
                     path="/profile"
                     element={
                         <PermissionRoute permissions={[PERMISSIONS.VIEW_PROFILE]}>
-                            <RoleBasedRoute admin={<Profile />} teacher={<TeacherProfile />} />
+                            <RoleBasedRoute admin={<Profile />} teacher={<TeacherProfile />} student={<Profile />} />
                         </PermissionRoute>
                     }
                 />

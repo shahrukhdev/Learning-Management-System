@@ -21,7 +21,12 @@ import type { NoticeItem } from "../../../types/notice.types";
 const DEFAULT_PER_PAGE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
 
-const Notices = () => {
+interface NoticesProps {
+    // Extra section class (the Teacher page adds "teacher")
+    className?: string;
+}
+
+const Notices = ({ className = "" }: NoticesProps) => {
 
     /* =========================
        Listing (GET /v1/notices, server-side pagination)
@@ -228,7 +233,7 @@ const Notices = () => {
                 description="Manage notices for Noor Ul Imaan Masjid Madrassah Portal."
             />
 
-            <section className="notices-section">
+            <section className={`${className} notices-section`.trim()}>
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-12">

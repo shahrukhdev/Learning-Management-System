@@ -11,7 +11,7 @@
   background-color: #f7f5ec;
   background-image: url("../../assets/images/auth-bg-img.png");
   background-repeat: no-repeat;
-  background-size: 100% 80%;
+  background-size: 100% auto;
   background-position: center bottom;
   min-height: 100vh;
   padding: 20px 0 20px;
@@ -37,6 +37,10 @@
 
 .auth-main-top {
   margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .auth-main-bottom .copy-right-text {
@@ -260,4 +264,198 @@ span.input-icon {
 
 .reset-password-section .primary-btn {
     margin-top: 40px;
+}
+
+/* =========================================================
+   AUTH RESPONSIVE  (Home / Login / Reset Password)
+========================================================= */
+
+/* Logos never overflow their container */
+.auth-logo,
+.bismillah-img,
+.center-br {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Short screens (small laptops, landscape phones):
+   copyright flows after the content instead of overlapping it */
+@media (max-height: 680px) {
+
+    .auth-main-bottom .copy-right-text {
+        position: static;
+        transform: none;
+    }
+
+    .auth-main-bottom {
+        padding-top: 40px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+
+    .auth-section {
+        background-size: 100% auto;
+        background-position: center bottom;
+    }
+
+    .auth-top-img {
+        height: 18vh;
+        max-height: 150px;
+        width: auto;
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    .auth-main-top {
+        margin-bottom: 28px;
+    }
+
+    .auth-main-bottom .copy-right-text {
+        position: static;
+        transform: none;
+    }
+
+    .auth-main-bottom {
+        padding-top: 30px;
+    }
+
+    .login-section {
+        padding: 30px 0;
+    }
+}
+
+/* Mobile & Small Tablets */
+@media (max-width: 767.98px) {
+
+    .auth-section {
+        background-image: none !important;
+        padding: 24px 0;
+    }
+
+    .auth-top-img {
+        display: none !important;
+    }
+
+    .auth-top-imgs {
+        display: none !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+
+    .auth-section {
+        padding: 20px 0;
+        background-image: none !important;
+    }
+
+    .auth-top-img,
+    .auth-top-imgs {
+        display: none !important;
+    }
+
+    .auth-main-top {
+        margin-bottom: 22px;
+    }
+
+    .auth-main-top .auth-log {
+        max-width: 100px;
+    }
+
+    .auth-main-top .bismillah-img {
+        max-width: 250px;
+    }
+
+    .auth-main-bottom .copy-right-text,
+    .login-bottom .copy-right-text {
+        font-size: 1.25rem;
+        line-height: 18px;
+    }
+
+    .login-bottom {
+        padding: 0 16px;
+    }
+
+    .login-section {
+        padding: 16px 0 24px;
+    }
+
+    .login-top {
+        margin-bottom: 14px;
+    }
+
+    .login-top .auth-logo {
+        max-width: 250px;
+    }
+
+    .login-box {
+        min-height: 0;
+        padding: 24px 16px;
+        border-width: 3px;
+        border-radius: 18px;
+    }
+
+    .login-box-top {
+        margin-bottom: 20px;
+    }
+
+    .auth-title {
+        font-size: 2.8rem;
+    }
+
+    .auth-md-title {
+        font-size: 2rem;
+        line-height: 28px;
+    }
+
+    .form-control {
+        height: 48px;
+        font-size: 1.45rem;
+    }
+
+    .login-divider {
+        margin: 22px 0 18px;
+    }
+
+    .reset-password-section .primary-btn {
+        margin-top: 24px;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 380px) {
+
+    .login-box {
+        padding: 20px 14px;
+    }
+
+    .auth-title {
+        font-size: 2.4rem;
+    }
+
+    .login-text.md {
+        font-size: 1.35rem;
+    }
+
+    .login-bottom {
+        padding: 0 12px;
+    }
+
+    .forgot-password {
+        font-size: 1.1rem;
+    }
+}
+
+/* Very short viewports (landscape phones) */
+@media (max-height: 500px) and (orientation: landscape) {
+
+    .auth-top-img {
+        height: 60vh;
+    }
+
+    .auth-main-top {
+        margin-bottom: 20px;
+    }
 }

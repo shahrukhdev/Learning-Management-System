@@ -19,6 +19,7 @@ const HOME_CANDIDATES: [permission: string, path: string][] = [
     [PERMISSIONS.VIEW_HIFZ, "/hifz"],
     [PERMISSIONS.VIEW_ATTENDANCE, "/attendance"],
     [PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST, "/students-progress"],
+    [PERMISSIONS.VIEW_MY_PROGRESS, "/my-progress"],
     [PERMISSIONS.VIEW_CLASSES, "/academic/classes"],
     [PERMISSIONS.VIEW_COURSES, "/academic/courses"],
     [PERMISSIONS.VIEW_USERS, "/system/users"],

@@ -3,8 +3,10 @@
 ========================================================= */
 
 .header {
-    padding-left: 12px;
-    padding-right: 12px;
+    background: #E7E5CB;
+    padding: 10px 12px;
+    border-radius: 20px;
+    margin: 0 20px;
 }
 
 .header-flex {
@@ -21,6 +23,33 @@
     gap: 12px;
     /* Stays on the right even without the header search */
     margin-left: auto;
+}
+
+.head-user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    line-height: 1.2;
+}
+
+.head-user-greeting {
+    font-size: 1.15rem;
+    font-family: var(--font-inter);
+    font-weight: 500;
+    color: #7C8A70;
+    letter-spacing: 0.02em;
+}
+
+.head-user-name {
+    font-size: 1.7rem;
+    font-family: var(--font-inter);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #2E3A1C;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
@@ -398,4 +427,150 @@
 .notification-item,
 .view-all-notifications {
     font-family: inherit;
+}
+
+/* =========================================================
+   HEADER RESPONSIVE
+========================================================= */
+
+/* Hamburger exists only below 1200px */
+.header-menu-btn {
+    display: none;
+}
+
+@media (max-width: 1199.98px) {
+
+    .header-menu-btn {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        background: #FFFDF6;
+        border: 1px solid #E1EFE7;
+        border-radius: 12px;
+
+        box-shadow: 0 14px 34px -18px rgba(15, 51, 39, 0.16);
+
+        color: #3F421A;
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .header-menu-btn:hover {
+        background: #F7F5EC;
+    }
+
+    .header-flex {
+        gap: 14px;
+    }
+
+    .header-search {
+        min-width: 0;
+    }
+
+    .header {
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .header {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .header-flex {
+        gap: 10px;
+    }
+
+    .search-input {
+        max-width: none;
+    }
+
+    .header-actions {
+        flex-shrink: 0;
+        gap: 8px;
+    }
+
+    .notification-menu,
+    .profile-menu {
+        position: static;
+    }
+
+    .notification-dropdown,
+    .profile-dropdown {
+        position: fixed;
+        top: 66px;
+        right: 12px;
+        left: auto;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+    }
+
+    .notification-dropdown {
+        left: 12px;
+        width: auto;
+        max-width: 400px;
+        margin-left: auto;
+    }
+
+    .profile-dropdown {
+        width: 220px;
+        max-width: calc(100vw - 24px);
+    }
+}
+
+@media (max-width: 575px) {
+    .header {
+        margin: 0 0;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .header-menu-btn,
+    .header-notification,
+    .header .user-avatar {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .search-input {
+        height: 36px;
+        padding-right: 10px;
+    }
+
+    .notification-dot {
+        top: 7px;
+        right: 8px;
+    }
+}
+
+/* Header user name on small screens */
+@media (max-width: 575.98px) {
+
+    .head-user-greeting {
+        font-size: 1.05rem;
+    }
+
+    .head-user-name {
+        font-size: 1.5rem;
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .head-user-name {
+        font-size: 1.4rem;
+        max-width: 120px;
+    }
 }

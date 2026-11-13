@@ -50,3 +50,97 @@
   align-items: center;
   gap: 10px;
 }
+
+/* =========================================================
+   WELCOME BANNER RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+  .welcome-banner-img {
+    max-height: 100%;
+    max-width: 55%;
+    object-fit: contain;
+    object-position: right bottom;
+  }
+}
+
+@media (max-width: 767.98px) {
+
+  .welcome-banner {
+    border-radius: 24px;
+    margin-bottom: 20px;
+  }
+
+  .welcome-banner-content {
+    border-radius: 22px;
+    min-height: 0;
+    padding: 24px 20px 26px;
+  }
+
+  /* Decorative image sits behind the text */
+  .welcome-banner-img {
+    max-width: 70%;
+    max-height: 80%;
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
+  .welcome-banner-content > *:not(.welcome-banner-img) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .welcome-banner-text {
+    line-height: 20px;
+  }
+
+  .welcome-banner-actions {
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .welcome-banner-content {
+    padding: 20px 16px 22px;
+  }
+
+  .welcome-banner-actions {
+    gap: 8px;
+  }
+
+  .welcome-banner-actions .welcome-banner-btn {
+    flex: 1 1 auto;
+    padding: 11px 12px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 390px) {
+  .welcome-banner {
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+
+  .welcome-banner-content {
+    border-radius: 18px;
+    padding: 16px 14px 18px;
+  }
+
+  .banner-title {
+    font-size: 2.2rem;
+    line-height: 32px;
+  }
+
+  .welcome-banner-badge {
+    font-size: 1rem;
+    padding: 4px 10px;
+  }
+
+  .welcome-banner-actions .welcome-banner-btn {
+    font-size: 1.25rem;
+    padding: 9px 10px;
+  }
+}

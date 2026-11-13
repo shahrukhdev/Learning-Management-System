@@ -217,3 +217,53 @@ export const deleteStudentProgressRecord = async (studentId: number, recordId: n
 
     return { message: toText(response.data?.message) ?? "" };
 };
+
+/* ================================
+   My Progress (signed-in student, read only). Same shapes as the
+   per-student endpoints above, so the same parsers are used.
+================================ */
+
+export interface MyProgressDetails {
+    student: ProgressStudentItem | null;
+    summary: ProgressSummary;
+    courses: ProgressCourse[];
+}
+
+// GET /v1/student-progress/my: profile, summary and subjects
+export const getMyProgressDetails = async (signal?: AbortSignal): Promise<MyProgressDetails> => {
+
+    const response = await api.get<RawObject>("/v1/student-progress/my", { signal });
+
+    const data = isObject(response.data?.data) ? response.data.data : {};
+
+    // `id` is null when the student has no student record yet: profile only
+    const student = isObject(data.student)
+        ? toStudent({ ...data.student, id: data.student.id ?? 0 })
+        : null;
+
+    return {
+        student,
+        summary: toSummary(data.summary),
+        courses: toList(data.courses, toCourse),
+    };
+};
+
+// GET /v1/student-progress/my/records (newest first, 10 per page)
+export const getMyProgressRecords = async (
+    params: ProgressRecordsParams,
+    signal?: AbortSignal
+): Promise<PaginatedResult<StudentProgressRecord>> => {
+
+    const query: ProgressRecordsParams = {};
+
+    if (params.course_id !== undefined) query.course_id = params.course_id;
+    if (params.page !== undefined) query.page = params.page;
+    if (params.per_page !== undefined) query.per_page = params.per_page;
+
+    const response = await api.get<RawObject>("/v1/student-progress/my/records", { params: query, signal });
+
+    return {
+        data: toList(response.data?.data, toRecord),
+        pagination: toPagination(response.data?.pagination),
+    };
+};

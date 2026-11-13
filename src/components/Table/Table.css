@@ -606,28 +606,71 @@
    RESPONSIVE
    ========================================================= */
 
+@media (max-width: 1199.98px) {
+  .attendance-table-footer {
+    padding: 16px 24px;
+  }
+}
+
 @media (max-width: 767px) {
   .table-footer {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 14px;
   }
 
-  .table-results {
-    order: 2;
-  }
-
-  .table-pagination {
+  .table-rows-per-page {
     width: 100%;
     justify-content: space-between;
   }
 
+  .table-results {
+    order: 2;
+    width: 100%;
+    font-size: 1.25rem;
+  }
+
+  /* Pagination: keep span on the left, buttons grouped on the right */
+  .table-pagination {
+    order: 3;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .table-pagination span {
+    margin-right: auto;
+    font-size: 1.3rem;
+  }
+
+  .attendance-table-footer {
+    padding: 14px 14px;
+  }
+
   .attendance-table-card {
-    padding: 20px 16px;
+    padding: 16px 12px;
   }
 
   .attendance-table-header {
     align-items: flex-start;
-    gap: 15px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 390px) {
+  .table-footer {
+    padding: 12px 10px;
+    gap: 10px;
+  }
+
+  .table-pagination span {
+    font-size: 1.2rem;
+  }
+
+  .table-pagination button {
+    width: 28px;
+    height: 28px;
   }
 }
 /* =========================================================

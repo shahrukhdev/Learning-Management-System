@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import SEO from "../../../components/Seo/SEO";
 import "./Roles.css";
+import "../AdminList.css";
 import RolesTable from "../../../components/Roles/RolesTable";
 import ConfirmPopup from "../../../components/Popups/ConfirmPopup/ConfirmPopup";
 import { useRolesList } from "../../../hooks/useRolesList";
@@ -122,7 +123,7 @@ const Roles = () => {
                 description="Define and control access levels across the Madrasah portal."
             />
 
-            <section className="roles-section">
+            <section className="admin-list-section">
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-12">

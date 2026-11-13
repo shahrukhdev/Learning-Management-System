@@ -2,12 +2,15 @@
     background: transparent;
     box-shadow: none;
     border-radius: 0;
+    padding: 0;
 }
 
 .hifz-section .attendance-student-grid {
-    gap: 10px 10px;
+    gap: 10px;
+    align-items: stretch;
 }
 
+/* 1600px+ large displays: 3 cards per row in 50% column */
 .hifz-section .student-card-wrapper {
     width: calc((100% - 20px) / 3);
 }
@@ -18,4 +21,54 @@
     font-size: 14px;
     font-weight: 700;
     margin: 15px auto 0;
+}
+
+/* =========================================================
+   Hifz Student List Responsive
+   MacBook Air, Laptops & Mobile
+========================================================= */
+
+/* 992px - 1440px (MacBook Air, 1366, 1280, 1024): 2 cards per row in 50% column */
+@media (max-width: 1440px) and (min-width: 992px) {
+    .hifz-section .student-card-wrapper {
+        width: calc((100% - 10px) / 2);
+    }
+}
+
+/* 768px - 991.98px (Tablet full width stacked): 4 cards per row */
+@media (max-width: 991.98px) {
+    .hifz-section .student-card-wrapper {
+        width: calc((100% - 30px) / 4);
+    }
+}
+
+/* 576px - 767.98px: 3 cards per row */
+@media (max-width: 767.98px) {
+    .hifz-section .student-card-wrapper {
+        width: calc((100% - 20px) / 3);
+    }
+}
+
+/* Mobile (<= 575.98px down to 360px): strictly 2 cards per row (never 3) */
+@media (max-width: 575.98px) {
+    .hifz-section .attendance-student-grid {
+        gap: 10px;
+    }
+
+    .hifz-section .student-card-wrapper {
+        width: calc((100% - 10px) / 2);
+        height: 140px;
+    }
+}
+
+/* Small mobile (390px, 375px, 360px) */
+@media (max-width: 390px) {
+    .hifz-section .attendance-student-grid {
+        gap: 8px;
+    }
+
+    .hifz-section .student-card-wrapper {
+        width: calc((100% - 8px) / 2);
+        height: 134px;
+    }
 }

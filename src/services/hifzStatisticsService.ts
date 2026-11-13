@@ -13,11 +13,9 @@ const toNumber = (value: unknown): number => {
     return 0;
 };
 
-// GET /v1/students/{studentId}/hifz-statistics
-export const getHifzStatistics = async (studentId: number, signal?: AbortSignal): Promise<HifzStatistics> => {
-    const response = await api.get<HifzStatisticsResponse>(`/v1/students/${studentId}/hifz-statistics`, { signal });
-
-    const data = isObject(response.data.data) ? response.data.data : {};
+// Statistics object -> HifzStatistics (also used by My Hifz, same shape)
+export const parseHifzStatistics = (value: unknown): HifzStatistics => {
+    const data = isObject(value) ? value : {};
 
     const surahs = isObject(data.surahs) ? data.surahs : {};
 
@@ -38,4 +36,11 @@ export const getHifzStatistics = async (studentId: number, signal?: AbortSignal)
             percentage: toNumber(pages.percentage),
         },
     };
+};
+
+// GET /v1/students/{studentId}/hifz-statistics
+export const getHifzStatistics = async (studentId: number, signal?: AbortSignal): Promise<HifzStatistics> => {
+    const response = await api.get<HifzStatisticsResponse>(`/v1/students/${studentId}/hifz-statistics`, { signal });
+
+    return parseHifzStatistics(response.data.data);
 };

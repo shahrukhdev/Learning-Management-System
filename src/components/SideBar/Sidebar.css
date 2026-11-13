@@ -42,18 +42,24 @@
   transition: all 0.3s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover, .nav-link.active, .nav-link.active:hover {
   background: linear-gradient(104.94deg, #3F421A 0%, #535624 60%), rgba(255, 255, 255, 0.002);
   box-shadow: 0px 10px 20px -10px #41441A;
   border-radius: 13px;
   color: white;
 }
 
+.nav-link:hover {
+  background: rgba(63, 66, 26, 0.12);
+  color: #3F4944;
+  box-shadow: none;
+}
+
 .nav-link:focus-visible {
   box-shadow: none;
 }
 
-.nav-link:hover .nav-icon, .nav-link.active  .nav-icon {
+.nav-link.active  .nav-icon {
   filter: brightness(0) invert(1);
 }
 
@@ -173,3 +179,93 @@
 
 /* sidebar css end */
 
+/* =========================================================
+   SIDEBAR RESPONSIVE
+   (drawer mode: tablet + mobile, below 1200px)
+========================================================= */
+
+/* Close button exists only inside the drawer */
+.sidebar-close-btn {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 280px;
+    max-width: 86vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0 28px 28px 0;
+    padding: 18px 14px;
+    transform: translateX(-105%);
+    visibility: hidden;
+    transition:
+      transform 0.35s ease,
+      visibility 0s linear 0.35s;
+    box-shadow: none;
+  }
+
+  .dashboard-sidebar.sidebar-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 0.35s ease,
+      visibility 0s linear 0s;
+    box-shadow: 0 20px 50px rgba(15, 51, 39, 0.35);
+  }
+
+  .sidebar-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgba(255, 253, 246, 0.7);
+    border: 1px solid #E1EFE7;
+    border-radius: 50%;
+    color: #41441B;
+    cursor: pointer;
+  }
+
+  .sidebar-logo img {
+    max-width: 130px;
+    height: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+
+  .dashboard-sidebar {
+    width: 270px;
+    border-radius: 0 24px 24px 0;
+  }
+
+  .sidebar-logo img {
+    max-width: 110px;
+  }
+
+  .nav-link {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-height: 640px) and (max-width: 1199.98px) {
+
+  .sidebar-nav {
+    margin: 12px 0;
+  }
+
+  .sidebar-logo img {
+    max-width: 90px;
+  }
+}

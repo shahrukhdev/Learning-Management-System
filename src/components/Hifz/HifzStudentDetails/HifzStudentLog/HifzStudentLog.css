@@ -132,3 +132,54 @@
 .hifz-log-section-header .hifz-log-status-group {
     flex-wrap: wrap;
 }
+
+/* ================================
+   Student Log Responsive
+================================ */
+
+@media (max-width: 767.98px) {
+
+    .hifz-log-section-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .hifz-log-status-group {
+        flex-wrap: wrap;
+    }
+
+    .tab-content-title {
+        font-size: 2.1rem;
+        line-height: 28px;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .hifz-log-radio-label {
+        padding: 7px 11px;
+    }
+}
+
+/* Narrow detail panel on laptops (992px - 1399px) */
+@media (min-width: 992px) and (max-width: 1399.98px) {
+
+    .hifz-log-section-header {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+
+    .tab-content-title {
+        font-size: 2.2rem;
+        white-space: nowrap;
+    }
+
+    .hifz-log-status-group {
+        flex-wrap: wrap;
+    }
+
+    .hifz-log-status-group label,
+    .hifz-log-radio {
+        white-space: nowrap;
+    }
+}

@@ -3,7 +3,13 @@ import "./Profile.css";
 import SEO from "../../../components/Seo/SEO";
 import ProfileForm from "../../../components/Profile/ProfileForm";
 
-const Profile = () => {
+interface ProfileProps {
+    // Extra section class (the Teacher page adds "teacher")
+    className?: string;
+}
+
+// One profile page for every role (GET / PATCH /v1/profile)
+const Profile = ({ className = "" }: ProfileProps) => {
 
     return (
 
@@ -14,7 +20,7 @@ const Profile = () => {
                 description="Manage profile for Noor Ul Imaan Masjid Madrassah Portal."
             />
 
-            <section className="profile-section">
+            <section className={`${className} profile-section`.trim()}>
 
                 <div className="container-fluid">
                     <div className="row">

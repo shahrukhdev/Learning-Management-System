@@ -1,9 +1,10 @@
 .role-selection {
   display: grid;
-  grid-template-columns: repeat(4, 196px);
+  grid-template-columns: repeat(4, minmax(0, 196px));
   justify-content: center;
   gap: 20px;
-  max-width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .role-card input {
@@ -86,4 +87,118 @@
 
 .role-card-content:hover .role-icon {
   opacity: 1;
+}
+
+/* =========================================================
+   ROLE SELECTION RESPONSIVE
+========================================================= */
+
+/* Tablet: sleek and compact 4 cards in one row */
+@media (max-width: 991.98px) {
+
+  .role-selection {
+    grid-template-columns: repeat(4, minmax(0, 145px));
+    gap: 12px;
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .role-card-content {
+    min-height: 136px;
+    border-radius: 18px;
+    gap: 6px;
+    padding: 12px 6px;
+  }
+
+  .role-icon-area {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+  }
+
+  .role-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .role-title {
+    font-size: 1.45rem;
+    line-height: 20px;
+  }
+}
+
+/* Mobile & Small Tablets: compact 2x2 grid */
+@media (max-width: 767.98px) {
+
+  .role-selection {
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    gap: 12px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .role-card {
+    border-radius: 18px;
+  }
+
+  .role-card-content {
+    min-height: 118px;
+    border-radius: 16px;
+    gap: 6px;
+    padding: 12px 8px;
+  }
+
+  .role-icon-area {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+  }
+
+  .role-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .role-title {
+    font-size: 1.35rem;
+    line-height: 18px;
+  }
+}
+
+/* Small mobile (390px, 375px, 360px) */
+@media (max-width: 390px) {
+
+  .role-selection {
+    grid-template-columns: repeat(2, minmax(0, 135px));
+    gap: 10px;
+    max-width: 290px;
+  }
+
+  .role-card {
+    border-radius: 16px;
+  }
+
+  .role-card-content {
+    min-height: 105px;
+    border-radius: 14px;
+    gap: 4px;
+    padding: 10px 6px;
+  }
+
+  .role-icon-area {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+
+  .role-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .role-title {
+    font-size: 1.25rem;
+    line-height: 16px;
+  }
 }

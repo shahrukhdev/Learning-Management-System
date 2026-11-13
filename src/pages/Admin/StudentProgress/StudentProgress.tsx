@@ -177,6 +177,9 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
             />
 
             <section className={`${className} student-progress-section`.trim()}>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12">
                 {/* Page heading */}
                 <div className="student-progress-heading">
                     <div>
@@ -388,6 +391,9 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
                         </div>
                     </div>
                 )}
+                        </div>
+                    </div>
+                </div>
             </section>
 
             {/* Log Progress Popup */}

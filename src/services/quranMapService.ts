@@ -37,14 +37,9 @@ const toSurah = (value: unknown): QuranMapSurah | null => {
     };
 };
 
-// GET /v1/students/{studentId}/quran-map
-export const getStudentQuranMap = async (studentId: number, signal?: AbortSignal): Promise<StudentQuranMap> => {
-    const response = await api.get<{ success: boolean; message: string; data?: unknown }>(
-        `/v1/students/${studentId}/quran-map`,
-        { signal }
-    );
-
-    const data = isObject(response.data.data) ? response.data.data : {};
+// `{ statistics, surahs }` -> StudentQuranMap (also used by My Hifz, same shape)
+export const parseQuranMap = (value: unknown): StudentQuranMap => {
+    const data = isObject(value) ? value : {};
 
     const statistics = isObject(data.statistics) ? data.statistics : {};
 
@@ -61,4 +56,14 @@ export const getStudentQuranMap = async (studentId: number, signal?: AbortSignal
             .filter((surah): surah is QuranMapSurah => surah !== null)
             .sort((a, b) => a.number - b.number),
     };
+};
+
+// GET /v1/students/{studentId}/quran-map
+export const getStudentQuranMap = async (studentId: number, signal?: AbortSignal): Promise<StudentQuranMap> => {
+    const response = await api.get<{ success: boolean; message: string; data?: unknown }>(
+        `/v1/students/${studentId}/quran-map`,
+        { signal }
+    );
+
+    return parseQuranMap(response.data.data);
 };

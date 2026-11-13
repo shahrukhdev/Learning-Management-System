@@ -93,7 +93,7 @@
 .notice-actions {
     display: flex;
     align-items: center;
-    gap: 6pxpx;
+    gap: 6px;
 }
 
 .notice-actions button {
@@ -198,4 +198,26 @@
     margin-top: 12px;
     padding-left: 4px;
     padding-right: 4px;
+}
+
+/* =========================================================
+   Notices Responsive
+========================================================= */
+
+@media (max-width: 575.98px) {
+    .notice-box {
+        padding: 16px 14px;
+        border-radius: 18px;
+    }
+
+    .notice-item {
+        padding: 12px 2px;
+    }
+}
+
+@media (max-width: 390px) {
+    .notice-box {
+        padding: 14px 10px;
+        border-radius: 16px;
+    }
 }

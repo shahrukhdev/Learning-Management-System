@@ -2,7 +2,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 10px;
     padding: 30px 26px;
     border-radius: 20px;
     background: #EFECE0;
@@ -223,6 +223,7 @@ input.filter-search-input {
 
     .filter-bar {
         flex-wrap: wrap;
+        padding: 20px 18px;
     }
 
     .filter-search,
@@ -239,6 +240,8 @@ input.filter-search-input {
     .filter-bar {
         flex-direction: column;
         align-items: stretch;
+        padding: 16px 14px;
+        border-radius: 16px;
     }
 
     .filter-search,
@@ -246,6 +249,15 @@ input.filter-search-input {
     .filter-date-wrapper {
         width: 100%;
         min-width: 0;
+    }
+
+}
+
+@media (max-width: 390px) {
+
+    .filter-bar {
+        padding: 14px 12px;
+        border-radius: 14px;
     }
 
 }

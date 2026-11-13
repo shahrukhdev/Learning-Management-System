@@ -14,8 +14,8 @@ import NavIcon9 from "../../assets/images/nav-icon-9.svg";
 import NavIcon10 from "../../assets/images/nav-icon-10.svg";
 import NavIcon11 from "../../assets/images/nav-icon-11.svg";
 
-import { LogOut, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LogOut, ChevronDown, X } from "lucide-react";
+import { useState } from "react";
 
 import { useLogout } from "../../hooks/useLogout";
 import { useAuth } from "../../hooks/useAuth";
@@ -66,6 +66,13 @@ const navItems: NavItem[] = [
         icon: NavIcon5,
         permission: PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST,
     },
+    {
+        // Student's own progress (Admin / Teacher use Students Progress)
+        title: "My Progress",
+        path: "/my-progress",
+        icon: NavIcon5,
+        permission: PERMISSIONS.VIEW_MY_PROGRESS,
+    },
 ];
 
 const systemItems: NavItem[] = [
@@ -104,7 +111,16 @@ const academicItems: NavItem[] = [
     },
 ];
 
-const Sidebar = () => {
+// --------------------------------------------------
+// Sidebar Component
+// --------------------------------------------------
+
+type SidebarProps = {
+    isOpen?: boolean;
+    onClose?: () => void;
+};
+
+const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
 
     const location = useLocation();
 
@@ -159,22 +175,40 @@ const Sidebar = () => {
         setIsAcademicOpen(isAcademicActive);
     }
 
-    useEffect(() => {
+    // Open/close System the same way (adjusted during render)
+    const [wasSystemActive, setWasSystemActive] =
+        useState(isSystemActive);
 
-        if (isSystemActive) {
-            setIsSystemOpen(true);
-        } else {
-            setIsSystemOpen(false);
-        }
-
-    }, [isSystemActive]);
+    if (wasSystemActive !== isSystemActive) {
+        setWasSystemActive(isSystemActive);
+        setIsSystemOpen(isSystemActive);
+    }
 
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
         isActive ? "nav-link active" : "nav-link";
 
     return (
 
-        <aside className="dashboard-sidebar">
+        <aside
+            className={`dashboard-sidebar ${isOpen ? "sidebar-open" : ""}`}
+            onClick={(event) => {
+                // Close the mobile drawer when any menu link is clicked
+                if ((event.target as HTMLElement).closest("a")) {
+                    onClose?.();
+                }
+            }}
+        >
+
+            {/* Close button (visible only on mobile / tablet drawer) */}
+            <button
+                type="button"
+                className="sidebar-close-btn"
+                onClick={onClose}
+                aria-label="Close menu"
+            >
+                <X size={20} strokeWidth={2.2} />
+            </button>
+
 
             {/* Sidebar Logo */}
 

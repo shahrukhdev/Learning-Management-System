@@ -1,8 +1,7 @@
 import { PenLine, X } from "lucide-react";
 import { formatNoticeDate } from "../../utils/noticeDate";
 
-// Minimal shape shown by a notice row. Both the API notices (Admin page) and
-// the existing mock notices (Teacher page) fit it.
+// Minimal shape shown by a notice row (mapped from the Notices API).
 export interface NoticeListItem {
     id: number;
     title: string;
@@ -14,6 +13,8 @@ interface NoticeItemPros {
     // Optional meta line (API notices only): status badge + backend date
     isActive?: boolean;
     date?: string;
+    // "Posted by {name}" under the message (Student page); hidden when empty
+    postedBy?: string | null;
     // Each action is shown only when its handler is passed (callers pass
     // them only when the user has the matching permission)
     onEdit?: (id: number) => void;
@@ -28,7 +29,7 @@ const noticeColors = [
     "red",
 ];
 
-const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) => {
+const NoticeList = ({notice, isActive, date, postedBy, onEdit, onDelete}: NoticeItemPros) => {
 
     const color = noticeColors[Math.abs(notice.id - 1) % noticeColors.length];
 
@@ -53,6 +54,12 @@ const NoticeList = ({notice, isActive, date, onEdit, onDelete}: NoticeItemPros) 
                 <p className="notice-description">
                     {notice.description}
                 </p>
+
+                {postedBy && (
+                    <span className="notice-posted-by">
+                        Posted by {postedBy}
+                    </span>
+                )}
 
                 {/* Status (existing table status styling) + date (d-m-Y) */}
                 {hasMeta && (

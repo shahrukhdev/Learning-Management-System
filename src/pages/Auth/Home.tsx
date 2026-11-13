@@ -1,6 +1,7 @@
 import TopImg1 from "../../assets/images/auth-top-img-1.png";
 import TopImg2 from "../../assets/images/auth-top-img-2.png";
-import AuthLogo from "../../assets/images/auth-logo.png";
+import Logo from "../../assets/images/logo.svg";
+import Bismillah from "../../assets/images/bismillah.png";
 import Copyright from "../../components/Copyright";
 import RoleSelection from "./RoleSelection";
 import SEO from "../../components/Seo/SEO";
@@ -24,8 +25,8 @@ const Home = () => {
               <div className="col-12">
                 <div className="auth-main text-center ">
                   <div className="auth-main-top">
-                    <img className="img-fluid auth-log mb-4" src={AuthLogo} alt="" />
-                    <h1 className="urdu-text home-title">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</h1>
+                    <img className="img-fluid auth-log mb-4" src={Logo} alt="" />
+                    <img className="img-fluid bismillah-img" src={Bismillah} alt="" />
                   </div>
                   <div className="auth-main-center">
                     <RoleSelection />

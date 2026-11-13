@@ -1,0 +1,221 @@
+
+/* =========================================
+   Student Attendance Table Card
+========================================= */
+
+.student-attendance-table-card {
+    width: 100%;
+}
+
+.student-attendance-table-card .attendance-table-header {
+    align-items: center;
+}
+
+
+/* =========================================
+   Table Heading
+========================================= */
+
+.student-attendance-table-card .attendance-table-title {
+    margin-bottom: 0;
+    font-family: var(--font-amiri);
+    font-size: 2.5rem;
+    color: #0B4230;
+}
+
+.student-attendance-table-card .attendance-table-date {
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 2.4rem;
+    color: #444841;
+}
+
+
+/* =========================================
+   Period Filter
+========================================= */
+
+.student-attendance-filter {
+    position: relative;
+    width: 150px;
+    flex-shrink: 0;
+}
+
+.student-attendance-filter select {
+    width: 100%;
+    height: 38px;
+    padding: 6px 32px 6px 12px;
+    appearance: none;
+    border: 1px solid #dddace;
+    border-radius: 8px;
+    background-color: #f7f5ec;
+    color: #444841;
+    font-family: inherit;
+    font-size: 1.2rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.student-attendance-filter select:focus {
+    border-color: #a5a58d;
+    box-shadow: none;
+}
+
+.student-attendance-filter-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #59633f;
+}
+
+
+/* =========================================
+   Table Sorting Button
+========================================= */
+
+.attendance-sort-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+
+/* =========================================
+   Attendance Table
+========================================= */
+
+.student-attendance-table {
+    min-width: 600px;
+}
+
+.student-attendance-table th,
+.student-attendance-table td {
+    text-align: left !important;
+}
+
+.student-attendance-table th:last-child,
+.student-attendance-table td:last-child {
+    text-align: start !important;
+}
+
+
+/* Date */
+
+.student-attendance-date {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #343a32;
+}
+
+
+/* Day */
+
+.student-attendance-day {
+    font-size: 1.4rem;
+    color: #4a5d45;
+}
+
+
+/* Status */
+
+.student-attendance-status {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+}
+
+.student-attendance-status-text {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.student-attendance-status-text.present {
+    color: #4a5d45;
+}
+
+.student-attendance-status-text.late {
+    color: #927516;
+}
+
+.student-attendance-status-text.absent {
+    color: #ba1a1a;
+}
+
+
+/* Empty State */
+
+.student-attendance-empty {
+    height: 100px;
+    text-align: center !important;
+    color: #747870 !important;
+    font-size: 1.4rem;
+}
+
+
+/* =========================================
+   Table Footer
+========================================= */
+
+.student-attendance-table-card .attendance-table-footer {
+    padding: 16px 64px;
+}
+
+.attendance-page-number {
+    min-width: 45px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #444841;
+}
+
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 1199px) {
+    .student-attendance-table-card .attendance-table-footer {
+        padding: 16px 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .student-attendance-table-card {
+        padding: 16px 14px;
+    }
+
+    .student-attendance-table-card .attendance-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .student-attendance-filter {
+        width: 100%;
+    }
+
+    .student-attendance-table-card .attendance-table-footer {
+        padding: 14px 14px;
+    }
+}
+
+@media (max-width: 390px) {
+    .student-attendance-table-card {
+        padding: 14px 10px;
+    }
+
+    .student-attendance-table-card .attendance-table-footer {
+        padding: 12px 10px;
+    }
+}

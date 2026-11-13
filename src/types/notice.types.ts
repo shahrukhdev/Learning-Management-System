@@ -7,6 +7,8 @@ export interface NoticeItem {
     message: string;
     is_active: boolean | number;
     created_at: string; // already formatted by the backend (d-m-Y)
+    // Who posted it; null for older notices or a deleted user
+    posted_by?: { id: number; name: string } | null;
 }
 
 export interface NoticesListResponse {

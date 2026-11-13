@@ -1,0 +1,99 @@
+
+/* =====================================
+   Student Hifz Header
+===================================== */
+
+.student-hifz-header {
+    width: 100%;
+    padding: 20px 22px;
+    background: #EFECE0;
+    border: 1px solid #BDCABA;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+/* =====================================
+   Profile
+===================================== */
+
+.student-hifz-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.student-hifz-avatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #D9D6B6;
+}
+
+.student-hifz-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-hifz-profile-info {
+    min-width: 0;
+}
+
+.student-hifz-overline {
+    display: block;
+    color: #77796e;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.student-hifz-profile-info h2 {
+    color: #191d18;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 7px;
+}
+
+.student-hifz-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.student-hifz-meta span {
+    color: #55594d;
+    font-size: 13px;
+}
+
+.student-hifz-meta span + span::before {
+    content: "•";
+    margin-right: 8px;
+    color: #929580;
+}
+
+/* =====================================
+   Responsive
+===================================== */
+
+@media (max-width: 575px) {
+    .student-hifz-page-heading h1 {
+        font-size: 1.8rem;
+    }
+
+    .student-hifz-header {
+        padding: 16px;
+    }
+
+    .student-hifz-avatar {
+        width: 54px;
+        height: 54px;
+    }
+
+    .student-hifz-profile-info h2 {
+        font-size: 17px;
+    }
+}
