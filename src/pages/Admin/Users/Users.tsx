@@ -103,6 +103,8 @@ const Users = () => {
         ],
         [roles]
     );
+console.log("Roles received by Users.tsx:", roles);
+console.table(roles);
 
     // After creating a user: go back to page 1 and fetch the list again, keeping
     // the current search, sort, page size and role tab. Both updates land in
