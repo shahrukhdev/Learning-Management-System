@@ -26,6 +26,18 @@ const mergeRoles = (
     current: UserRoleSummary[],
     incoming: UserRoleSummary[]
 ): UserRoleSummary[] => {
+        console.log("Current roles:", current);
+    console.log("Incoming roles:", incoming);
+
+    console.log(
+        "Current role ID types:",
+        current.map((role) => typeof role.id)
+    );
+
+    console.log(
+        "Incoming role ID types:",
+        incoming.map((role) => typeof role.id)
+    );
     const known = new Set(current.map((role) => role.id));
     const additions = incoming.filter((role) => !known.has(role.id));
 
