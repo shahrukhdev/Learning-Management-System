@@ -30,6 +30,10 @@ const HifzStudentHeader = ({ date, onDateChange, studentNumber, studentName }: H
 
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
+    // Today (local): later days can't be picked
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return (
 
         <div className="hifz-student-header">
@@ -94,7 +98,14 @@ const HifzStudentHeader = ({ date, onDateChange, studentNumber, studentName }: H
                         <DayPicker
                             mode="single"
                             selected={selectedDate}
+                            // Up to today only (no future dates or months)
+                            disabled={{ after: today }}
+                            endMonth={today}
+                            defaultMonth={selectedDate ?? today}
                             onSelect={(value) => {
+
+                                // Never accept a future day
+                                if (value && value > today) return;
 
                                 // Clicking the selected day again clears it
                                 onDateChange(value ? toYmd(value) : null);

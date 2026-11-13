@@ -34,7 +34,6 @@ import {
     updateHifzSession,
 } from "../../../services/hifzSessionService";
 import { parseApiError } from "../../../utils/apiError";
-import { todayYmd } from "../../Attendance/attendanceDates";
 import type { SurahProgressRecord } from "../../../types/surahProgress.types";
 import type { HifzSession, SaveHifzSessionRequest } from "../../../types/hifzSession.types";
 import { usePermissions } from "../../../hooks/usePermissions";
@@ -47,6 +46,10 @@ interface HifzStudentDetailsProps {
     studentNumber?: number | null;
     // Same name as the student's card in the list
     studentName?: string;
+    // The tracker's date (header date picker), owned by the Hifz page so the
+    // student list shows attendance for the same date. null = all sessions.
+    date: string | null;
+    onDateChange: (date: string | null) => void;
 }
 
 // First 422 message for the given fields, else the general message
@@ -63,7 +66,13 @@ const getValidationMessage = (
     return fallback;
 };
 
-const HifzStudentDetails = ({ studentId, studentNumber = null, studentName = "" }: HifzStudentDetailsProps) => {
+const HifzStudentDetails = ({
+    studentId,
+    studentNumber = null,
+    studentName = "",
+    date,
+    onDateChange: setDate,
+}: HifzStudentDetailsProps) => {
     const [activeTab, setActiveTab] = useState<HifzStudentTab>("student-log");
 
     /* --------------------------------
@@ -80,9 +89,8 @@ const HifzStudentDetails = ({ studentId, studentNumber = null, studentName = "" 
 
     const canDeleteSession = hasPermission(PERMISSIONS.DELETE_HIFZ_SESSION);
 
-    // The tracker's date (header date picker): filters the Sessions tab and
-    // is the date of a new session. Cleared = all sessions.
-    const [date, setDate] = useState<string | null>(todayYmd);
+    // The tracker's date (props): filters the Sessions tab and is the date of
+    // a new session. Cleared = all sessions.
 
     // Surahs (selectors) + Juz (names), loaded once and shared
     const quran = useQuranData();

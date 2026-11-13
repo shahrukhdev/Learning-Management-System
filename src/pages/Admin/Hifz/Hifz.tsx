@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import HifzStudentDetails from "../../../components/Hifz/HifzStudentDetails/HifzStudentDetails";
 import { useAcademicClassOptions } from "../../../hooks/useAcademicClassOptions";
 import { useClassAttendance } from "../../../hooks/useClassAttendance";
+import type { ClassAttendanceRecord } from "../../../types/attendance.types";
 import { todayYmd } from "../../../components/Attendance/attendanceDates";
 
 
@@ -35,14 +36,35 @@ const Hifz = () => {
        responses are discarded by the hook)
     -------------------------------- */
 
-    const [date] = useState(todayYmd);
+    // The tracker's date (header date picker). The student list shows each
+    // student's attendance status on this date; cleared (all sessions) = today.
+    const [date, setDate] = useState<string | null>(todayYmd);
+
+    const attendanceDate = date ?? todayYmd();
 
     const {
-        records: students,
+        records,
         isLoading: studentsLoading,
         error: studentsError,
         reload: reloadStudents,
-    } = useClassAttendance(selectedClassId, date);
+        hasLoaded: studentsLoaded,
+    } = useClassAttendance(selectedClassId, attendanceDate);
+
+    // While another date loads, keep this class's previous list (dimmed) so
+    // the selected student and the details panel stay in place
+    const [lastList, setLastList] = useState<{ classId: number | null; records: ClassAttendanceRecord[] }>({
+        classId: null,
+        records: [],
+    });
+
+    if (studentsLoaded && lastList.records !== records) {
+        setLastList({ classId: selectedClassId, records });
+    }
+
+    const students =
+        studentsLoaded || lastList.classId !== selectedClassId
+            ? records
+            : lastList.records;
 
     // Selected student, tied to the class it was picked from
     const [selection, setSelection] = useState<{ classId: number; studentId: number } | null>(null);
@@ -173,6 +195,8 @@ const Hifz = () => {
                                         studentId={selectedStudentId}
                                         studentNumber={selectedStudentNumber}
                                         studentName={selectedStudentName}
+                                        date={date}
+                                        onDateChange={setDate}
                                     />
                                 )}
                             </div>
