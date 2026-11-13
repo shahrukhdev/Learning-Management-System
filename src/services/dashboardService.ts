@@ -89,6 +89,7 @@ export const getDashboardSummary = async (
     const attendance = isObject(data.attendance_overview) ? data.attendance_overview : {};
 
     return {
+        assigned_classes: toNumber(data.assigned_classes) ?? 0,
         statistics: {
             total_students: toNumber(statistics.total_students),
             students_added_this_month: toNumber(statistics.students_added_this_month),

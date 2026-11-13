@@ -49,7 +49,12 @@ console.log("Assigned classes:", summary?.assigned_classes);
 
                         {/* Statistics */}
                         <div className="col-12">
-                            <DashboardStats statistics={summary?.statistics ?? null} assignedClasses={summary?.assigned_classes ?? 0} isTeacher={isTeacher} isLoading={isLoading} />
+                            <DashboardStats
+                                statistics={summary?.statistics ?? null}
+                                assignedClasses={summary?.assigned_classes ?? 0}
+                                isTeacher={true}
+                                isLoading={isLoading}
+                            />
                         </div>
 
                         <div className="col-12">
