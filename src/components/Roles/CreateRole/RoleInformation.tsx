@@ -46,7 +46,7 @@ const RoleInformation = ({
                             htmlFor="role-name"
                             className="primary-label"
                         >
-                            Role Name
+                            Role Name<span className="required-mark" aria-hidden="true">*</span>
                         </label>
 
                         <input

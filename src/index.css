@@ -813,3 +813,10 @@ body {
     flex: 1 1 auto;
   }
 }
+
+/* Red asterisk after the label of a required field */
+.required-mark {
+  margin-left: 3px;
+  color: red;
+  font-weight: 600;
+}

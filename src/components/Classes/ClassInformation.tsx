@@ -36,7 +36,7 @@ const ClassInformation = ({
                 {/* Name */}
                 <div className="primary-field">
                     <label htmlFor="class-name" className="primary-label">
-                        Class Name
+                        Class Name<span className="required-mark" aria-hidden="true">*</span>
                     </label>
                     <input
                         id="class-name"

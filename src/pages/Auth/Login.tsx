@@ -173,7 +173,7 @@ const Login = () => {
                         <div className="form-group">
 
                             <label className="form-label" htmlFor="email">
-                                Email Address
+                                Email Address<span className="required-mark" aria-hidden="true">*</span>
                             </label>
 
                             <div className="input-wrapper">
@@ -217,7 +217,7 @@ const Login = () => {
                                     className="form-label mb-0"
                                     htmlFor="password"
                                 >
-                                    Password
+                                    Password<span className="required-mark" aria-hidden="true">*</span>
                                 </label>
 
                                 <Link

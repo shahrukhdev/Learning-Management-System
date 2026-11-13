@@ -370,7 +370,7 @@ const LogProgressPopup = ({
                                     className="log-progress-label"
                                     htmlFor="progress-subject"
                                 >
-                                    Course
+                                    Course<span className="required-mark" aria-hidden="true">*</span>
                                 </label>
 
                                 <div className="log-progress-select-wrap">
@@ -440,7 +440,7 @@ const LogProgressPopup = ({
                                     className="log-progress-label"
                                     htmlFor="progress-lesson"
                                 >
-                                    Lesson / Topic
+                                    Lesson / Topic<span className="required-mark" aria-hidden="true">*</span>
                                 </label>
 
                                 <input
@@ -470,7 +470,7 @@ const LogProgressPopup = ({
                                     className="log-progress-label"
                                     htmlFor="progress-grade"
                                 >
-                                    Grade
+                                    Grade<span className="required-mark" aria-hidden="true">*</span>
                                 </label>
 
                                 <div className="log-progress-select-wrap">
@@ -517,7 +517,7 @@ const LogProgressPopup = ({
                                     className="log-progress-label"
                                     htmlFor="progress-date"
                                 >
-                                    Date
+                                    Date<span className="required-mark" aria-hidden="true">*</span>
                                 </label>
 
                                 <input

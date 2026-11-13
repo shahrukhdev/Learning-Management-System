@@ -39,7 +39,7 @@ const PermissionInformation = ({
             <div className="create-role-card-body">
                 <div className="primary-field">
                     <label htmlFor="permission-name" className="primary-label">
-                        Permission Name
+                        Permission Name<span className="required-mark" aria-hidden="true">*</span>
                     </label>
                     <input
                         id="permission-name"
@@ -57,7 +57,7 @@ const PermissionInformation = ({
                 </div>
                 <div className="primary-field">
                     <label htmlFor="permission-module" className="primary-label">
-                        Module
+                        Module<span className="required-mark" aria-hidden="true">*</span>
                     </label>
                     <select
                         id="permission-module"

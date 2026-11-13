@@ -440,7 +440,7 @@ const ProfileForm = () => {
                 <div className="col-12 col-md-6">
                     <div className="profile-field">
                         <label htmlFor="profile-name">
-                            FULL NAME
+                            FULL NAME<span className="required-mark" aria-hidden="true">*</span>
                         </label>
 
                         <div className="profile-input-icon">
@@ -491,7 +491,7 @@ const ProfileForm = () => {
                 <div className="col-12">
                     <div className="profile-field ">
                         <label htmlFor="profile-email">
-                            EMAIL ADDRESS
+                            EMAIL ADDRESS<span className="required-mark" aria-hidden="true">*</span>
                         </label>
 
                         <div className="profile-input-icon">

@@ -115,7 +115,7 @@ const ForgotPassword = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label" htmlFor="email">Email Address</label>
+                            <label className="form-label" htmlFor="email">Email Address<span className="required-mark" aria-hidden="true">*</span></label>
 
                             <div className="input-wrapper">
                                 <span className="input-icon">

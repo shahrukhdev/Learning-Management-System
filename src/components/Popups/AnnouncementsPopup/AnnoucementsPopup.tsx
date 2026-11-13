@@ -361,7 +361,7 @@ const AnnoucementsPopup = ({
                     <div className="app-popup-field">
 
                         <label htmlFor="notice-title">
-                            Notice Title
+                            Notice Title<span className="required-mark" aria-hidden="true">*</span>
                         </label>
 
 
@@ -394,7 +394,7 @@ const AnnoucementsPopup = ({
                     <div className="app-popup-field">
 
                         <label htmlFor="notice-message">
-                            Message
+                            Message<span className="required-mark" aria-hidden="true">*</span>
                         </label>
 
 

@@ -843,7 +843,7 @@ const AddUserPopup = ({
                                 <div className="app-popup-field">
 
                                     <label htmlFor="user-name">
-                                        Full Name
+                                        Full Name<span className="required-mark" aria-hidden="true">*</span>
                                     </label>
 
                                     <input
@@ -879,7 +879,7 @@ const AddUserPopup = ({
                                 <div className="app-popup-field">
 
                                     <label htmlFor="user-email">
-                                        Email
+                                        Email<span className="required-mark" aria-hidden="true">*</span>
                                     </label>
 
                                     <input
@@ -915,7 +915,7 @@ const AddUserPopup = ({
                                 <div className="app-popup-field">
 
                                     <label htmlFor="user-password">
-                                        Password
+                                        Password{!isEditMode && <span className="required-mark" aria-hidden="true">*</span>}
                                     </label>
 
                                     <div className="add-user-password">
@@ -1072,7 +1072,7 @@ const AddUserPopup = ({
                                 <div className="app-popup-field">
 
                                     <label htmlFor="user-role">
-                                        Role
+                                        Role<span className="required-mark" aria-hidden="true">*</span>
                                     </label>
 
                                     <div className="add-user-select-wrapper">
@@ -1131,7 +1131,7 @@ const AddUserPopup = ({
                                     <div className="app-popup-field">
 
                                         <label htmlFor="user-student-class">
-                                            Class
+                                            Class<span className="required-mark" aria-hidden="true">*</span>
                                         </label>
 
                                         <div className="add-user-select-wrapper">
@@ -1221,7 +1221,7 @@ const AddUserPopup = ({
                                     <div className="app-popup-field">
 
                                         <label htmlFor="user-student-year">
-                                            Year
+                                            Year<span className="required-mark" aria-hidden="true">*</span>
                                         </label>
 
                                         <input
@@ -1266,7 +1266,7 @@ const AddUserPopup = ({
                                     <div className="app-popup-field">
 
                                         <label>
-                                            Assign Classes
+                                            Assign Classes<span className="required-mark" aria-hidden="true">*</span>
                                         </label>
 
                                         <div className="add-user-children">

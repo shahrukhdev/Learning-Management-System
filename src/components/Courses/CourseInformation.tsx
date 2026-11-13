@@ -36,7 +36,7 @@ const CourseInformation = ({
 
                 {/* Name */}
                 <div className="primary-field">
-                    <label htmlFor="course-name" className="primary-label">Course Name</label>
+                    <label htmlFor="course-name" className="primary-label">Course Name<span className="required-mark" aria-hidden="true">*</span></label>
                     <input
                         id="course-name"
                         type="text"
