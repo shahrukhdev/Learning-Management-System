@@ -45,6 +45,8 @@ interface HifzStudentDetailsProps {
     studentId: number;
     // Same number as the student's card in the list
     studentNumber?: number | null;
+    // Same name as the student's card in the list
+    studentName?: string;
 }
 
 // First 422 message for the given fields, else the general message
@@ -61,7 +63,7 @@ const getValidationMessage = (
     return fallback;
 };
 
-const HifzStudentDetails = ({ studentId, studentNumber = null }: HifzStudentDetailsProps) => {
+const HifzStudentDetails = ({ studentId, studentNumber = null, studentName = "" }: HifzStudentDetailsProps) => {
     const [activeTab, setActiveTab] = useState<HifzStudentTab>("student-log");
 
     /* --------------------------------
@@ -595,7 +597,7 @@ const HifzStudentDetails = ({ studentId, studentNumber = null }: HifzStudentDeta
 
     return (
         <div className="hifz-student-details hifz-box">
-            <HifzStudentHeader date={date} onDateChange={setDate} studentNumber={studentNumber} />
+            <HifzStudentHeader date={date} onDateChange={setDate} studentNumber={studentNumber} studentName={studentName} />
 
             <HifzStudentStates
                 statistics={statistics.statistics}

@@ -61,6 +61,12 @@ const Hifz = () => {
             ? null
             : students.findIndex((student) => student.student_id === selectedStudentId) + 1;
 
+    // The selected student's name, from the same list record as its card
+    const selectedStudentName =
+        selectedStudentId === null
+            ? ""
+            : students.find((student) => student.student_id === selectedStudentId)?.name ?? "";
+
     const handleClassChange = (classId: number) => {
         setChosenClassId(classId);
         setSelection(null);
@@ -163,7 +169,11 @@ const Hifz = () => {
                                 {selectedStudentId === null ? (
                                     <HifzEmptyState />
                                 ) : (
-                                    <HifzStudentDetails studentId={selectedStudentId} studentNumber={selectedStudentNumber} />
+                                    <HifzStudentDetails
+                                        studentId={selectedStudentId}
+                                        studentNumber={selectedStudentNumber}
+                                        studentName={selectedStudentName}
+                                    />
                                 )}
                             </div>
                         </div>

@@ -13,6 +13,8 @@ interface HifzStudentHeaderProps {
     onDateChange: (date: string | null) => void;
     // The student's number on the left student list (its card number)
     studentNumber: number | null;
+    // The selected student's name (from the student list)
+    studentName: string;
 }
 
 const toYmd = (date: Date) =>
@@ -22,7 +24,7 @@ const toYmd = (date: Date) =>
         String(date.getDate()).padStart(2, "0"),
     ].join("-");
 
-const HifzStudentHeader = ({ date, onDateChange, studentNumber }: HifzStudentHeaderProps) => {
+const HifzStudentHeader = ({ date, onDateChange, studentNumber, studentName }: HifzStudentHeaderProps) => {
 
     const selectedDate = date ? new Date(`${date}T00:00:00`) : undefined;
 
@@ -38,12 +40,12 @@ const HifzStudentHeader = ({ date, onDateChange, studentNumber }: HifzStudentHea
                 <div className="hifz-student-header-avatar">
                     <img
                         src={StudentDummyImg}
-                        alt="Muhammad Ali"
+                        alt={studentName}
                     />
                 </div>
 
                 <h2 className="hifz-student-name">
-                    Muhammad Ali
+                    {studentName}
                 </h2>
 
                 {studentNumber !== null && (
