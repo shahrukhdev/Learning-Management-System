@@ -16,70 +16,66 @@ import "../Popup.css";
    Types
 ========================= */
 
-type UserRole = | "admin" | "student" | "teacher" | "parent";
+type UserRole = "admin" | "student" | "teacher" | "parent";
 
-// Fields validated on the client and by the backend (Laravel names)
-type AddUserField = "name" | "email" | "password" | "phone_no" | "is_active" | "roles" | "class_id";
+type AddUserField =
+    | "name"
+    | "email"
+    | "password"
+    | "phone_no"
+    | "is_active"
+    | "roles"
+    | "class_id"
+    | "class_ids";
 
 type AddUserErrors = Partial<Record<AddUserField, string>>;
 
 interface AddUserPopupProps {
     isOpen: boolean;
     onClose: () => void;
-
-    // Set to a user ID to edit that user; null/undefined = add a new user
     editUserId?: number | null;
-
-    // Called after the API created the user
-    onUserCreated?: (
-        user: ManagedUser | undefined
-    ) => void;
-
-    // Called after the API updated the user
-    onUserUpdated?: (
-        user: ManagedUser
-    ) => void;
-
-    // Roles with real IDs (from the users list); filtered to the enabled ones
+    onUserCreated?: (user: ManagedUser | undefined) => void;
+    onUserUpdated?: (user: ManagedUser) => void;
     roleOptions: UserRoleSummary[];
-
     childrenList: Student[];
-
 }
 
 /* =========================
    Constants
 ========================= */
 
-// Roles that can be selected: Admin, Super Admin (admin kind), Teacher and
-// Student (Student also needs a class, see "Student Class").
-// Parent is hidden for now; to restore it, use the line below instead.
-// const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher", "parent", "student"];
+// Parent is hidden for now. Restore it here when needed.
 const ENABLED_ROLE_KINDS: UserRole[] = ["admin", "teacher", "student"];
 
-// Roles whose role-specific fields are shown. None for now: Teacher and Parent
-// work like Admin (no extra fields). The Student/Teacher/Parent sections below
-// are kept for when their fields are enabled.
+// Legacy role-specific sections remain disabled.
 const SECTION_ROLE_KINDS: UserRole[] = [];
 
-// Mirrors the backend rules
 const MAX_NAME_LENGTH = 255;
 const MAX_EMAIL_LENGTH = 255;
 const MAX_PHONE_LENGTH = 20;
 const MIN_PASSWORD_LENGTH = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ADD_USER_FIELDS: AddUserField[] = ["name", "email", "password", "phone_no", "is_active", "roles", "class_id"];
+const ADD_USER_FIELDS: AddUserField[] = [
+    "name",
+    "email",
+    "password",
+    "phone_no",
+    "is_active",
+    "roles",
+    "class_id",
+    "class_ids",
+];
 
-// Maps a backend role name to the popup's role sections.
-// Super Admin uses the admin kind: it is selectable alongside Admin and, like
-// Admin, has no role-specific fields.
 const toRoleKind = (roleName: string): UserRole | null => {
     const kind = roleName.trim().toLowerCase();
 
     if (kind === "super admin") return "admin";
 
-    return kind === "admin" || kind === "student" || kind === "teacher" || kind === "parent"
+    return kind === "admin" ||
+        kind === "student" ||
+        kind === "teacher" ||
+        kind === "parent"
         ? kind
         : null;
 };
@@ -105,23 +101,15 @@ const AddUserPopup = ({
     ========================= */
 
     const [name, setName] = useState("");
-
     const [email, setEmail] = useState("");
-
     const [password, setPassword] = useState("");
-
     const [phone, setPhone] = useState("");
 
-    // Selected backend role ID (sent in `roles`) and its kind (drives the
-    // role-specific sections). Nothing is selected until the user picks one.
     const [roleId, setRoleId] = useState<number | null>(null);
-
     const [role, setRole] = useState<UserRole | null>(null);
 
-    // Edit mode only (Add keeps the backend default)
     const [isActive, setIsActive] = useState(true);
 
-    // Edit mode: roles the user currently has (see `roleChoices`)
     const [currentRoles, setCurrentRoles] = useState<UserRoleSummary[]>([]);
 
     const [errors, setErrors] = useState<AddUserErrors>({});
@@ -130,8 +118,12 @@ const AddUserPopup = ({
 
     const isSubmittingRef = useRef(false);
 
-    // Edit mode: which user (and which attempt) the form has been loaded for
-    const [loadState, setLoadState] = useState<{ id: number; token: number; error: string | null } | null>(null);
+    // Edit mode: loaded user and request attempt
+    const [loadState, setLoadState] = useState<{
+        id: number;
+        token: number;
+        error: string | null;
+    } | null>(null);
 
     const [loadToken, setLoadToken] = useState(0);
 
@@ -141,16 +133,17 @@ const AddUserPopup = ({
         !(loadState && loadState.id === editUserId && loadState.token === loadToken);
 
     const loadError =
-        isEditMode && loadState?.id === editUserId ? loadState.error : null;
+        isEditMode && loadState?.id === editUserId
+            ? loadState.error
+            : null;
 
-    // Role IDs come from real data; only enabled role kinds are offered
+    // Available roles
     const availableRoles = roleOptions.filter((option) => {
         const kind = toRoleKind(option.name);
         return kind !== null && ENABLED_ROLE_KINDS.includes(kind);
     });
 
-    // When editing, the user's current role stays selectable even if it is not
-    // an enabled kind (e.g. Super Admin), so saving never silently changes it
+    // Keep the current role available when editing
     const roleChoices = [
         ...availableRoles,
         ...currentRoles.filter(
@@ -158,38 +151,48 @@ const AddUserPopup = ({
         ),
     ];
 
-    // Role-specific sections only render for kinds in SECTION_ROLE_KINDS (none
-    // yet). Their code is kept below for when they are enabled.
+    // Legacy role-specific sections
     const sectionRole =
-        role !== null && SECTION_ROLE_KINDS.includes(role) ? role : null;
+        role !== null && SECTION_ROLE_KINDS.includes(role)
+            ? role
+            : null;
 
     const [className, setClassName] = useState("Hifz Level 1");
 
-    /* Student Class (GET /v1/academic-classes): required for Student */
+    /* =========================
+       Academic Classes
+    ========================= */
 
     const isStudent = role === "student";
+    const isTeacher = role === "teacher";
 
-    // Selected academic class ID (sent as `class_id`, Student only)
+    // Student: one class ID
     const [classId, setClassId] = useState<number | null>(null);
 
-    // Edit mode: the user's current class, kept as an option even if it is
-    // not in the loaded list
-    const [currentClass, setCurrentClass] = useState<{ id: number; name: string } | null>(null);
+    // Teacher: multiple class IDs
+    const [classIds, setClassIds] = useState<number[]>([]);
 
-    // Requested only while a Student is being added/edited
-    const studentClasses = useAcademicClassOptions(isOpen && isStudent);
+    // Edit mode: current Student class
+    const [currentClass, setCurrentClass] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
+
+    // Load academic classes for Students and Teachers
+    const studentClasses = useAcademicClassOptions(
+        isOpen && (isStudent || isTeacher)
+    );
 
     const classChoices = [
         ...studentClasses.classes,
-        ...(currentClass && !studentClasses.classes.some((option) => option.id === currentClass.id)
+        ...(currentClass &&
+        !studentClasses.classes.some((option) => option.id === currentClass.id)
             ? [currentClass]
             : []),
     ];
 
     const [parentId, setParentId] = useState("");
-
     const [subject, setSubject] = useState("");
-
     const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
 
     /* =========================
@@ -203,10 +206,21 @@ const AddUserPopup = ({
     ========================= */
 
     const [childrenDropdownOpen, setChildrenDropdownOpen] = useState(false);
-
     const [childrenSearch, setChildrenSearch] = useState("");
 
     const childrenDropdownRef = useRef<HTMLDivElement>(null);
+
+    /* =========================
+       Clear Error
+    ========================= */
+
+    const clearError = (field: AddUserField) => {
+        setErrors((current) =>
+            current[field]
+                ? { ...current, [field]: undefined }
+                : current
+        );
+    };
 
     /* =========================
        Reset Form
@@ -217,25 +231,32 @@ const AddUserPopup = ({
         setEmail("");
         setPassword("");
         setPhone("");
+
         setRoleId(null);
         setRole(null);
+
         setIsActive(true);
         setCurrentRoles([]);
+
         setLoadState(null);
         setErrors({});
+
         setClassName("Hifz Level 1");
         setClassId(null);
         setCurrentClass(null);
+        setClassIds([]);
+
         setParentId("");
         setSubject("");
         setSelectedChildren([]);
+
         setShowPassword(false);
         setChildrenDropdownOpen(false);
         setChildrenSearch("");
     };
 
     /* =========================
-       Edit: load the user (GET /v1/users/{id})
+       Edit: Load User
     ========================= */
 
     useEffect(() => {
@@ -250,32 +271,54 @@ const AddUserPopup = ({
                 if (controller.signal.aborted) return;
 
                 const user = response.data;
-                const userRoles = (user.roles ?? []).map(({ id, name }) => ({ id, name }));
+
+                const userRoles = (user.roles ?? []).map(({ id, name }) => ({
+                    id,
+                    name,
+                }));
+
                 const primaryRole = userRoles[0] ?? null;
 
-                // Password is never filled in; blank keeps the current one
                 setName(user.name);
                 setEmail(user.email);
                 setPhone(user.phone_no ?? "");
                 setPassword("");
+
                 setIsActive(Boolean(user.is_active));
                 setCurrentRoles(userRoles);
+
                 setRoleId(primaryRole ? primaryRole.id : null);
                 setRole(primaryRole ? toRoleKind(primaryRole.name) : null);
 
-                // Student: preselect the assigned class (by ID; works even if
-                // the class list arrives later)
-                const assignedClassId = user.class_id ?? user.class?.id ?? null;
+                // Student: preselect assigned class
+                const assignedClassId =
+                    user.class_id ?? user.class?.id ?? null;
+
                 setClassId(assignedClassId);
+
                 setCurrentClass(
                     user.class && typeof user.class.id === "number"
-                        ? { id: user.class.id, name: user.class.name }
+                        ? {
+                            id: user.class.id,
+                            name: user.class.name,
+                        }
                         : null
+                );
+
+                // Teacher: preselect all assigned academic classes
+                setClassIds(
+                    Array.isArray(user.class_ids)
+                        ? user.class_ids.map(Number)
+                        : []
                 );
 
                 setErrors({});
 
-                setLoadState({ id: editUserId, token: loadToken, error: null });
+                setLoadState({
+                    id: editUserId,
+                    token: loadToken,
+                    error: null,
+                });
 
             })
             .catch((error: unknown) => {
@@ -284,14 +327,17 @@ const AddUserPopup = ({
 
                 const { message } = parseApiError(error);
 
-                setLoadState({ id: editUserId, token: loadToken, error: message });
+                setLoadState({
+                    id: editUserId,
+                    token: loadToken,
+                    error: message,
+                });
 
             });
 
         return () => controller.abort();
 
     }, [isOpen, editUserId, loadToken]);
-
 
     /* =========================
        Outside Click
@@ -303,128 +349,75 @@ const AddUserPopup = ({
 
             if (
                 childrenDropdownRef.current &&
-                !childrenDropdownRef.current.contains(
-                    event.target as Node
-                )
+                !childrenDropdownRef.current.contains(event.target as Node)
             ) {
-
                 setChildrenDropdownOpen(false);
-
             }
 
         };
 
-        document.addEventListener(
-            "mousedown",
-            handleOutsideClick
-        );
+        document.addEventListener("mousedown", handleOutsideClick);
 
         return () => {
-
-            document.removeEventListener(
-                "mousedown",
-                handleOutsideClick
-            );
-
+            document.removeEventListener("mousedown", handleOutsideClick);
         };
 
     }, []);
-
 
     /* =========================
        Filter Students
     ========================= */
 
-    const filteredChildren =
-        childrenList.filter((student) => {
+    const filteredChildren = childrenList.filter((student) => {
 
-            const search =
-                childrenSearch
-                    .toLowerCase()
-                    .trim();
+        const search = childrenSearch.toLowerCase().trim();
 
+        if (!search) return true;
 
-            if (!search) {
+        return (
+            student.name.toLowerCase().includes(search) ||
+            student.email.toLowerCase().includes(search)
+        );
 
-                return true;
-
-            }
-
-
-            return (
-                student.name
-                    .toLowerCase()
-                    .includes(search) ||
-
-                student.email
-                    .toLowerCase()
-                    .includes(search)
-            );
-
-        });
-
+    });
 
     /* =========================
        Selected Students
     ========================= */
 
-    const selectedChildObjects =
-        childrenList.filter((student) =>
-            selectedChildren.includes(
-                String(student.id)
-            )
-        );
-
+    const selectedChildObjects = childrenList.filter((student) =>
+        selectedChildren.includes(String(student.id))
+    );
 
     /* =========================
        Toggle Student
     ========================= */
 
-    const toggleChild = (
-        studentId: string
-    ) => {
+    const toggleChild = (studentId: string) => {
 
         setSelectedChildren((current) => {
 
-            if (
-                current.includes(studentId)
-            ) {
-
-                return current.filter(
-                    (id) =>
-                        id !== studentId
-                );
-
+            if (current.includes(studentId)) {
+                return current.filter((id) => id !== studentId);
             }
 
-
-            return [
-                ...current,
-                studentId,
-            ];
+            return [...current, studentId];
 
         });
 
     };
 
-
     /* =========================
        Remove Student
     ========================= */
 
-    const removeChild = (
-        studentId: string
-    ) => {
+    const removeChild = (studentId: string) => {
 
         setSelectedChildren((current) =>
-            current.filter(
-                (id) =>
-                    id !== studentId
-            )
+            current.filter((id) => id !== studentId)
         );
 
     };
-
 
     /* =========================
        Role Change
@@ -432,24 +425,48 @@ const AddUserPopup = ({
 
     const handleRoleChange = (newRole: UserRole | null) => {
 
-        // Only Students have a class: clear it for any other role
+        // Clear Student class when changing to another role
         if (newRole !== "student") {
             setClassId(null);
             clearError("class_id");
         }
 
+        // Clear Teacher classes when changing to another role
+        if (newRole !== "teacher") {
+            setClassIds([]);
+            clearError("class_ids");
+        }
+
         setRole(newRole);
+
         setClassName("Hifz Level 1");
         setParentId("");
         setSubject("");
         setSelectedChildren([]);
+
         setChildrenDropdownOpen(false);
         setChildrenSearch("");
 
     };
 
     /* =========================
-       Role Select (backend role ID)
+       Toggle Teacher Class
+    ========================= */
+
+    const toggleTeacherClass = (classId: number) => {
+
+        setClassIds((current) =>
+            current.includes(classId)
+                ? current.filter((id) => id !== classId)
+                : [...current, classId]
+        );
+
+        clearError("class_ids");
+
+    };
+
+    /* =========================
+       Role Select
     ========================= */
 
     const handleRoleSelect = (value: string) => {
@@ -459,24 +476,17 @@ const AddUserPopup = ({
 
         setRoleId(selected ? selected.id : null);
 
-        handleRoleChange(selected ? toRoleKind(selected.name) : null);
+        handleRoleChange(
+            selected ? toRoleKind(selected.name) : null
+        );
 
         clearError("roles");
 
     };
 
-
     /* =========================
        Validation
     ========================= */
-
-    const clearError = (field: AddUserField) => {
-
-        setErrors((current) =>
-            current[field] ? { ...current, [field]: undefined } : current
-        );
-
-    };
 
     const validate = (): AddUserErrors => {
 
@@ -499,7 +509,7 @@ const AddUserPopup = ({
             result.email = `The email must not be greater than ${MAX_EMAIL_LENGTH} characters.`;
         }
 
-        // Required when adding; optional when editing (blank = keep current)
+        // Required when adding; optional when editing
         if (!password) {
             if (!isEditMode) {
                 result.password = "The password field is required.";
@@ -516,14 +526,19 @@ const AddUserPopup = ({
             result.roles = "Please select a role.";
         }
 
+        // Student must have exactly one selected class
         if (isStudent && classId === null) {
             result.class_id = "Please select a class.";
+        }
+
+        // Teacher must have at least one selected class
+        if (isTeacher && classIds.length === 0) {
+            result.class_ids = "Please select at least one class.";
         }
 
         return result;
 
     };
-
 
     /* =========================
        Submit
@@ -535,8 +550,13 @@ const AddUserPopup = ({
 
         if (isSubmittingRef.current || isLoadingUser || loadError) return;
 
-        // Student: wait for the class list (or show its error)
-        if (isStudent && (studentClasses.isLoading || studentClasses.error)) return;
+        // Wait for academic classes to load successfully
+        if (
+            (isStudent || isTeacher) &&
+            (studentClasses.isLoading || studentClasses.error)
+        ) {
+            return;
+        }
 
         const clientErrors = validate();
 
@@ -551,9 +571,6 @@ const AddUserPopup = ({
 
         try {
 
-            // Role-specific fields (class, parent, subject, children) are not
-            // part of these APIs yet, so they are not sent
-
             if (editUserId !== null) {
 
                 const updatePayload: UpdateUserRequest = {
@@ -562,21 +579,33 @@ const AddUserPopup = ({
                     phone_no: phone.trim() || null,
                     is_active: isActive,
                     roles: [roleId],
-                    // Single class ID, Student only (omitted otherwise)
-                    ...(isStudent && classId !== null ? { class_id: classId } : {}),
+
+                    // Student: one class ID
+                    ...(isStudent && classId !== null
+                        ? { class_id: classId }
+                        : {}),
+
+                    // Teacher: multiple class IDs
+                    ...(isTeacher
+                        ? { class_ids: classIds }
+                        : {}),
                 };
 
-                // Only send a password when a new one was entered
+                // Only send password when a new one was entered
                 if (password) {
                     updatePayload.password = password;
                 }
 
-                const updated = await updateUser(editUserId, updatePayload);
+                const updated = await updateUser(
+                    editUserId,
+                    updatePayload
+                );
 
-                toast.success(updated.message || "User updated successfully.");
+                toast.success(
+                    updated.message || "User updated successfully."
+                );
 
                 resetForm();
-
                 onClose();
 
                 onUserUpdated?.(updated.data);
@@ -591,27 +620,36 @@ const AddUserPopup = ({
                 password,
                 phone_no: phone.trim() || null,
                 roles: [roleId],
-                // Single class ID, Student only (omitted otherwise)
-                ...(isStudent && classId !== null ? { class_id: classId } : {}),
+
+                // Student: one class ID
+                ...(isStudent && classId !== null
+                    ? { class_id: classId }
+                    : {}),
+
+                // Teacher: multiple class IDs
+                ...(isTeacher
+                    ? { class_ids: classIds }
+                    : {}),
             });
 
-            toast.success(response.message || "User created successfully.");
+            toast.success(
+                response.message || "User created successfully."
+            );
 
             resetForm();
-
             onClose();
 
             onUserCreated?.(response.data);
 
         } catch (error) {
 
-            const { status, message, validationErrors } = parseApiError(error);
+            const { status, message, validationErrors } =
+                parseApiError(error);
 
-            if (status === 401) return; // handled globally
+            if (status === 401) return;
 
             if (status === 422 && validationErrors) {
 
-                // Laravel keys like "roles.0" belong to the "roles" field
                 const inlineErrors: AddUserErrors = {};
 
                 Object.entries(validationErrors).forEach(([key, messages]) => {
@@ -631,7 +669,6 @@ const AddUserPopup = ({
 
                 setErrors(inlineErrors);
 
-                // Only toast if nothing could be shown inline
                 if (Object.keys(inlineErrors).length === 0) {
                     toast.error(message);
                 }
@@ -651,7 +688,6 @@ const AddUserPopup = ({
 
     };
 
-
     /* =========================
        Close Popup
     ========================= */
@@ -661,25 +697,23 @@ const AddUserPopup = ({
         if (isSubmittingRef.current) return;
 
         resetForm();
-
         onClose();
 
     };
 
-
     if (!isOpen) {
-
         return null;
-
     }
 
+    /* =========================
+       Render
+    ========================= */
 
     return (
 
         <div className="app-popup-wrapper">
 
             <div className="app-popup-box">
-
 
                 {/* =========================
                     Header
@@ -691,7 +725,6 @@ const AddUserPopup = ({
                         {isEditMode ? "Edit User" : "Add User"}
                     </h2>
 
-
                     <button
                         type="button"
                         className="app-popup-close"
@@ -699,19 +732,13 @@ const AddUserPopup = ({
                         aria-label="Close"
                         disabled={isSubmitting}
                     >
-
-                        <X
-                            size={19}
-                            strokeWidth={2}
-                        />
-
+                        <X size={19} strokeWidth={2} />
                     </button>
 
                 </div>
 
-
                 {/* =========================
-                    Form (Edit: loading / load error first)
+                    Form: Loading / Error / Content
                 ========================= */}
 
                 {isLoadingUser ? (
@@ -751,368 +778,277 @@ const AddUserPopup = ({
 
                 ) : (
 
-                <form
-                    className="app-popup-form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                >
+                    <form
+                        className="app-popup-form"
+                        onSubmit={handleSubmit}
+                        noValidate
+                    >
 
-                    <div className="row">
+                        <div className="row">
 
-
-                        {/* =========================
-                            Full Name
-                        ========================= */}
-
-                        <div className="col-12">
-
-                            <div className="app-popup-field">
-
-                                <label htmlFor="user-name">
-                                    Full Name
-                                </label>
-
-                                <input
-                                    id="user-name"
-                                    type="text"
-                                    placeholder="Full name"
-                                    value={name}
-                                    onChange={(event) => {
-                                        setName(
-                                            event.target.value
-                                        );
-                                        clearError("name");
-                                    }}
-                                    autoComplete="name"
-                                    aria-invalid={Boolean(errors.name)}
-                                    required
-                                />
-
-                                {errors.name && (
-                                    <span className="error-text">{errors.name}</span>
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* =========================
-                            Email
-                        ========================= */}
-
-                        <div className="col-12 col-md-6">
-
-                            <div className="app-popup-field">
-
-                                <label htmlFor="user-email">
-                                    Email
-                                </label>
-
-                                <input
-                                    id="user-email"
-                                    type="email"
-                                    placeholder="Email address"
-                                    value={email}
-                                    onChange={(event) => {
-                                        setEmail(
-                                            event.target.value
-                                        );
-                                        clearError("email");
-                                    }}
-                                    autoComplete="off"
-                                    aria-invalid={Boolean(errors.email)}
-                                    required
-                                />
-
-                                {errors.email && (
-                                    <span className="error-text">{errors.email}</span>
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* =========================
-                            Password
-                        ========================= */}
-
-                        <div className="col-12 col-md-6">
-
-                            <div className="app-popup-field">
-
-                                <label htmlFor="user-password">
-                                    Password
-                                </label>
-
-
-                                <div className="add-user-password">
-
-                                    <input
-                                        id="user-password"
-                                        type={
-                                            showPassword
-                                                ? "text"
-                                                : "password"
-                                        }
-                                        placeholder={
-                                            isEditMode
-                                                ? "Leave blank to keep current"
-                                                : "Set password"
-                                        }
-                                        value={password}
-                                        onChange={(event) => {
-                                            setPassword(
-                                                event.target.value
-                                            );
-                                            clearError("password");
-                                        }}
-                                        autoComplete="new-password"
-                                        aria-invalid={Boolean(errors.password)}
-                                        required
-                                    />
-
-
-                                    <button
-                                        type="button"
-                                        className="add-user-password-toggle"
-                                        onClick={() =>
-                                            setShowPassword(
-                                                (current) =>
-                                                    !current
-                                            )
-                                        }
-                                        aria-label={
-                                            showPassword
-                                                ? "Hide password"
-                                                : "Show password"
-                                        }
-                                    >
-
-                                        {showPassword ? (
-
-                                            <EyeOff size={17} />
-
-                                        ) : (
-
-                                            <Eye size={17} />
-
-                                        )}
-
-                                    </button>
-
-                                </div>
-
-                                {errors.password && (
-                                    <span className="error-text">{errors.password}</span>
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* =========================
-                            Phone Number (optional)
-                        ========================= */}
-
-                        <div className="col-12">
-
-                            <div className="app-popup-field">
-
-                                <label htmlFor="user-phone">
-                                    Phone Number
-                                </label>
-
-                                <div className="add-user-input-icon">
-
-                                    <input
-                                        id="user-phone"
-                                        type="tel"
-                                        placeholder="Enter phone number"
-                                        value={phone}
-                                        onChange={(event) => {
-                                            setPhone(
-                                                event.target.value
-                                            );
-                                            clearError("phone_no");
-                                        }}
-                                        autoComplete="tel"
-                                        aria-invalid={Boolean(errors.phone_no)}
-                                    />
-
-                                    <Phone size={15} />
-
-                                </div>
-
-                                {errors.phone_no && (
-                                    <span className="error-text">{errors.phone_no}</span>
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* =========================
-                            Status (Edit only)
-                        ========================= */}
-
-                        {isEditMode && (
+                            {/* =========================
+                                Full Name
+                            ========================= */}
 
                             <div className="col-12">
 
                                 <div className="app-popup-field">
 
-                                    <label htmlFor="user-status">
-                                        Status
+                                    <label htmlFor="user-name">
+                                        Full Name
                                     </label>
 
-                                    <div className="add-user-select-wrapper">
+                                    <input
+                                        id="user-name"
+                                        type="text"
+                                        placeholder="Full name"
+                                        value={name}
+                                        onChange={(event) => {
+                                            setName(event.target.value);
+                                            clearError("name");
+                                        }}
+                                        autoComplete="name"
+                                        aria-invalid={Boolean(errors.name)}
+                                        required
+                                    />
 
-                                        <select
-                                            id="user-status"
-                                            value={isActive ? "active" : "inactive"}
-                                            onChange={(event) => {
-                                                setIsActive(event.target.value === "active");
-                                                clearError("is_active");
-                                            }}
-                                            aria-invalid={Boolean(errors.is_active)}
-                                        >
-
-                                            <option value="active">
-                                                Active
-                                            </option>
-
-                                            <option value="inactive">
-                                                Inactive
-                                            </option>
-
-                                        </select>
-
-                                        <ChevronDown
-                                            className="add-user-select-icon"
-                                            size={17}
-                                        />
-
-                                    </div>
-
-                                    {errors.is_active && (
-                                        <span className="error-text">{errors.is_active}</span>
+                                    {errors.name && (
+                                        <span className="error-text">
+                                            {errors.name}
+                                        </span>
                                     )}
 
                                 </div>
 
                             </div>
 
-                        )}
+                            {/* =========================
+                                Email
+                            ========================= */}
 
+                            <div className="col-12 col-md-6">
 
-                        {/* =========================
-                            Role
-                        ========================= */}
+                                <div className="app-popup-field">
 
-                        <div className="col-12">
+                                    <label htmlFor="user-email">
+                                        Email
+                                    </label>
 
-                            <div className="app-popup-field">
-
-                                <label htmlFor="user-role">
-                                    Role
-                                </label>
-
-
-                                <div className="add-user-select-wrapper">
-
-                                    {/* Only enabled roles (Admin for now), with
-                                        their real IDs. Student, Teacher and
-                                        Parent return once they are enabled. */}
-                                    <select
-                                        id="user-role"
-                                        value={roleId === null ? "" : String(roleId)}
-                                        onChange={(event) =>
-                                            handleRoleSelect(
-                                                event.target.value
-                                            )
-                                        }
-                                        aria-invalid={Boolean(errors.roles)}
-                                    >
-
-                                        <option value="">
-                                            {roleChoices.length > 0
-                                                ? "Select role"
-                                                : "No roles available"}
-                                        </option>
-
-                                        {roleChoices.map((option) => (
-
-                                            <option
-                                                key={option.id}
-                                                value={option.id}
-                                            >
-                                                {option.name}
-                                            </option>
-
-                                        ))}
-
-                                    </select>
-
-
-                                    <ChevronDown
-                                        className="add-user-select-icon"
-                                        size={17}
+                                    <input
+                                        id="user-email"
+                                        type="email"
+                                        placeholder="Email address"
+                                        value={email}
+                                        onChange={(event) => {
+                                            setEmail(event.target.value);
+                                            clearError("email");
+                                        }}
+                                        autoComplete="off"
+                                        aria-invalid={Boolean(errors.email)}
+                                        required
                                     />
+
+                                    {errors.email && (
+                                        <span className="error-text">
+                                            {errors.email}
+                                        </span>
+                                    )}
 
                                 </div>
 
-                                {errors.roles && (
-                                    <span className="error-text">{errors.roles}</span>
-                                )}
+                            </div>
+
+                            {/* =========================
+                                Password
+                            ========================= */}
+
+                            <div className="col-12 col-md-6">
+
+                                <div className="app-popup-field">
+
+                                    <label htmlFor="user-password">
+                                        Password
+                                    </label>
+
+                                    <div className="add-user-password">
+
+                                        <input
+                                            id="user-password"
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder={
+                                                isEditMode
+                                                    ? "Leave blank to keep current"
+                                                    : "Set password"
+                                            }
+                                            value={password}
+                                            onChange={(event) => {
+                                                setPassword(event.target.value);
+                                                clearError("password");
+                                            }}
+                                            autoComplete="new-password"
+                                            aria-invalid={Boolean(errors.password)}
+                                            required
+                                        />
+
+                                        <button
+                                            type="button"
+                                            className="add-user-password-toggle"
+                                            onClick={() =>
+                                                setShowPassword((current) => !current)
+                                            }
+                                            aria-label={
+                                                showPassword
+                                                    ? "Hide password"
+                                                    : "Show password"
+                                            }
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff size={17} />
+                                            ) : (
+                                                <Eye size={17} />
+                                            )}
+                                        </button>
+
+                                    </div>
+
+                                    {errors.password && (
+                                        <span className="error-text">
+                                            {errors.password}
+                                        </span>
+                                    )}
+
+                                </div>
 
                             </div>
 
-                        </div>
-
-
-                        {/* =========================
-                            Student Class (required for Student)
-                        ========================= */}
-
-                        {isStudent && (
+                            {/* =========================
+                                Phone Number
+                            ========================= */}
 
                             <div className="col-12">
 
                                 <div className="app-popup-field">
 
-                                    <label htmlFor="user-student-class">
-                                        Class
+                                    <label htmlFor="user-phone">
+                                        Phone Number
+                                    </label>
+
+                                    <div className="add-user-input-icon">
+
+                                        <input
+                                            id="user-phone"
+                                            type="tel"
+                                            placeholder="Enter phone number"
+                                            value={phone}
+                                            onChange={(event) => {
+                                                setPhone(event.target.value);
+                                                clearError("phone_no");
+                                            }}
+                                            autoComplete="tel"
+                                            aria-invalid={Boolean(errors.phone_no)}
+                                        />
+
+                                        <Phone size={15} />
+
+                                    </div>
+
+                                    {errors.phone_no && (
+                                        <span className="error-text">
+                                            {errors.phone_no}
+                                        </span>
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                            {/* =========================
+                                Status (Edit only)
+                            ========================= */}
+
+                            {isEditMode && (
+
+                                <div className="col-12">
+
+                                    <div className="app-popup-field">
+
+                                        <label htmlFor="user-status">
+                                            Status
+                                        </label>
+
+                                        <div className="add-user-select-wrapper">
+
+                                            <select
+                                                id="user-status"
+                                                value={isActive ? "active" : "inactive"}
+                                                onChange={(event) => {
+                                                    setIsActive(event.target.value === "active");
+                                                    clearError("is_active");
+                                                }}
+                                                aria-invalid={Boolean(errors.is_active)}
+                                            >
+                                                <option value="active">
+                                                    Active
+                                                </option>
+
+                                                <option value="inactive">
+                                                    Inactive
+                                                </option>
+                                            </select>
+
+                                            <ChevronDown
+                                                className="add-user-select-icon"
+                                                size={17}
+                                            />
+
+                                        </div>
+
+                                        {errors.is_active && (
+                                            <span className="error-text">
+                                                {errors.is_active}
+                                            </span>
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =========================
+                                Role
+                            ========================= */}
+
+                            <div className="col-12">
+
+                                <div className="app-popup-field">
+
+                                    <label htmlFor="user-role">
+                                        Role
                                     </label>
 
                                     <div className="add-user-select-wrapper">
 
                                         <select
-                                            id="user-student-class"
-                                            value={classId === null ? "" : String(classId)}
-                                            onChange={(event) => {
-                                                const value = event.target.value;
-                                                setClassId(value ? Number(value) : null);
-                                                clearError("class_id");
-                                            }}
-                                            disabled={studentClasses.isLoading || isSubmitting}
-                                            aria-invalid={Boolean(errors.class_id)}
-                                            required
+                                            id="user-role"
+                                            value={roleId === null ? "" : String(roleId)}
+                                            onChange={(event) =>
+                                                handleRoleSelect(event.target.value)
+                                            }
+                                            aria-invalid={Boolean(errors.roles)}
                                         >
 
                                             <option value="">
-                                                {studentClasses.isLoading
-                                                    ? "Loading classes..."
-                                                    : classChoices.length > 0
-                                                        ? "Select class"
-                                                        : "No classes available"}
+                                                {roleChoices.length > 0
+                                                    ? "Select role"
+                                                    : "No roles available"}
                                             </option>
 
-                                            {classChoices.map((option) => (
-                                                <option key={option.id} value={option.id}>
+                                            {roleChoices.map((option) => (
+                                                <option
+                                                    key={option.id}
+                                                    value={option.id}
+                                                >
                                                     {option.name}
                                                 </option>
                                             ))}
@@ -1126,20 +1062,9 @@ const AddUserPopup = ({
 
                                     </div>
 
-                                    {errors.class_id && (
-                                        <span className="error-text">{errors.class_id}</span>
-                                    )}
-
-                                    {studentClasses.error && (
+                                    {errors.roles && (
                                         <span className="error-text">
-                                            {studentClasses.error}{" "}
-                                            <button
-                                                type="button"
-                                                className="btn btn-link p-0 align-baseline"
-                                                onClick={studentClasses.retry}
-                                            >
-                                                Try again
-                                            </button>
+                                            {errors.roles}
                                         </span>
                                     )}
 
@@ -1147,63 +1072,60 @@ const AddUserPopup = ({
 
                             </div>
 
-                        )}
+                            {/* =========================
+                                Student Class
+                            ========================= */}
 
+                            {isStudent && (
 
-                        {/* =========================
-                            Student
-                        ========================= */}
-
-                        {sectionRole === "student" && (
-
-                            <>
-
-
-                                {/* Class */}
-
-                                <div className="col-12 col-md-6">
+                                <div className="col-12">
 
                                     <div className="app-popup-field">
 
-                                        <label htmlFor="user-class">
+                                        <label htmlFor="user-student-class">
                                             Class
                                         </label>
-
 
                                         <div className="add-user-select-wrapper">
 
                                             <select
-                                                id="user-class"
-                                                value={className}
-                                                onChange={(event) =>
-                                                    setClassName(
-                                                        event.target.value
-                                                    )
+                                                id="user-student-class"
+                                                value={classId === null ? "" : String(classId)}
+                                                onChange={(event) => {
+                                                    const value = event.target.value;
+
+                                                    setClassId(
+                                                        value ? Number(value) : null
+                                                    );
+
+                                                    clearError("class_id");
+                                                }}
+                                                disabled={
+                                                    studentClasses.isLoading ||
+                                                    isSubmitting
                                                 }
+                                                aria-invalid={Boolean(errors.class_id)}
+                                                required
                                             >
 
-                                                <option>
-                                                    Hifz Level 1
+                                                <option value="">
+                                                    {studentClasses.isLoading
+                                                        ? "Loading classes..."
+                                                        : classChoices.length > 0
+                                                            ? "Select class"
+                                                            : "No classes available"}
                                                 </option>
 
-                                                <option>
-                                                    Hifz Level 2
-                                                </option>
-
-                                                <option>
-                                                    Hifz Level 3
-                                                </option>
-
-                                                <option>
-                                                    Arabic Foundations
-                                                </option>
-
-                                                <option>
-                                                    Tajweed Intermediate
-                                                </option>
+                                                {classChoices.map((option) => (
+                                                    <option
+                                                        key={option.id}
+                                                        value={option.id}
+                                                    >
+                                                        {option.name}
+                                                    </option>
+                                                ))}
 
                                             </select>
-
 
                                             <ChevronDown
                                                 className="add-user-select-icon"
@@ -1212,334 +1134,136 @@ const AddUserPopup = ({
 
                                         </div>
 
+                                        {errors.class_id && (
+                                            <span className="error-text">
+                                                {errors.class_id}
+                                            </span>
+                                        )}
+
+                                        {studentClasses.error && (
+                                            <span className="error-text">
+
+                                                {studentClasses.error}{" "}
+
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-link p-0 align-baseline"
+                                                    onClick={studentClasses.retry}
+                                                >
+                                                    Try again
+                                                </button>
+
+                                            </span>
+                                        )}
+
                                     </div>
 
                                 </div>
 
+                            )}
 
-                                {/* Parent ID */}
+                            {/* =========================
+                                Teacher Classes
+                            ========================= */}
 
-                                <div className="col-12 col-md-6">
+                            {isTeacher && (
+
+                                <div className="col-12">
 
                                     <div className="app-popup-field">
 
-                                        <label htmlFor="parent-id">
-                                            Parent ID
+                                        <label>
+                                            Assign Classes
                                         </label>
 
-                                        <input
-                                            id="parent-id"
-                                            type="text"
-                                            placeholder="e.g. p1"
-                                            value={parentId}
-                                            onChange={(event) =>
-                                                setParentId(
-                                                    event.target.value
-                                                )
-                                            }
-                                        />
+                                        <div className="add-user-children">
 
-                                    </div>
-
-                                </div>
-
-                            </>
-
-                        )}
-
-
-                        {/* =========================
-                            Teacher
-                        ========================= */}
-
-                        {sectionRole === "teacher" && (
-
-                            <div className="col-12">
-
-                                <div className="app-popup-field">
-
-                                    <label htmlFor="teacher-subject">
-                                        Subject
-                                    </label>
-
-                                    <input
-                                        id="teacher-subject"
-                                        type="text"
-                                        placeholder="e.g. Quran & Tajweed"
-                                        value={subject}
-                                        onChange={(event) =>
-                                            setSubject(
-                                                event.target.value
-                                            )
-                                        }
-                                        required
-                                    />
-
-                                </div>
-
-                            </div>
-
-                        )}
-
-
-                        {/* =========================
-                            Parent
-                        ========================= */}
-
-                        {sectionRole === "parent" && (
-
-                            <div className="col-12">
-
-                                <div className="app-popup-field">
-
-                                    <label>
-                                        Assign Children
-                                    </label>
-
-
-                                    <div
-                                        className="add-user-children"
-                                        ref={childrenDropdownRef}
-                                    >
-
-                                        <div
-                                            className={`add-user-children-control ${
-                                                childrenDropdownOpen
-                                                    ? "open"
-                                                    : ""
-                                            }`}
-                                            onClick={() =>
-                                                setChildrenDropdownOpen(
-                                                    (current) =>
-                                                        !current
-                                                )
-                                            }
-                                        >
-
-                                            {selectedChildObjects.length >
-                                            0 ? (
-
-                                                <div className="add-user-selected-list">
-
-                                                    {selectedChildObjects.map(
-                                                        (student) => (
-
-                                                            <span
-                                                                className="add-user-child-chip"
-                                                                key={
-                                                                    student.id
-                                                                }
-                                                            >
-
-                                                                {
-                                                                    student.name
-                                                                }
-
-
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={(
-                                                                        event
-                                                                    ) => {
-
-                                                                        event.stopPropagation();
-
-                                                                        removeChild(
-                                                                            String(
-                                                                                student.id
-                                                                            )
-                                                                        );
-
-                                                                    }}
-                                                                    aria-label={`Remove ${student.name}`}
-                                                                >
-
-                                                                    <X
-                                                                        size={12}
-                                                                    />
-
-                                                                </button>
-
-                                                            </span>
-
-                                                        )
-                                                    )}
-
-                                                </div>
-
-                                            ) : (
-
-                                                <span className="add-user-children-placeholder">
-                                                    Select children
-                                                </span>
-
-                                            )}
-
-
-                                            <ChevronDown
-                                                className={`add-user-children-arrow ${
-                                                    childrenDropdownOpen
-                                                        ? "rotate"
-                                                        : ""
-                                                }`}
-                                                size={17}
-                                            />
-
-                                        </div>
-
-
-                                        {childrenDropdownOpen && (
-
-                                            <div className="add-user-children-dropdown">
-
-
-                                                {/* Search */}
-
-                                                <div className="add-user-children-search">
-
-                                                    <Search
-                                                        size={16}
-                                                    />
-
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Search students..."
-                                                        value={
-                                                            childrenSearch
-                                                        }
-                                                        onChange={(
-                                                            event
-                                                        ) =>
-                                                            setChildrenSearch(
-                                                                event.target.value
-                                                            )
-                                                        }
-                                                        onClick={(
-                                                            event
-                                                        ) =>
-                                                            event.stopPropagation()
-                                                        }
-                                                    />
-
-                                                </div>
-
-
-                                                {/* List */}
+                                            <div
+                                                className="add-user-children-dropdown"
+                                                style={{ position: "static" }}
+                                            >
 
                                                 <div className="add-user-children-list">
 
-                                                    {filteredChildren.length >
-                                                    0 ? (
+                                                    {studentClasses.isLoading ? (
 
-                                                        filteredChildren.map(
-                                                            (student) => {
+                                                        <div className="add-user-no-children">
+                                                            Loading classes...
+                                                        </div>
 
-                                                                const studentId =
-                                                                    String(
-                                                                        student.id
-                                                                    );
+                                                    ) : studentClasses.classes.length > 0 ? (
 
-                                                                const isSelected =
-                                                                    selectedChildren.includes(
-                                                                        studentId
-                                                                    );
+                                                        studentClasses.classes.map((option) => {
 
+                                                            const isSelected =
+                                                                classIds.includes(option.id);
 
-                                                                return (
+                                                            return (
 
-                                                                    <button
-                                                                        type="button"
-                                                                        className={`add-user-child-option ${
-                                                                            isSelected
-                                                                                ? "selected"
-                                                                                : ""
-                                                                        }`}
-                                                                        key={
-                                                                            student.id
-                                                                        }
-                                                                        onClick={() =>
-                                                                            toggleChild(
-                                                                                studentId
-                                                                            )
-                                                                        }
-                                                                    >
+                                                                <button
+                                                                    type="button"
+                                                                    key={option.id}
+                                                                    className={`add-user-child-option ${
+                                                                        isSelected ? "selected" : ""
+                                                                    }`}
+                                                                    onClick={() =>
+                                                                        toggleTeacherClass(option.id)
+                                                                    }
+                                                                    disabled={isSubmitting}
+                                                                >
 
-                                                                        <div className="add-user-child-info">
+                                                                    <div className="add-user-child-info">
 
-                                                                            <span className="add-user-child-name">
-                                                                                {
-                                                                                    student.name
-                                                                                }
-                                                                            </span>
-
-                                                                            <span className="add-user-child-meta">
-                                                                                {
-                                                                                    student.email
-                                                                                }
-                                                                            </span>
-
-                                                                        </div>
-
-
-                                                                        <span
-                                                                            className={`add-user-child-check ${
-                                                                                isSelected
-                                                                                    ? "checked"
-                                                                                    : ""
-                                                                            }`}
-                                                                        >
-
-                                                                            {isSelected && (
-
-                                                                                <Check
-                                                                                    size={13}
-                                                                                    strokeWidth={3}
-                                                                                />
-
-                                                                            )}
-
+                                                                        <span className="add-user-child-name">
+                                                                            {option.name}
                                                                         </span>
 
-                                                                    </button>
+                                                                    </div>
 
-                                                                );
+                                                                    <span
+                                                                        className={`add-user-child-check ${
+                                                                            isSelected ? "checked" : ""
+                                                                        }`}
+                                                                    >
+                                                                        {isSelected && (
+                                                                            <Check
+                                                                                size={13}
+                                                                                strokeWidth={3}
+                                                                            />
+                                                                        )}
+                                                                    </span>
 
-                                                            }
-                                                        )
+                                                                </button>
+
+                                                            );
+
+                                                        })
 
                                                     ) : (
 
                                                         <div className="add-user-no-children">
-                                                            No students found.
+                                                            No classes available.
                                                         </div>
 
                                                     )}
 
                                                 </div>
 
-
-                                                {/* Footer */}
-
                                                 <div className="add-user-children-footer">
 
                                                     <span>
-                                                        {
-                                                            selectedChildren.length
-                                                        }{" "}
-                                                        selected
+                                                        {classIds.length} selected
                                                     </span>
 
-
-                                                    {selectedChildren.length >
-                                                        0 && (
+                                                    {classIds.length > 0 && (
 
                                                         <button
                                                             type="button"
-                                                            onClick={() =>
-                                                                setSelectedChildren(
-                                                                    []
-                                                                )
-                                                            }
+                                                            onClick={() => {
+                                                                setClassIds([]);
+                                                                clearError("class_ids");
+                                                            }}
+                                                            disabled={isSubmitting}
                                                         >
                                                             Clear
                                                         </button>
@@ -1550,53 +1274,384 @@ const AddUserPopup = ({
 
                                             </div>
 
+                                        </div>
+
+                                        {errors.class_ids && (
+                                            <span className="error-text">
+                                                {errors.class_ids}
+                                            </span>
+                                        )}
+
+                                        {studentClasses.error && (
+
+                                            <span className="error-text">
+
+                                                {studentClasses.error}{" "}
+
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-link p-0 align-baseline"
+                                                    onClick={studentClasses.retry}
+                                                >
+                                                    Try again
+                                                </button>
+
+                                            </span>
+
                                         )}
 
                                     </div>
 
                                 </div>
 
-                            </div>
+                            )}
 
-                        )}
+                            {/* =========================
+                                Legacy Student Section
+                            ========================= */}
 
+                            {sectionRole === "student" && (
 
-                        {/* =========================
-                            Actions
-                        ========================= */}
+                                <>
 
-                        <div className="col-12">
+                                    <div className="col-12 col-md-6">
 
-                            <div className="app-popup-actions">
+                                        <div className="app-popup-field">
 
-                                <button
-                                    type="button"
-                                    className="app-popup-btn cancel"
-                                    onClick={handleClose}
-                                    disabled={isSubmitting}
-                                >
-                                    Cancel
-                                </button>
+                                            <label htmlFor="user-class">
+                                                Class
+                                            </label>
 
+                                            <div className="add-user-select-wrapper">
 
-                                <button
-                                    type="submit"
-                                    className="app-popup-btn submit"
-                                    disabled={isSubmitting || (isStudent && studentClasses.isLoading)}
-                                    aria-busy={isSubmitting}
-                                >
-                                    {isEditMode
-                                        ? (isSubmitting ? "Saving..." : "Save Changes")
-                                        : (isSubmitting ? "Adding..." : "Add User")}
-                                </button>
+                                                <select
+                                                    id="user-class"
+                                                    value={className}
+                                                    onChange={(event) =>
+                                                        setClassName(event.target.value)
+                                                    }
+                                                >
+                                                    <option>Hifz Level 1</option>
+                                                    <option>Hifz Level 2</option>
+                                                    <option>Hifz Level 3</option>
+                                                    <option>Arabic Foundations</option>
+                                                    <option>Tajweed Intermediate</option>
+                                                </select>
+
+                                                <ChevronDown
+                                                    className="add-user-select-icon"
+                                                    size={17}
+                                                />
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div className="col-12 col-md-6">
+
+                                        <div className="app-popup-field">
+
+                                            <label htmlFor="parent-id">
+                                                Parent ID
+                                            </label>
+
+                                            <input
+                                                id="parent-id"
+                                                type="text"
+                                                placeholder="e.g. p1"
+                                                value={parentId}
+                                                onChange={(event) =>
+                                                    setParentId(event.target.value)
+                                                }
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </>
+
+                            )}
+
+                            {/* =========================
+                                Legacy Teacher Section
+                            ========================= */}
+
+                            {sectionRole === "teacher" && (
+
+                                <div className="col-12">
+
+                                    <div className="app-popup-field">
+
+                                        <label htmlFor="teacher-subject">
+                                            Subject
+                                        </label>
+
+                                        <input
+                                            id="teacher-subject"
+                                            type="text"
+                                            placeholder="e.g. Quran & Tajweed"
+                                            value={subject}
+                                            onChange={(event) =>
+                                                setSubject(event.target.value)
+                                            }
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =========================
+                                Legacy Parent Section
+                            ========================= */}
+
+                            {sectionRole === "parent" && (
+
+                                <div className="col-12">
+
+                                    <div className="app-popup-field">
+
+                                        <label>
+                                            Assign Children
+                                        </label>
+
+                                        <div
+                                            className="add-user-children"
+                                            ref={childrenDropdownRef}
+                                        >
+
+                                            <div
+                                                className={`add-user-children-control ${
+                                                    childrenDropdownOpen ? "open" : ""
+                                                }`}
+                                                onClick={() =>
+                                                    setChildrenDropdownOpen(
+                                                        (current) => !current
+                                                    )
+                                                }
+                                            >
+
+                                                {selectedChildObjects.length > 0 ? (
+
+                                                    <div className="add-user-selected-list">
+
+                                                        {selectedChildObjects.map((student) => (
+
+                                                            <span
+                                                                className="add-user-child-chip"
+                                                                key={student.id}
+                                                            >
+
+                                                                {student.name}
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(event) => {
+                                                                        event.stopPropagation();
+
+                                                                        removeChild(
+                                                                            String(student.id)
+                                                                        );
+                                                                    }}
+                                                                    aria-label={`Remove ${student.name}`}
+                                                                >
+                                                                    <X size={12} />
+                                                                </button>
+
+                                                            </span>
+
+                                                        ))}
+
+                                                    </div>
+
+                                                ) : (
+
+                                                    <span className="add-user-children-placeholder">
+                                                        Select children
+                                                    </span>
+
+                                                )}
+
+                                                <ChevronDown
+                                                    className={`add-user-children-arrow ${
+                                                        childrenDropdownOpen ? "rotate" : ""
+                                                    }`}
+                                                    size={17}
+                                                />
+
+                                            </div>
+
+                                            {childrenDropdownOpen && (
+
+                                                <div className="add-user-children-dropdown">
+
+                                                    {/* Search */}
+
+                                                    <div className="add-user-children-search">
+
+                                                        <Search size={16} />
+
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Search students..."
+                                                            value={childrenSearch}
+                                                            onChange={(event) =>
+                                                                setChildrenSearch(event.target.value)
+                                                            }
+                                                            onClick={(event) =>
+                                                                event.stopPropagation()
+                                                            }
+                                                        />
+
+                                                    </div>
+
+                                                    {/* List */}
+
+                                                    <div className="add-user-children-list">
+
+                                                        {filteredChildren.length > 0 ? (
+
+                                                            filteredChildren.map((student) => {
+
+                                                                const studentId =
+                                                                    String(student.id);
+
+                                                                const isSelected =
+                                                                    selectedChildren.includes(studentId);
+
+                                                                return (
+
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`add-user-child-option ${
+                                                                            isSelected ? "selected" : ""
+                                                                        }`}
+                                                                        key={student.id}
+                                                                        onClick={() =>
+                                                                            toggleChild(studentId)
+                                                                        }
+                                                                    >
+
+                                                                        <div className="add-user-child-info">
+
+                                                                            <span className="add-user-child-name">
+                                                                                {student.name}
+                                                                            </span>
+
+                                                                            <span className="add-user-child-meta">
+                                                                                {student.email}
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                        <span
+                                                                            className={`add-user-child-check ${
+                                                                                isSelected ? "checked" : ""
+                                                                            }`}
+                                                                        >
+                                                                            {isSelected && (
+                                                                                <Check
+                                                                                    size={13}
+                                                                                    strokeWidth={3}
+                                                                                />
+                                                                            )}
+                                                                        </span>
+
+                                                                    </button>
+
+                                                                );
+
+                                                            })
+
+                                                        ) : (
+
+                                                            <div className="add-user-no-children">
+                                                                No students found.
+                                                            </div>
+
+                                                        )}
+
+                                                    </div>
+
+                                                    {/* Footer */}
+
+                                                    <div className="add-user-children-footer">
+
+                                                        <span>
+                                                            {selectedChildren.length} selected
+                                                        </span>
+
+                                                        {selectedChildren.length > 0 && (
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    setSelectedChildren([])
+                                                                }
+                                                            >
+                                                                Clear
+                                                            </button>
+
+                                                        )}
+
+                                                    </div>
+
+                                                </div>
+
+                                            )}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =========================
+                                Actions
+                            ========================= */}
+
+                            <div className="col-12">
+
+                                <div className="app-popup-actions">
+
+                                    <button
+                                        type="button"
+                                        className="app-popup-btn cancel"
+                                        onClick={handleClose}
+                                        disabled={isSubmitting}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        className="app-popup-btn submit"
+                                        disabled={
+                                            isSubmitting ||
+                                            ((isStudent || isTeacher) &&
+                                                studentClasses.isLoading)
+                                        }
+                                        aria-busy={isSubmitting}
+                                    >
+                                        {isEditMode
+                                            ? (isSubmitting ? "Saving..." : "Save Changes")
+                                            : (isSubmitting ? "Adding..." : "Add User")}
+                                    </button>
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                    </div>
-
-                </form>
+                    </form>
 
                 )}
 
@@ -1607,6 +1662,5 @@ const AddUserPopup = ({
     );
 
 };
-
 
 export default AddUserPopup;
