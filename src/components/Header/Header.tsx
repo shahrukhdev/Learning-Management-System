@@ -3,11 +3,11 @@ import "./Header.css";
 
 import { useEffect, useRef, useState } from "react";
 import {
-    Bell,
+    // Bell, // notifications are commented out below
     // Search, // header search is commented out below
     User,
     LogOut,
-    Check,
+    // Check, // notifications are commented out below
     Menu,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -38,11 +38,12 @@ const Header = ({ onMenuClick }: HeaderProps) => {
     const avatarUrl = resolveImageUrl(user?.image);
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    // Notifications are hidden for now
+    // const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     // Properly typed refs
     const profileRef = useRef<HTMLDivElement>(null);
-    const notificationRef = useRef<HTMLDivElement>(null);
+    // const notificationRef = useRef<HTMLDivElement>(null);
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -58,12 +59,13 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                 setIsProfileOpen(false);
             }
 
-            if (
-                notificationRef.current &&
-                !notificationRef.current.contains(target)
-            ) {
-                setIsNotificationOpen(false);
-            }
+            // Notifications are hidden for now
+            // if (
+            //     notificationRef.current &&
+            //     !notificationRef.current.contains(target)
+            // ) {
+            //     setIsNotificationOpen(false);
+            // }
 
         };
 
@@ -125,7 +127,12 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                             {/* Header Actions */}
                             <div className="header-actions">
 
-                                {/* Notification Menu */}
+                                {/* Notifications (hidden for now; to bring them back, uncomment
+                                    this block, the `Bell` / `Check` imports, the notification
+                                    state + ref, its click-outside check and the
+                                    `setIsNotificationOpen(false)` in the profile button)
+
+                                // Notification Menu
                                 <div
                                     className="notification-menu"
                                     ref={notificationRef}
@@ -153,7 +160,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
                                         <div className="notification-dropdown">
 
-                                            {/* Notification Header */}
+                                            // Notification Header
                                             <div className="notification-dropdown-header">
 
                                                 <div>
@@ -175,10 +182,10 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
                                             <div className="notification-dropdown-divider"></div>
 
-                                            {/* Notification List */}
+                                            // Notification List
                                             <div className="notification-list">
 
-                                                {/* Notification 1 */}
+                                                // Notification 1
                                                 <button
                                                     type="button"
                                                     className="notification-item unread"
@@ -208,7 +215,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
                                                 </button>
 
-                                                {/* Notification 2 */}
+                                                // Notification 2
                                                 <button
                                                     type="button"
                                                     className="notification-item unread"
@@ -238,7 +245,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
                                                 </button>
 
-                                                {/* Notification 3 */}
+                                                // Notification 3
                                                 <button
                                                     type="button"
                                                     className="notification-item"
@@ -270,7 +277,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
                                             <div className="notification-dropdown-divider"></div>
 
-                                            {/* View All */}
+                                            // View All
                                             <Link
                                                 to="/notices"
                                                 className="view-all-notifications text-decoration-none"
@@ -284,6 +291,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                                     )}
 
                                 </div>
+                                */}
 
                                 {/* Profile Menu */}
                                 <div
@@ -296,7 +304,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                                         className="user-avatar profile-button"
                                         onClick={() => {
                                             setIsProfileOpen(!isProfileOpen);
-                                            setIsNotificationOpen(false);
+                                            // setIsNotificationOpen(false); // notifications hidden
                                         }}
                                         aria-expanded={isProfileOpen}
                                         aria-label={user ? `${user.name} profile menu` : "User profile menu"}
