@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { usePermissions } from "../hooks/usePermissions";
@@ -31,6 +31,8 @@ const PermissionRoute = ({ permissions, children }: PermissionRouteProps) => {
 
     const { user } = useAuth();
 
+    const location = useLocation();
+
     const { permissions: userPermissions, hasAnyPermission, isSyncingUser } = usePermissions();
 
     // Not signed in (e.g. during logout): this is not a permission problem,
@@ -51,7 +53,19 @@ const PermissionRoute = ({ permissions, children }: PermissionRouteProps) => {
         );
     }
 
-    return <AccessDeniedRedirect to={getHomePath(userPermissions)} />;
+    const homePath = getHomePath(userPermissions);
+
+    // The home page is this page (the user may open no page at all): show the
+    // message here instead of redirecting to itself
+    if (homePath === location.pathname) {
+        return (
+            <div className="d-flex justify-content-center align-items-center py-5" role="alert">
+                {NO_ACCESS_MESSAGE}
+            </div>
+        );
+    }
+
+    return <AccessDeniedRedirect to={homePath} />;
 };
 
 export default PermissionRoute;

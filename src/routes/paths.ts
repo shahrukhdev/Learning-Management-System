@@ -6,8 +6,10 @@ export const LOGIN_PATH = "/login";
 // Prefix-free dashboard; the role-specific dashboard is chosen by RoleBasedRoute
 export const DEFAULT_DASHBOARD_PATH = "/dashboard";
 
-// The only page without a permission rule (always opens for signed-in users)
-export const FALLBACK_HOME_PATH = "/students-progress";
+// Used when the user may open none of the pages below. Every page now has a
+// permission rule, so PermissionRoute shows a "no permission" message here
+// instead of redirecting again (no redirect loop).
+export const FALLBACK_HOME_PATH = DEFAULT_DASHBOARD_PATH;
 
 // Candidate home pages in order, each with the permission it needs
 const HOME_CANDIDATES: [permission: string, path: string][] = [
@@ -16,6 +18,7 @@ const HOME_CANDIDATES: [permission: string, path: string][] = [
     [PERMISSIONS.VIEW_NOTICES, "/notices"],
     [PERMISSIONS.VIEW_HIFZ, "/hifz"],
     [PERMISSIONS.VIEW_ATTENDANCE, "/attendance"],
+    [PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST, "/students-progress"],
     [PERMISSIONS.VIEW_CLASSES, "/academic/classes"],
     [PERMISSIONS.VIEW_COURSES, "/academic/courses"],
     [PERMISSIONS.VIEW_USERS, "/system/users"],

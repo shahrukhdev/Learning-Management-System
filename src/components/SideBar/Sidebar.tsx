@@ -64,6 +64,7 @@ const navItems: NavItem[] = [
         title: "Students Progress",
         path: "/students-progress",
         icon: NavIcon5,
+        permission: PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST,
     },
 ];
 

@@ -20,6 +20,9 @@ import { formatProgressDate, getGradeClass, toPopupStudent } from "../../../../u
 import "../../../../components/Table/Table.css";
 import "../../../../components/Popups/LogProgressPopup/LogProgressPopup.css";
 import "./StudentProgressDetails.css";
+import { usePermissions } from "../../../../hooks/usePermissions";
+import { usePermittedPath } from "../../../../hooks/usePermittedPath";
+import { PERMISSIONS } from "../../../../utils/permissions";
 
 const LIST_PATH = "/students-progress";
 
@@ -129,7 +132,25 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
     // List card data passed on navigation: shown while the profile loads
     const stateStudent = location.state?.student as ProgressStudentItem | undefined;
 
-    const backTo = typeof location.state?.backTo === "string" ? location.state.backTo : LIST_PATH;
+    /* Permissions ("View Student Progress" is checked by the route) */
+
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_STUDENT_PROGRESS);
+
+    const canEdit = hasPermission(PERMISSIONS.EDIT_STUDENT_PROGRESS);
+
+    const canDelete = hasPermission(PERMISSIONS.DELETE_STUDENT_PROGRESS);
+
+    const canViewList = hasPermission(PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST);
+
+    // "Back to Students" goes to the list only with "View Student Progress
+    // List", otherwise to the user's home page
+    const listPath = usePermittedPath(LIST_PATH, PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST);
+
+    const stateBackTo = typeof location.state?.backTo === "string" ? location.state.backTo : LIST_PATH;
+
+    const backTo = canViewList ? stateBackTo : listPath;
 
     const {
         details,
@@ -200,6 +221,18 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
         retryRecords();
     };
 
+    const openCreate = () => {
+        if (canCreate) setShowPopup(true);
+    };
+
+    const openEdit = (record: StudentProgressRecord) => {
+        if (canEdit) setEditRecord(record);
+    };
+
+    const openDelete = (record: StudentProgressRecord) => {
+        if (canDelete) setDeleteRecord(record);
+    };
+
     const handleSaveProgress = () => {
         setShowPopup(false);
         setEditRecord(null);
@@ -226,7 +259,7 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
     };
 
     const handleConfirmDelete = async () => {
-        if (!deleteRecord || studentId === null || isDeletingRef.current) return;
+        if (!deleteRecord || studentId === null || isDeletingRef.current || !canDelete) return;
 
         const target = deleteRecord;
 
@@ -343,14 +376,16 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                         <p>Review lessons, results and teacher feedback.</p>
                     </div>
 
-                    <button
-                        type="button"
-                        className="spd-add-button"
-                        onClick={() => setShowPopup(true)}
-                    >
-                        <Plus size={18} />
-                        Add Progress
-                    </button>
+                    {canCreate && (
+                        <button
+                            type="button"
+                            className="spd-add-button"
+                            onClick={openCreate}
+                        >
+                            <Plus size={18} />
+                            Add Progress
+                        </button>
+                    )}
                 </div>
 
                 {/* Student profile */}
@@ -545,29 +580,35 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                                                     {entry.grade}
                                                 </span>
 
-                                                <div className="spd-record-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="spd-icon-button"
-                                                        onClick={() => setEditRecord(entry)}
-                                                        disabled={busyRecordId === entry.id}
-                                                        aria-label="Edit progress"
-                                                        title="Edit progress"
-                                                    >
-                                                        <Pencil size={15} />
-                                                    </button>
+                                                {(canEdit || canDelete) && (
+                                                    <div className="spd-record-actions">
+                                                        {canEdit && (
+                                                            <button
+                                                                type="button"
+                                                                className="spd-icon-button"
+                                                                onClick={() => openEdit(entry)}
+                                                                disabled={busyRecordId === entry.id}
+                                                                aria-label="Edit progress"
+                                                                title="Edit progress"
+                                                            >
+                                                                <Pencil size={15} />
+                                                            </button>
+                                                        )}
 
-                                                    <button
-                                                        type="button"
-                                                        className="spd-icon-button spd-icon-button-danger"
-                                                        onClick={() => setDeleteRecord(entry)}
-                                                        disabled={busyRecordId === entry.id}
-                                                        aria-label="Delete progress"
-                                                        title="Delete progress"
-                                                    >
-                                                        <Trash2 size={15} />
-                                                    </button>
-                                                </div>
+                                                        {canDelete && (
+                                                            <button
+                                                                type="button"
+                                                                className="spd-icon-button spd-icon-button-danger"
+                                                                onClick={() => openDelete(entry)}
+                                                                disabled={busyRecordId === entry.id}
+                                                                aria-label="Delete progress"
+                                                                title="Delete progress"
+                                                            >
+                                                                <Trash2 size={15} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -604,10 +645,10 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                                     : "Try selecting another subject to view its records."}
                             </p>
 
-                            {activeCourseId === null && (
+                            {activeCourseId === null && canCreate && (
                                 <button
                                     type="button"
-                                    onClick={() => setShowPopup(true)}
+                                    onClick={openCreate}
                                 >
                                     <Plus size={17} />
                                     Add First Progress
@@ -655,7 +696,7 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
                 </div>
             </section>
 
-            {showPopup && (
+            {showPopup && canCreate && (
                 <LogProgressPopup
                     student={toPopupStudent(student)}
                     // Subjects/grades already loaded here; the popup loads
@@ -667,7 +708,7 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
             )}
 
             {/* Edit: the same popup, pre-filled from the record */}
-            {editRecord && (
+            {editRecord && canEdit && (
                 <LogProgressPopup
                     key={editRecord.id}
                     mode="edit"
@@ -689,7 +730,7 @@ const StudentProgressDetails = ({ className = "" }: StudentProgressDetailsProps)
             )}
 
             {/* Delete confirmation */}
-            {deleteRecord && (
+            {deleteRecord && canDelete && (
                 <DeleteProgressDialog
                     lesson={deleteRecord.lesson}
                     isDeleting={busyRecordId === deleteRecord.id}

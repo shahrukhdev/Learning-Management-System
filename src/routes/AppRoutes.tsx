@@ -128,12 +128,20 @@ const AppRoutes = () => {
 
                 <Route
                     path="/students-progress"
-                    element={<RoleBasedRoute admin={<StudentProgress />} teacher={<TeacherStudentProgress />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_STUDENT_PROGRESS_LIST]}>
+                            <RoleBasedRoute admin={<StudentProgress />} teacher={<TeacherStudentProgress />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route
                     path="/students-progress/:studentId"
-                    element={<RoleBasedRoute admin={<StudentProgressDetails />} teacher={<TeacherStudentProgressDetails />} />}
+                    element={
+                        <PermissionRoute permissions={[PERMISSIONS.VIEW_STUDENT_PROGRESS]}>
+                            <RoleBasedRoute admin={<StudentProgressDetails />} teacher={<TeacherStudentProgressDetails />} />
+                        </PermissionRoute>
+                    }
                 />
 
                 <Route

@@ -15,6 +15,8 @@ import { toPopupStudent } from "../../../utils/studentProgress";
 
 import "../../../components/Table/Table.css";
 import "./StudentProgress.css";
+import { usePermissions } from "../../../hooks/usePermissions";
+import { PERMISSIONS } from "../../../utils/permissions";
 
 // Backend default page size (10 per page)
 const PER_PAGE = 10;
@@ -79,11 +81,21 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
     const lastResult = Math.min(currentPage * resultsPerPage, totalResults);
 
     /*
+     * Permissions ("View Student Progress List" is checked by the route)
+     */
+    const { hasPermission } = usePermissions();
+
+    const canCreate = hasPermission(PERMISSIONS.CREATE_STUDENT_PROGRESS);
+
+    const canView = hasPermission(PERMISSIONS.VIEW_STUDENT_PROGRESS);
+
+    /*
      * Log Progress popup (subjects/grades are loaded by the popup)
      */
     const [logStudent, setLogStudent] = useState<ProgressStudentItem | null>(null);
 
     const handleLogProgress = (student: ProgressStudentItem) => {
+        if (!canCreate) return;
         setLogStudent(student);
     };
 
@@ -98,6 +110,8 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
     };
 
     const handleViewProgress = (student: ProgressStudentItem) => {
+        if (!canView) return;
+
         navigate(`/students-progress/${student.id}`, {
             state: {
                 student,
@@ -298,31 +312,37 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="student-progress-actions">
-                                    <button
-                                        type="button"
-                                        className="student-progress-log-button"
-                                        onClick={() =>
-                                            handleLogProgress(student)
-                                        }
-                                    >
-                                        <Plus size={15} />
+                                {(canCreate || canView) && (
+                                    <div className="student-progress-actions">
+                                        {canCreate && (
+                                            <button
+                                                type="button"
+                                                className="student-progress-log-button"
+                                                onClick={() =>
+                                                    handleLogProgress(student)
+                                                }
+                                            >
+                                                <Plus size={15} />
 
-                                        <span>Log Progress</span>
-                                    </button>
+                                                <span>Log Progress</span>
+                                            </button>
+                                        )}
 
-                                    <button
-                                        type="button"
-                                        className="student-progress-view-button"
-                                        onClick={() =>
-                                            handleViewProgress(student)
-                                        }
-                                    >
-                                        <Eye size={15} />
+                                        {canView && (
+                                            <button
+                                                type="button"
+                                                className="student-progress-view-button"
+                                                onClick={() =>
+                                                    handleViewProgress(student)
+                                                }
+                                            >
+                                                <Eye size={15} />
 
-                                        <span>View Progress</span>
-                                    </button>
-                                </div>
+                                                <span>View Progress</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
@@ -371,7 +391,7 @@ const StudentProgress = ({ className = "" }: StudentProgressProps) => {
             </section>
 
             {/* Log Progress Popup */}
-            {logStudent && (
+            {logStudent && canCreate && (
                 <LogProgressPopup
                     key={logStudent.id}
                     student={toPopupStudent(logStudent)}

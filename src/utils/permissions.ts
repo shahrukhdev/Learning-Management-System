@@ -42,6 +42,12 @@ export const PERMISSIONS = {
     EDIT_HIFZ_SESSION: "Edit Hifz Session",
     DELETE_HIFZ_SESSION: "Delete Hifz Session",
 
+    VIEW_STUDENT_PROGRESS_LIST: "View Student Progress List",
+    CREATE_STUDENT_PROGRESS: "Create Student Progress",
+    VIEW_STUDENT_PROGRESS: "View Student Progress",
+    EDIT_STUDENT_PROGRESS: "Edit Student Progress",
+    DELETE_STUDENT_PROGRESS: "Delete Student Progress",
+
     VIEW_ATTENDANCE: "View Attendance",
     MARK_ATTENDANCE: "Mark Attendance",
     ATTENDANCE_OVERVIEW: "Attendance Overview",
