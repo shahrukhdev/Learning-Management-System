@@ -24,6 +24,12 @@ const Dashboard = () => {
     // One request on load + one per period change (GET /v1/dashboard/summary)
     const { summary, isLoading, error, retry } = useDashboardSummary(attendancePeriod);
 
+    console.log("User:", user);
+console.log("User role:", user?.role);
+console.log("Is Teacher:", isTeacher);
+console.log("Dashboard summary:", summary);
+console.log("Assigned classes:", summary?.assigned_classes);
+
     // Errors are shown per section only when it has nothing to show
     const sectionProps = { isLoading, error, onRetry: retry };
 
