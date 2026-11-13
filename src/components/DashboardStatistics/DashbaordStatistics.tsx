@@ -6,6 +6,8 @@ import type { DashboardStatistics } from "../../types/dashboard.types";
 interface DashboardStatsProps {
     // From GET /v1/dashboard/summary `statistics`; null until loaded
     statistics: DashboardStatistics | null;
+    assignedClasses: number;
+    isTeacher: boolean;
     isLoading: boolean;
 }
 
@@ -25,7 +27,7 @@ const formatChange = (value: number | null, suffix: string, unit = "") => {
 const show = (value: number | null | undefined, unit = "") =>
     value === null || value === undefined ? PLACEHOLDER : `${value}${unit}`;
 
-const DashboardStats = ({ statistics, isLoading }: DashboardStatsProps) => {
+const DashboardStats = ({ statistics, assignedClasses, isTeacher, isLoading }: DashboardStatsProps) => {
 
     const items = [
         {
@@ -38,11 +40,18 @@ const DashboardStats = ({ statistics, isLoading }: DashboardStatsProps) => {
         },
         {
             id: "teachers",
-            title: "Teachers",
-            value: show(statistics?.total_teachers),
+            title: isTeacher ? "Assigned Classes" : "Teachers",
+            value: isTeacher
+                ? show(assignedClasses)
+                : show(statistics?.total_teachers),
             icon: BookOpen,
             iconClass: "teachers",
-            change: formatChange(statistics?.teachers_added_this_month ?? null, "this month"),
+            change: isTeacher
+                ? { text: "", type: "neutral" }
+                : formatChange(
+                    statistics?.teachers_added_this_month ?? null,
+                    "this month"
+                ),
         },
         {
             id: "sessions",

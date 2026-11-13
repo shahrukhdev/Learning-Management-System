@@ -9,9 +9,14 @@ import Announcements from "../../../components/Announcements/Announcements";
 // import TeachersOnline from "../../../components/TeachersOnline/TeachersOnline";
 import QuranProgressOverview from "../../../components/QuranProgressOverview/QuranProgressOverview";
 import { useDashboardSummary } from "../../../hooks/useDashboardSummary";
+import { useAuth } from "../../../hooks/useAuth";
 import type { AttendancePeriod } from "../../../types/dashboard.types";
 
 const Dashboard = () => {
+
+    const { user } = useAuth();
+
+    const isTeacher = user?.role === "Teacher"; 
 
     // Attendance chart period (`attendance_period`; API default 7days)
     const [attendancePeriod, setAttendancePeriod] = useState<AttendancePeriod>("7days");
@@ -38,7 +43,7 @@ const Dashboard = () => {
 
                         {/* Statistics */}
                         <div className="col-12">
-                            <DashboardStats statistics={summary?.statistics ?? null} isLoading={isLoading} />
+                            <DashboardStats statistics={summary?.statistics ?? null} assignedClasses={summary?.assigned_classes ?? 0} isTeacher={isTeacher} isLoading={isLoading} />
                         </div>
 
                         <div className="col-12">

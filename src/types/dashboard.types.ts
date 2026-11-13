@@ -55,6 +55,7 @@ export interface DashboardAnnouncement {
 
 export interface DashboardSummary {
     statistics: DashboardStatistics;
+    assigned_classes: number;
     hifz_overview: DashboardHifzStudent[];
     attendance_overview: DashboardAttendanceOverview;
     quran_progress_overview: DashboardQuranProgress[];
