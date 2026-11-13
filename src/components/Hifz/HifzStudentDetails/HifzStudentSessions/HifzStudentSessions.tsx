@@ -6,6 +6,7 @@ import type { Surah } from "../../../../types/quran.types";
 import type {
     HifzSession,
     NewSabaqEntry,
+    OldSabaqEntry,
     RevisionEntry,
     SabaqStatus,
     SabaqStrength,
@@ -123,6 +124,25 @@ const HifzStudentSessions = ({
             `${getSurahName(entry.to_surah, entry.to_surah_id)}:${entry.to_ayah}`
         );
 
+    // Old Sabaq with ayahs: same as New Sabaq; without (older sessions) or
+    // Manzil: Surah names only
+    const describeRevision = (section: SessionSection, entry: RevisionEntry) => {
+        const { from_ayah: fromAyah = null, to_ayah: toAyah = null } =
+            section === "old_sabaq" ? (entry as OldSabaqEntry) : {};
+
+        if (fromAyah !== null && toAyah !== null) {
+            return describeRange(
+                `${getSurahName(entry.from_surah, entry.from_surah_id)}:${fromAyah}`,
+                `${getSurahName(entry.to_surah, entry.to_surah_id)}:${toAyah}`
+            );
+        }
+
+        return describeRange(
+            getSurahName(entry.from_surah, entry.from_surah_id),
+            getSurahName(entry.to_surah, entry.to_surah_id)
+        );
+    };
+
     // Old Sabaq / Manzil entry: portion + status, strength and mistakes
     const renderRevisionEntry = (section: SessionSection, entry: RevisionEntry, index: number) => (
         <li className="hifz-session-entry" key={`${section}-${entry.id ?? index}`}>
@@ -134,10 +154,7 @@ const HifzStudentSessions = ({
             <div className="hifz-session-entry-body">
 
                 <h3 className="hifz-session-portion m-0">
-                    {describeRange(
-                        getSurahName(entry.from_surah, entry.from_surah_id),
-                        getSurahName(entry.to_surah, entry.to_surah_id)
-                    )}
+                    {describeRevision(section, entry)}
                 </h3>
 
                 <div className="hifz-session-entry-meta">

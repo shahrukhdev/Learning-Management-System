@@ -22,6 +22,9 @@ export interface RevisionEntryForm {
     strength: SabaqStrength | "";
     mistakes: string;
     page: string; // Old Sabaq only ("" or missing is sent as 0)
+    // Old Sabaq only (required there); unused for Manzil
+    from_ayah: string;
+    to_ayah: string;
 }
 
 export interface NewSabaqEntryForm {
@@ -62,6 +65,8 @@ export const emptyRevisionEntry = (): RevisionEntryForm => ({
     strength: "",
     mistakes: "0",
     page: "0",
+    from_ayah: "",
+    to_ayah: "",
 });
 
 export const emptyNewSabaqEntry = (): NewSabaqEntryForm => ({
@@ -91,6 +96,9 @@ export const toSessionFormData = (session: HifzSession): HifzSessionFormData => 
         strength: entry.strength ?? "",
         mistakes: entry.mistakes !== null ? String(entry.mistakes) : "",
         page: String(entry.page ?? 0),
+        // Older sessions have no ayahs: left empty, required before saving
+        from_ayah: entry.from_ayah !== null ? String(entry.from_ayah) : "",
+        to_ayah: entry.to_ayah !== null ? String(entry.to_ayah) : "",
     })),
     manzil: session.manzil.map((entry) => ({
         key: newKey(),
@@ -100,6 +108,8 @@ export const toSessionFormData = (session: HifzSession): HifzSessionFormData => 
         strength: entry.strength ?? "",
         mistakes: entry.mistakes !== null ? String(entry.mistakes) : "",
         page: "0", // not used for Manzil
+        from_ayah: "",
+        to_ayah: "",
     })),
     new_sabaq: session.new_sabaq.map((entry) => ({
         key: newKey(),
@@ -116,7 +126,7 @@ const isZeroOrEmpty = (value: string) => value.trim() === "" || value.trim() ===
 const isBlankRevision = (section: RevisionSection, entry: RevisionEntryForm) =>
     !entry.from_surah_id && !entry.to_surah_id && !entry.status && !entry.strength &&
     isZeroOrEmpty(entry.mistakes) &&
-    (section !== "old_sabaq" || isZeroOrEmpty(entry.page));
+    (section !== "old_sabaq" || (isZeroOrEmpty(entry.page) && !entry.from_ayah && !entry.to_ayah));
 
 const isBlankNewSabaq = (entry: NewSabaqEntryForm) =>
     !entry.from_surah_id && !entry.from_ayah && !entry.to_surah_id && !entry.to_ayah;
@@ -159,6 +169,34 @@ export const validateSessionForm = (
             if (from && to && to.number < from.number) {
                 err("to_surah_id", "The ending Surah cannot be before the starting Surah.");
             }
+
+            // Old Sabaq ayahs: same rules as New Sabaq
+            const fromAyah = Number(entry.from_ayah);
+            const toAyah = Number(entry.to_ayah);
+
+            if (section === "old_sabaq") {
+                if (from) {
+                    if (!entry.from_ayah) err("from_ayah", "Select the starting ayah.");
+                    else if (!Number.isInteger(fromAyah) || fromAyah < 1 || fromAyah > from.ayahs) {
+                        err("from_ayah", `The ayah must be between 1 and ${from.ayahs}.`);
+                    }
+                }
+
+                if (to) {
+                    if (!entry.to_ayah) err("to_ayah", "Select the ending ayah.");
+                    else if (!Number.isInteger(toAyah) || toAyah < 1 || toAyah > to.ayahs) {
+                        err("to_ayah", `The ayah must be between 1 and ${to.ayahs}.`);
+                    }
+                }
+
+                if (
+                    from && to && to.id === from.id &&
+                    entry.from_ayah && entry.to_ayah && toAyah < fromAyah
+                ) {
+                    err("to_ayah", "The ending ayah cannot be before the starting ayah.");
+                }
+            }
+
             if (!entry.status) err("status", "Select a status.");
             if (!entry.strength) err("strength", "Select a strength.");
 
@@ -185,7 +223,11 @@ export const validateSessionForm = (
                     strength: entry.strength,
                     mistakes: mistakes !== null && Number.isInteger(mistakes) ? mistakes : null,
                     ...(section === "old_sabaq"
-                        ? { page: Number.isInteger(page) && page >= 0 ? page : 0 }
+                        ? {
+                            from_ayah: fromAyah,
+                            to_ayah: toAyah,
+                            page: Number.isInteger(page) && page >= 0 ? page : 0,
+                        }
                         : {}),
                 });
                 entryKeys[section].push(entry.key);

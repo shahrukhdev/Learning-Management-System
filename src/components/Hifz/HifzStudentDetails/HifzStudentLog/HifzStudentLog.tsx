@@ -180,12 +180,35 @@ const HifzStudentLog = ({
 
                 const next = { ...entry, [field]: value } as RevisionEntryForm;
 
+                // Old Sabaq: a different Surah has a different ayah range
+                if (section === "old_sabaq") {
+                    if (field === "from_surah_id") next.from_ayah = "";
+                    if (field === "to_surah_id") next.to_ayah = "";
+                }
+
                 // The ending Surah cannot be before the new starting Surah
                 if (field === "from_surah_id") {
                     const from = findSurah(value);
                     const to = findSurah(next.to_surah_id);
 
-                    if (from && to && to.number < from.number) next.to_surah_id = "";
+                    if (from && to && to.number < from.number) {
+                        next.to_surah_id = "";
+                        next.to_ayah = "";
+                    }
+                }
+
+                // Old Sabaq: within one Surah the end cannot be before the start
+                if (section === "old_sabaq") {
+                    const from = findSurah(next.from_surah_id);
+                    const to = findSurah(next.to_surah_id);
+
+                    if (
+                        from && to && from.id === to.id &&
+                        next.from_ayah && next.to_ayah &&
+                        Number(next.to_ayah) < Number(next.from_ayah)
+                    ) {
+                        next.to_ayah = "";
+                    }
                 }
 
                 return next;
@@ -193,6 +216,10 @@ const HifzStudentLog = ({
         }));
 
         if (field === "from_surah_id") cleared.push("to_surah_id");
+
+        if (section === "old_sabaq" && ["from_surah_id", "to_surah_id", "from_ayah", "to_ayah"].includes(field)) {
+            cleared.push("from_surah_id", "to_surah_id", "from_ayah", "to_ayah");
+        }
 
         clearErrors(cleared.map((name) => entryErrorKey(section, entryKey, name)));
     };
@@ -362,8 +389,27 @@ const HifzStudentLog = ({
 
                             <div className="row">
 
-                                {/* From Surah */}
+                                {/* Old Sabaq: From / To Surah + Ayah (same as New Sabaq) */}
 
+                                {isOldSabaq && (
+                                    <>
+                                        <div className="col-12 col-md-6">
+                                            {renderSurahAyahPosition("old_sabaq", entry, "from", (field, value) =>
+                                                updateRevision("old_sabaq", entry.key, field, value)
+                                            )}
+                                        </div>
+
+                                        <div className="col-12 col-md-6">
+                                            {renderSurahAyahPosition("old_sabaq", entry, "to", (field, value) =>
+                                                updateRevision("old_sabaq", entry.key, field, value)
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Manzil: From Surah */}
+
+                                {!isOldSabaq && (
                                 <div className="col-12 col-md-6">
 
                                     <div className="primary-field">
@@ -388,10 +434,12 @@ const HifzStudentLog = ({
                                     </div>
 
                                 </div>
+                                )}
 
 
-                                {/* To Surah (not before the starting Surah) */}
+                                {/* Manzil: To Surah (not before the starting Surah) */}
 
+                                {!isOldSabaq && (
                                 <div className="col-12 col-md-6">
 
                                     <div className="primary-field">
@@ -416,6 +464,7 @@ const HifzStudentLog = ({
                                     </div>
 
                                 </div>
+                                )}
 
 
                                 {/* Strength */}
@@ -524,7 +573,15 @@ const HifzStudentLog = ({
         </div>
     );
 
-    const renderNewSabaqPosition = (entry: NewSabaqEntryForm, side: "from" | "to") => {
+    // Surah + Ayah picker for one side of an entry (New Sabaq and Old Sabaq)
+    type PositionField = "from_surah_id" | "from_ayah" | "to_surah_id" | "to_ayah";
+
+    const renderSurahAyahPosition = (
+        section: "old_sabaq" | "new_sabaq",
+        entry: Pick<NewSabaqEntryForm, "key" | PositionField>,
+        side: "from" | "to",
+        onChange: (field: PositionField, value: string) => void
+    ) => {
 
         const surahField = side === "from" ? "from_surah_id" : "to_surah_id";
         const ayahField = side === "from" ? "from_ayah" : "to_ayah";
@@ -538,7 +595,7 @@ const HifzStudentLog = ({
                 ? Number(entry.from_ayah)
                 : 1;
 
-        const id = `new_sabaq-${entry.key}-${side}`;
+        const id = `${section}-${entry.key}-${side}`;
 
         return (
             <div className="primary-field">
@@ -553,9 +610,9 @@ const HifzStudentLog = ({
                         id={`${id}-surah`}
                         className="primary-select"
                         value={entry[surahField]}
-                        onChange={(event) => updateNewSabaq(entry.key, surahField, event.target.value)}
+                        onChange={(event) => onChange(surahField, event.target.value)}
                         disabled={surahSelectDisabled}
-                        aria-invalid={Boolean(getError("new_sabaq", entry.key, surahField))}
+                        aria-invalid={Boolean(getError(section, entry.key, surahField))}
                     >
                         {renderSurahOptions(side === "to" ? fromSurah?.number ?? 0 : 0)}
                     </select>
@@ -565,9 +622,9 @@ const HifzStudentLog = ({
                         className="primary-select hifz-ayah-select"
                         aria-label={side === "from" ? "From ayah" : "To ayah"}
                         value={entry[ayahField]}
-                        onChange={(event) => updateNewSabaq(entry.key, ayahField, event.target.value)}
+                        onChange={(event) => onChange(ayahField, event.target.value)}
                         disabled={!surah || isSubmitting}
-                        aria-invalid={Boolean(getError("new_sabaq", entry.key, ayahField))}
+                        aria-invalid={Boolean(getError(section, entry.key, ayahField))}
                     >
                         <option value="">Ayah</option>
                         {surah && getAyahNumbers(surah.ayahs, ayahStart).map((ayah) => (
@@ -579,7 +636,7 @@ const HifzStudentLog = ({
 
                 </div>
 
-                {renderError(getError("new_sabaq", entry.key, surahField) ?? getError("new_sabaq", entry.key, ayahField))}
+                {renderError(getError(section, entry.key, surahField) ?? getError(section, entry.key, ayahField))}
 
             </div>
         );
@@ -639,14 +696,18 @@ const HifzStudentLog = ({
                                 {/* From Surah / Ayah */}
 
                                 <div className="col-12 col-md-6">
-                                    {renderNewSabaqPosition(entry, "from")}
+                                    {renderSurahAyahPosition("new_sabaq", entry, "from", (field, value) =>
+                                        updateNewSabaq(entry.key, field, value)
+                                    )}
                                 </div>
 
 
                                 {/* To Surah / Ayah */}
 
                                 <div className="col-12 col-md-6">
-                                    {renderNewSabaqPosition(entry, "to")}
+                                    {renderSurahAyahPosition("new_sabaq", entry, "to", (field, value) =>
+                                        updateNewSabaq(entry.key, field, value)
+                                    )}
                                 </div>
 
                             </div>

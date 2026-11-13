@@ -5,6 +5,7 @@ import type {
     HifzSessionRecorder,
     HifzSessionResponse,
     NewSabaqEntry,
+    OldSabaqEntry,
     RevisionEntry,
     SabaqStatus,
     SabaqStrength,
@@ -67,6 +68,19 @@ const toRevisionEntry = (value: unknown): RevisionEntry | null => {
     };
 };
 
+// Old Sabaq: a revision entry + ayahs (null for sessions saved before them)
+const toOldSabaqEntry = (value: unknown): OldSabaqEntry | null => {
+    const entry = toRevisionEntry(value);
+
+    if (!entry || !isObject(value)) return null;
+
+    return {
+        ...entry,
+        from_ayah: toNumber(value.from_ayah),
+        to_ayah: toNumber(value.to_ayah),
+    };
+};
+
 const toNewSabaqEntry = (value: unknown): NewSabaqEntry | null => {
     if (!isObject(value)) return null;
 
@@ -118,7 +132,7 @@ export const toSession = (value: unknown): HifzSession | null => {
         recorded_by_user: toRecorder(value.recorded_by_user),
         session_date: typeof value.session_date === "string" ? value.session_date.slice(0, 10) : "",
         notes: typeof value.notes === "string" ? value.notes : null,
-        old_sabaq: toList(pick("old_sabaq"), toRevisionEntry),
+        old_sabaq: toList(pick("old_sabaq"), toOldSabaqEntry),
         manzil: toList(pick("manzil"), toRevisionEntry),
         new_sabaq: toList(pick("new_sabaq"), toNewSabaqEntry),
     };

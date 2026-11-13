@@ -25,6 +25,12 @@ export interface RevisionEntry {
     page: number | null;
 }
 
+// Old Sabaq entry: a revision entry with ayahs (null for older sessions)
+export interface OldSabaqEntry extends RevisionEntry {
+    from_ayah: number | null;
+    to_ayah: number | null;
+}
+
 export interface NewSabaqEntry {
     id: number | null;
     from_surah_id: number;
@@ -48,7 +54,7 @@ export interface HifzSession {
     recorded_by_user: HifzSessionRecorder | null;
     session_date: string; // Y-m-d
     notes: string | null;
-    old_sabaq: RevisionEntry[];
+    old_sabaq: OldSabaqEntry[];
     manzil: RevisionEntry[];
     new_sabaq: NewSabaqEntry[];
 }
@@ -63,6 +69,9 @@ export interface RevisionEntryPayload {
     mistakes: number | null;
     // Old Sabaq only (integer >= 0; the backend defaults a missing page to 0)
     page?: number;
+    // Old Sabaq only: required, 1 to the Surah's ayah count
+    from_ayah?: number;
+    to_ayah?: number;
 }
 
 export interface NewSabaqEntryPayload {
