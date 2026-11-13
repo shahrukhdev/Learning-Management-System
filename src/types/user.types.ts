@@ -24,6 +24,9 @@ export interface ManagedUser {
     last_login?: string | null;
     // Student users: assigned academic class
     class_id?: number | null;
+    // Student users: calendar year (e.g. 2026); null for other roles and
+    // for students created before the field existed
+    year: number | null;
     // Teacher users: assigned academic class IDs
     class_ids?: number[];
     class?: { id: number; name: string } | null;
@@ -46,6 +49,8 @@ export interface CreateUserRequest {
     roles: number[];
     // Student role only: one academic class ID
     class_id?: number;
+    // Student role only: calendar year (2000 to next year)
+    year?: number;
     // Teacher role only: multiple academic class IDs
     class_ids?: number[];
 }
@@ -76,6 +81,8 @@ export interface UpdateUserRequest {
     roles: number[];
     // Student role only: one academic class ID
     class_id?: number;
+    // Student role only: calendar year (2000 to next year)
+    year?: number;
     // Teacher role only: multiple academic class IDs
     class_ids?: number[];
 }

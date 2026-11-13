@@ -26,7 +26,8 @@ type AddUserField =
     | "is_active"
     | "roles"
     | "class_id"
-    | "class_ids";
+    | "class_ids"
+    | "year";
 
 type AddUserErrors = Partial<Record<AddUserField, string>>;
 
@@ -65,7 +66,13 @@ const ADD_USER_FIELDS: AddUserField[] = [
     "roles",
     "class_id",
     "class_ids",
+    "year",
 ];
+
+// Student year: a 4-digit calendar year from 2000 to next year
+const MIN_STUDENT_YEAR = 2000;
+
+const currentYear = () => new Date().getFullYear();
 
 const toRoleKind = (roleName: string): UserRole | null => {
     const kind = roleName.trim().toLowerCase();
@@ -172,6 +179,11 @@ const AddUserPopup = ({
     // Teacher: multiple class IDs
     const [classIds, setClassIds] = useState<number[]>([]);
 
+    // Student: calendar year (kept as text while typing; sent as a number)
+    const [year, setYear] = useState("");
+
+    const maxStudentYear = currentYear() + 1;
+
     // Edit mode: current Student class
     const [currentClass, setCurrentClass] = useState<{
         id: number;
@@ -245,6 +257,7 @@ const AddUserPopup = ({
         setClassId(null);
         setCurrentClass(null);
         setClassIds([]);
+        setYear("");
 
         setParentId("");
         setSubject("");
@@ -295,6 +308,9 @@ const AddUserPopup = ({
                     user.class_id ?? user.class?.id ?? null;
 
                 setClassId(assignedClassId);
+
+                // Student: year (empty for students created before the field)
+                setYear(typeof user.year === "number" ? String(user.year) : "");
 
                 setCurrentClass(
                     user.class && typeof user.class.id === "number"
@@ -425,10 +441,16 @@ const AddUserPopup = ({
 
     const handleRoleChange = (newRole: UserRole | null) => {
 
-        // Clear Student class when changing to another role
+        // Clear Student class and year when changing to another role
         if (newRole !== "student") {
             setClassId(null);
             clearError("class_id");
+
+            setYear("");
+            clearError("year");
+        } else if (!isEditMode && !year) {
+            // New student: default to the current year
+            setYear(String(currentYear()));
         }
 
         // Clear Teacher classes when changing to another role
@@ -531,6 +553,22 @@ const AddUserPopup = ({
             result.class_id = "Please select a class.";
         }
 
+        // Student year: required, 4-digit, 2000 to next year (backend wording)
+        if (isStudent) {
+            const trimmedYear = year.trim();
+            const yearNumber = Number(trimmedYear);
+
+            if (!trimmedYear) {
+                result.year = "The year field is required for students.";
+            } else if (!/^\d{4}$/.test(trimmedYear)) {
+                result.year = "The year must be a 4-digit year.";
+            } else if (yearNumber < MIN_STUDENT_YEAR) {
+                result.year = `The year must be ${MIN_STUDENT_YEAR} or later.`;
+            } else if (yearNumber > maxStudentYear) {
+                result.year = "The year cannot be later than next year.";
+            }
+        }
+
         // Teacher must have at least one selected class
         if (isTeacher && classIds.length === 0) {
             result.class_ids = "Please select at least one class.";
@@ -585,6 +623,11 @@ const AddUserPopup = ({
                         ? { class_id: classId }
                         : {}),
 
+                    // Student: year (never sent for other roles)
+                    ...(isStudent
+                        ? { year: Number(year.trim()) }
+                        : {}),
+
                     // Teacher: multiple class IDs
                     ...(isTeacher
                         ? { class_ids: classIds }
@@ -624,6 +667,11 @@ const AddUserPopup = ({
                 // Student: one class ID
                 ...(isStudent && classId !== null
                     ? { class_id: classId }
+                    : {}),
+
+                // Student: year (never sent for other roles)
+                ...(isStudent
+                    ? { year: Number(year.trim()) }
                     : {}),
 
                 // Teacher: multiple class IDs
@@ -1153,6 +1201,51 @@ const AddUserPopup = ({
                                                     Try again
                                                 </button>
 
+                                            </span>
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* =========================
+                                Student Year
+                            ========================= */}
+
+                            {isStudent && (
+
+                                <div className="col-12">
+
+                                    <div className="app-popup-field">
+
+                                        <label htmlFor="user-student-year">
+                                            Year
+                                        </label>
+
+                                        <input
+                                            id="user-student-year"
+                                            type="number"
+                                            inputMode="numeric"
+                                            placeholder={`e.g. ${currentYear()}`}
+                                            min={MIN_STUDENT_YEAR}
+                                            max={maxStudentYear}
+                                            step={1}
+                                            value={year}
+                                            onChange={(event) => {
+                                                // Digits only, at most 4
+                                                setYear(event.target.value.replace(/\D/g, "").slice(0, 4));
+                                                clearError("year");
+                                            }}
+                                            disabled={isSubmitting}
+                                            aria-invalid={Boolean(errors.year)}
+                                            required
+                                        />
+
+                                        {errors.year && (
+                                            <span className="error-text">
+                                                {errors.year}
                                             </span>
                                         )}
 
