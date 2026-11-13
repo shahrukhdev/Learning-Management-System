@@ -9,15 +9,26 @@ import Announcements from "../../../components/Announcements/Announcements";
 // import TeachersOnline from "../../../components/TeachersOnline/TeachersOnline";
 import QuranProgressOverview from "../../../components/QuranProgressOverview/QuranProgressOverview";
 import { useDashboardSummary } from "../../../hooks/useDashboardSummary";
+import { useAuth } from "../../../hooks/useAuth";
 import type { AttendancePeriod } from "../../../types/dashboard.types";
 
 const Dashboard = () => {
+
+    const { user } = useAuth();
+
+    const isTeacher = user?.role === "Teacher"; 
 
     // Attendance chart period (`attendance_period`; API default 7days)
     const [attendancePeriod, setAttendancePeriod] = useState<AttendancePeriod>("7days");
 
     // One request on load + one per period change (GET /v1/dashboard/summary)
     const { summary, isLoading, error, retry } = useDashboardSummary(attendancePeriod);
+
+    console.log("User:", user);
+console.log("User role:", user?.role);
+console.log("Is Teacher:", isTeacher);
+console.log("Dashboard summary:", summary);
+console.log("Assigned classes:", summary?.assigned_classes);
 
     // Errors are shown per section only when it has nothing to show
     const sectionProps = { isLoading, error, onRetry: retry };
@@ -29,7 +40,7 @@ const Dashboard = () => {
                 description="Manage your Noor Ul Imaan Masjid Madrassah Portal dashboard."
             />
 
-            <section className="teacher dashboard-section">
+            <section className="dashboard-section">
                 <div className="container-fluid">
                     <div className="row">
 
@@ -38,7 +49,12 @@ const Dashboard = () => {
 
                         {/* Statistics */}
                         <div className="col-12">
-                            <DashboardStats statistics={summary?.statistics ?? null} isLoading={isLoading} />
+                            <DashboardStats
+                                statistics={summary?.statistics ?? null}
+                                assignedClasses={summary?.assigned_classes ?? 0}
+                                isTeacher={true}
+                                isLoading={isLoading}
+                            />
                         </div>
 
                         <div className="col-12">
