@@ -26,24 +26,13 @@ const mergeRoles = (
     current: UserRoleSummary[],
     incoming: UserRoleSummary[]
 ): UserRoleSummary[] => {
-        console.log("Current roles:", current);
-    console.log("Incoming roles:", incoming);
+    const roleMap = new Map<number, UserRoleSummary>();
 
-    console.log(
-        "Current role ID types:",
-        current.map((role) => typeof role.id)
-    );
+    [...current, ...incoming].forEach((role) => {
+        roleMap.set(role.id, role);
+    });
 
-    console.log(
-        "Incoming role ID types:",
-        incoming.map((role) => typeof role.id)
-    );
-    const known = new Set(current.map((role) => role.id));
-    const additions = incoming.filter((role) => !known.has(role.id));
-
-    if (additions.length === 0) return current;
-
-    return [...current, ...additions].sort((a, b) => a.id - b.id);
+    return Array.from(roleMap.values()).sort((a, b) => a.id - b.id);
 };
 
 const rolesFromUsers = (users: ManagedUser[]): UserRoleSummary[] =>
