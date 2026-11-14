@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react";
 
 import AvatarContent from "../Avatar/AvatarContent";
 import { resolveImageUrl } from "../../utils/imageUrl";
@@ -30,36 +30,42 @@ export const getUserManagementColumns = ({
             const sortState = column.getIsSorted();
 
             // Same size/stroke as before; the icon shows the active direction
+            // (no icon while unsorted)
             const SortIcon =
                 sortState === "asc"
                     ? ArrowUp
                     : sortState === "desc"
                         ? ArrowDown
-                        : ArrowUpDown;
+                        : null;
 
             return (
 
                 <button
                     type="button"
                     className="table-sort-button"
-                    onClick={() =>
-                        column.toggleSorting(
-                            column.getIsSorted() === "asc"
-                        )
-                    }
+                    // None -> A to Z -> Z to A -> none (newest first)
+                    onClick={() => {
+                        if (!sortState) column.toggleSorting(false);
+                        else if (sortState === "asc") column.toggleSorting(true);
+                        else column.clearSorting();
+                    }}
                     aria-label={
                         sortState === "asc"
                             ? "Sort users by name, currently A to Z"
-                            : "Sort users by name, currently Z to A"
+                            : sortState === "desc"
+                                ? "Sort users by name, currently Z to A"
+                                : "Sort users by name, currently newest first"
                     }
                 >
 
                     User
 
-                    <SortIcon
-                        size={14}
-                        strokeWidth={2}
-                    />
+                    {SortIcon && (
+                        <SortIcon
+                            size={14}
+                            strokeWidth={2}
+                        />
+                    )}
 
                 </button>
 

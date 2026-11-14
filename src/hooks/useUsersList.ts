@@ -9,7 +9,8 @@ import type { ManagedUser, SortDirection, UserRoleSummary } from "../types/user.
 // Only these values trigger a request. Role tabs filter locally (see Users page).
 export interface UsersQuery {
     search: string;
-    sortDirection: SortDirection;
+    // null = not sent (API default: newest first)
+    sortDirection: SortDirection | null;
     page: number;
     perPage: number;
 }
@@ -59,7 +60,7 @@ export const useUsersList = ({ search, sortDirection, page, perPage }: UsersQuer
         getUsers(
             {
                 search: search || undefined,
-                sort_direction: sortDirection,
+                sort_direction: sortDirection ?? undefined,
                 page,
                 per_page: perPage,
             },

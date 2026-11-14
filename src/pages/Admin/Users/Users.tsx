@@ -29,7 +29,6 @@ import { PERMISSIONS } from "../../../utils/permissions";
 const ALL_TAB = "all";
 const SEARCH_DEBOUNCE_MS = 450;
 const DEFAULT_PER_PAGE = 10; // matches the existing "Rows per page" default
-const DEFAULT_SORT_DIRECTION: SortDirection = "desc";
 
 const Users = () => {
 
@@ -54,8 +53,9 @@ const Users = () => {
 
     const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
-    // Server-side sort on the User (name) column
-    const [sortDirection, setSortDirection] = useState<SortDirection>(DEFAULT_SORT_DIRECTION);
+    // Server-side sort on the User (name) column. null (initial) = no
+    // sort_direction sent, so the API returns the newest users first.
+    const [sortDirection, setSortDirection] = useState<SortDirection | null>(null);
 
     // Trimmed + debounced, so typing (or adding spaces) doesn't fire requests
     const debouncedSearch = useDebouncedValue(search.trim(), SEARCH_DEBOUNCE_MS);

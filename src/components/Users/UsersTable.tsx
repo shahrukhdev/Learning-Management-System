@@ -28,8 +28,9 @@ interface UserManagementTableProps {
     isRoleFiltered: boolean;
     onPageChange: (page: number) => void;
     onPerPageChange: (perPage: number) => void;
-    sortDirection: SortDirection;
-    onSortDirectionChange: (direction: SortDirection) => void;
+    // null = no sort (newest first, no arrow)
+    sortDirection: SortDirection | null;
+    onSortDirectionChange: (direction: SortDirection | null) => void;
     onRetry: () => void;
     // Omitted = action hidden ("Edit User" / "Delete User")
     onEditUser?: (user: ManagedUser) => void;
@@ -61,9 +62,8 @@ const UserManagementTable = ({
 }: UserManagementTableProps) => {
 
     // Table sort state mirrors the server-side sort direction
-    const sorting: SortingState = [
-        { id: SORT_COLUMN_ID, desc: sortDirection === "desc" },
-    ];
+    const sorting: SortingState =
+        sortDirection === null ? [] : [{ id: SORT_COLUMN_ID, desc: sortDirection === "desc" }];
 
     // The existing header button calls column.toggleSorting(); turn the
     // resulting state into a sort direction for the API
@@ -71,8 +71,8 @@ const UserManagementTable = ({
         const next = typeof updater === "function" ? updater(sorting) : updater;
         const nameSort = next.find((entry) => entry.id === SORT_COLUMN_ID);
 
-        const nextDirection: SortDirection =
-            nameSort && !nameSort.desc ? "asc" : "desc";
+        const nextDirection: SortDirection | null =
+            nameSort ? (nameSort.desc ? "desc" : "asc") : null;
 
         if (nextDirection !== sortDirection) {
             onSortDirectionChange(nextDirection);
@@ -105,8 +105,8 @@ const UserManagementTable = ({
             // Rows arrive already sorted by the API
             manualSorting: true,
 
-            // Never fall back to an "unsorted" state; just asc <-> desc
-            enableSortingRemoval: false,
+            // Third click clears the sort (back to newest first)
+            enableSortingRemoval: true,
 
             // Pagination is done by the API
             manualPagination: true,
@@ -228,7 +228,9 @@ const UserManagementTable = ({
                                                 }
                                                 aria-sort={
                                                     header.column.id === SORT_COLUMN_ID
-                                                        ? (sortDirection === "asc" ? "ascending" : "descending")
+                                                        ? (sortDirection === null
+                                                            ? "none"
+                                                            : sortDirection === "asc" ? "ascending" : "descending")
                                                         : undefined
                                                 }
                                             >
