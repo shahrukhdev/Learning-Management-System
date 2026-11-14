@@ -6,6 +6,7 @@ import type {
     DashboardQuranProgress,
     DashboardSummary,
     DashboardSummaryResponse,
+    DashboardTeacher,
 } from "../types/dashboard.types";
 
 // Dashboard summary. The Bearer token is attached by the api.ts request
@@ -72,6 +73,25 @@ const toAnnouncement = (item: Record<string, unknown>): DashboardAnnouncement | 
     };
 };
 
+const toTeacher = (item: Record<string, unknown>): DashboardTeacher | null => {
+    const id = toNumber(item.id);
+
+    if (id === null) return null;
+
+    return {
+        id,
+        name: toText(item.name) ?? "",
+        initials: toText(item.initials) ?? "",
+        image: toText(item.image),
+        classes: toList(item.classes, (value) => {
+            const classId = toNumber(value.id);
+            const name = toText(value.name);
+            return classId !== null && name !== null ? { id: classId, name } : null;
+        }),
+        shift: toText(item.shift),
+    };
+};
+
 // GET /v1/dashboard/summary?attendance_period=...
 export const getDashboardSummary = async (
     attendancePeriod: AttendancePeriod,
@@ -111,5 +131,7 @@ export const getDashboardSummary = async (
         },
         quran_progress_overview: toList(data.quran_progress_overview, toQuranProgress),
         announcements: toList(data.announcements, toAnnouncement),
+        teachers_total: toNumber(data.teachers_total) ?? 0,
+        teachers_available: toList(data.teachers_available, toTeacher),
     };
 };

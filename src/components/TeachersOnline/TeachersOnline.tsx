@@ -1,60 +1,58 @@
 import "./TeachersOnline.css";
 
-interface Teacher {
-    id: number;
-    initials: string;
-    name: string;
-    className: string;
-    timing: string;
-    status: "active" | "offline";
+import DashboardBoxStatus from "../DashboardStatistics/DashboardBoxStatus";
+import AvatarContent from "../Avatar/AvatarContent";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import type { DashboardTeacher } from "../../types/dashboard.types";
+
+interface TeachersOnlineProps {
+    // From GET /v1/dashboard/summary `teachers_available` (max 5) and
+    // `teachers_total` (all active teachers). Admin dashboard only.
+    teachers: DashboardTeacher[];
+    total: number;
+    isLoading: boolean;
+    error: string | null;
+    onRetry: () => void;
 }
 
-const teachers: Teacher[] = [
-    {
-        id: 1,
-        initials: "HK",
-        name: "Hafiz Kareem",
-        className: "Class A",
-        timing: "Morning",
-        status: "active",
-    },
-    {
-        id: 2,
-        initials: "HK",
-        name: "Hafiz Kareem",
-        className: "Class A",
-        timing: "Morning",
-        status: "active",
-    },
-    {
-        id: 3,
-        initials: "HK",
-        name: "Hafiz Kareem",
-        className: "Class A",
-        timing: "Morning",
-        status: "offline",
-    },
-];
-
-const TeachersOnline = () => {
+const TeachersOnline = ({ teachers, total, isLoading, error, onRetry }: TeachersOnlineProps) => {
     return (
         <div className="teachers-online dashboard-box">
 
             <div className="dash-box-top">
                 <h2 className="dash-box-title">
-                    Teachers Available
+                    Teachers Available{total > 0 ? ` (${total})` : ""}
                 </h2>
             </div>
 
-            {/* Teachers List */}
-            <div className="teachers-list">
+            <DashboardBoxStatus
+                isLoading={isLoading && teachers.length === 0 && !error}
+                error={teachers.length === 0 ? error : null}
+                onRetry={onRetry}
+                isEmpty={teachers.length === 0}
+                emptyText="No teachers yet."
+                loadingText="Loading teachers..."
+            />
 
-                {teachers.map((teacher) => (
+            {/* Teachers List */}
+            {teachers.length > 0 && (
+            <div className={`teachers-list ${isLoading ? "dashboard-box-refreshing" : ""}`}>
+
+                {teachers.map((teacher) => {
+
+                    const classNames = teacher.classes.map((item) => item.name).join(", ");
+
+                    return (
                     <div className="teacher-item" key={teacher.id} >
 
-                        {/* Avatar */}
-                        <div className="teacher-avatar">
-                            {teacher.initials}
+                        {/* Avatar (photo, else initials) */}
+                        <div className="teacher-avatar overflow-hidden">
+                            <AvatarContent
+                                src={resolveImageUrl(teacher.image)}
+                                alt={teacher.name}
+                                fallback={teacher.initials}
+                                className="w-100 h-100 object-fit-cover"
+                            />
                         </div>
 
                         {/* Teacher Info */}
@@ -64,22 +62,27 @@ const TeachersOnline = () => {
                                     {teacher.name}
                                 </h3>
                                 <p className="teacher-class sm-para mb-0">
-                                    {teacher.className}
-                                    <span> · </span>
-                                    {teacher.timing}
+                                    {classNames || "No class assigned"}
+                                    {teacher.shift && (
+                                        <>
+                                            <span> · </span>
+                                            {teacher.shift}
+                                        </>
+                                    )}
                                 </p>
                             </div>
-                            {/* Status */}
-                            <span className={`teacher-status ${teacher.status}`} >
-                                {teacher.status === "active"
-                                    ? "Active"
-                                    : "Offline"}
+                            {/* Status: shown as Active for every teacher (no
+                                live status from the API yet) */}
+                            <span className="teacher-status active">
+                                Active
                             </span>
                         </div>
 
                     </div>
-                ))}
+                    );
+                })}
             </div>
+            )}
         </div>
     );
 };

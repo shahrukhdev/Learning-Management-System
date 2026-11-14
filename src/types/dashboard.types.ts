@@ -53,6 +53,16 @@ export interface DashboardAnnouncement {
     created_at: string | null;
 }
 
+// "Teachers Available" box (Super Admin / Admin; max 5, from the backend)
+export interface DashboardTeacher {
+    id: number;
+    name: string;
+    initials: string;
+    image: string | null;
+    classes: { id: number; name: string }[];
+    shift: string | null; // hidden when null
+}
+
 export interface DashboardSummary {
     statistics: DashboardStatistics;
     assigned_classes: number;
@@ -60,6 +70,9 @@ export interface DashboardSummary {
     attendance_overview: DashboardAttendanceOverview;
     quran_progress_overview: DashboardQuranProgress[];
     announcements: DashboardAnnouncement[];
+    // All active teachers (the list below is shortened)
+    teachers_total: number;
+    teachers_available: DashboardTeacher[];
 }
 
 export interface DashboardSummaryResponse {
